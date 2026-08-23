@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="CyberKavach Terms of Protocol. Understand the rules of engagement, limitations of AI liability, and acceptable use policies for our cybersecurity modules.">
+    <title>Terms of Protocol | CyberKavach AI</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'], 
+                        mono: ['JetBrains Mono', 'monospace'] 
+                    },
+                    colors: { primary: '#4f46e5', secondary: '#0ea5e9' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ========================================== */
+        /* LEGAL PROTOCOL STYLES (100% RESPONSIVE)    */
+        /* ========================================== */
+
+        body, html {
+            overflow-x: hidden;
+            width: 100%;
+            background-color: #fdfdfd;
+        }
+
+        /* Abstract Security Grid Background */
+        .bg-grid {
+            position: fixed; inset: 0; z-index: -1;
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+        }
+
+        /* Glowing Orbs for UI Depth */
+        .glow-orb-1 { position: absolute; top: -10%; right: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(14, 165, 233, 0.06) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;}
+        .glow-orb-2 { position: absolute; top: 40%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(79, 70, 229, 0.05) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;}
+
+        /* Universal Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Typography for Legal Document */
+        .legal-content {
+            font-size: 1.05rem;
+            color: #334155;
+            line-height: 1.8;
+            word-wrap: break-word; /* Crucial for mobile URLs */
+        }
+        @media (min-width: 768px) { .legal-content { font-size: 1.1rem; } }
+
+        .legal-content p { margin-bottom: 1.5rem; }
+
+        .legal-content h3 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            letter-spacing: -0.01em;
+        }
+        @media (min-width: 768px) { .legal-content h3 { font-size: 1.6rem; margin-top: 3.5rem; margin-bottom: 1.25rem; } }
+
+        .legal-content h4 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-top: 1.75rem;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .legal-content ul {
+            margin-bottom: 1.5rem;
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .legal-content ul li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+        .legal-content ul li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #0ea5e9; /* Cyan */
+            font-weight: 900;
+        }
+
+        .legal-content strong { color: #0f172a; font-weight: 700; }
+        
+        .legal-content code {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.375rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+            word-break: break-all;
+        }
+
+        /* Sidebar Navigation Active State */
+        .nav-link {
+            transition: all 0.3s ease;
+            position: relative;
+            display: block;
+        }
+        .nav-link.active-link {
+            color: #0ea5e9;
+            font-weight: 800;
+            background: rgba(14, 165, 233, 0.08);
+            border-left: 3px solid #0ea5e9;
+            padding-left: 0.75rem;
+        }
+
+        /* Animations */
+        .fade-up { opacity: 0; transform: translateY(20px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+    </style>
+</head>
+<body class="selection:bg-cyan-100 selection:text-cyan-900">
+
+    <div class="bg-grid"></div>
+    <div class="glow-orb-1"></div>
+    <div class="glow-orb-2"></div>
+
+    <header id="navbar" class="fixed w-full z-50 top-0 bg-white/90 backdrop-blur-xl border-b border-slate-200/60 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex justify-between items-center w-full">
+            
+            <div class="flex items-center gap-3 shrink-0">
+                <a href="index.html" class="flex items-center gap-2 group">
+                   <div class="bg-indigo-600 p-2 md:p-2.5 rounded-xl shadow-lg group-hover:rotate-12 group-hover:shadow-indigo-500/50 transition-all duration-300">
+                    <i data-lucide="shield" class="w-4 h-4 md:w-5 md:h-5 text-white"></i>
+                </div>
+                    <span class="font-black text-lg md:text-xl tracking-tight text-slate-900">CyberKavach<span class="text-indigo-600">.AI</span></span>
+                </a>
+            </div>
+            
+            <nav class="hidden md:flex items-center gap-8 bg-slate-50/80 px-6 py-2 rounded-full border border-slate-200 shadow-sm">
+                <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Scanner</a>
+                <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Pricing</a>
+            </nav>
+
+            <div class="flex items-center shrink-0">
+                <a href="/index.html#blog" class="px-4 py-2.5 md:px-6 bg-white border border-slate-200 text-slate-700 font-bold text-[10px] md:text-xs uppercase tracking-widest rounded-lg md:rounded-xl hover:bg-slate-50 hover:text-indigo-600 transition-all shadow-sm flex items-center gap-2 whitespace-nowrap">
+                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Back to Home</span>
+                    <span class="sm:hidden">Back</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section class="pt-32 md:pt-48 pb-12 md:pb-20 px-4 md:px-6 relative z-10 w-full border-b border-slate-200 bg-gradient-to-b from-white to-slate-50/50">
+        <div class="max-w-4xl mx-auto text-center w-full">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-200 bg-cyan-50 text-cyan-700 text-[10px] font-bold mb-6 uppercase tracking-widest shadow-sm fade-up">
+                <i data-lucide="book-open" class="w-3.5 h-3.5"></i> Legal Architecture
+            </div>
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-slate-900 mb-6 leading-[1.1] fade-up delay-100 break-words">
+                Terms of Protocol.<br>
+                <span class="text-cyan-600">Rules of Engagement.</span>
+            </h1>
+            <p class="text-sm sm:text-lg lg:text-xl text-slate-500 font-medium max-w-2xl mx-auto leading-relaxed fade-up delay-200 px-2">
+                By interacting with the CyberKavach API, Extension, or Dashboards, you agree to the following operational boundaries and liability limitations.
+            </p>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-20 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 relative z-10 w-full">
+        
+        <aside class="hidden lg:block lg:col-span-3 relative">
+            <div class="sticky top-32 bg-white border border-slate-200 p-6 rounded-3xl shadow-sm">
+                <h4 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6 px-2 flex items-center gap-2">
+                    <i data-lucide="scale" class="w-3.5 h-3.5 text-cyan-500"></i> Protocol Index
+                </h4>
+                <nav class="flex flex-col space-y-1.5" id="toc-nav">
+                    <a href="#acceptance" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">1. Protocol Acceptance</a>
+                    <a href="#license" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">2. License & Fair Use</a>
+                    <a href="#limitations" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">3. AI Liability Disclaimer</a>
+                    <a href="#prohibited" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">4. Prohibited Conduct</a>
+                    <a href="#payments" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">5. Billing & Revocation</a>
+                    <a href="#jurisdiction" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">6. Governing Law</a>
+                </nav>
+            </div>
+        </aside>
+
+        <article class="col-span-1 lg:col-span-9 w-full max-w-4xl mx-auto lg:mx-0 overflow-hidden fade-up delay-300">
+            
+            <p class="text-[10px] sm:text-xs font-mono text-slate-400 mb-8 border-b border-slate-200 pb-4 uppercase tracking-widest">
+                Last Updated: October 24, 2026 | Effective Date: Immediately
+            </p>
+
+            <div class="legal-content">
+                
+                <section id="acceptance" class="scroll-mt-32 pt-4">
+                    <h3><div class="p-2 bg-cyan-50 rounded-lg"><i data-lucide="check-square" class="w-5 h-5 text-cyan-500"></i></div> 1. Protocol Acceptance</h3>
+                    <p>These Terms of Protocol ("Terms") constitute a legally binding agreement between you (the "User" or "Node Operator") and CyberKavach AI ("Company", "We", "Our"). By generating an API key, installing the Chromium extension, or interacting with the <code>api.cyberkavach.ai</code> endpoints, you acknowledge that you have read, understood, and agreed to be bound by these algorithms of engagement.</p>
+                </section>
+
+                <div class="w-full h-px bg-gradient-to-r from-slate-200 via-slate-300 to-transparent my-10"></div>
+
+                <section id="license" class="scroll-mt-32">
+                    <h3><div class="p-2 bg-cyan-50 rounded-lg"><i data-lucide="key" class="w-5 h-5 text-cyan-500"></i></div> 2. License Allocation & Fair Usage (FUP)</h3>
+                    <p>Subject to your compliance with these Terms, CyberKavach grants you a limited, non-exclusive, non-transferable, and revocable license to deploy the Titan Engine for personal or internal business security validation.</p>
+                    
+                    <h4>The "Community" Node (Free Tier)</h4>
+                    <p>Guest sessions are allocated an ephemeral ID (e.g., <code>FREE-XXXXX</code>). You are entitled to strictly 10 Domain Scans and 10 Forensic AI Scans (inclusive of Satark and Shadow Scout) per 24-hour cycle. Attempting to bypass this limit by spoofing LocalStorage or IP rotating constitutes an abuse of infrastructure.</p>
+
+                    <h4>The "Titan Elite" License (PRO Tier)</h4>
+                    <p>Elite License holders receive a cryptographic key (<code>CK-PRO-XXXXX</code>). This key unlocks 2,000 Extension Scans and 200 Deep AI Scans daily. <strong>This is a strictly single-user license.</strong> If our heuristic monitors detect concurrent API requests from geographically impossible locations using the same PRO key, the key will be permanently cryptographically burned without refund.</p>
+                </section>
+
+                <div class="w-full h-px bg-gradient-to-r from-slate-200 via-slate-300 to-transparent my-10"></div>
+
+                <section id="limitations" class="scroll-mt-32">
+                    <h3><div class="p-2 bg-cyan-50 rounded-lg"><i data-lucide="brain-circuit" class="w-5 h-5 text-cyan-500"></i></div> 3. The "Probabilistic AI" Liability Disclaimer</h3>
+                    <p>This is the most critical section of our protocol. CyberKavach utilizes advanced Machine Learning, Deep DOM Parsing, and Spectral Analysis. However, <strong>Neural networks are probabilistic, not deterministic.</strong></p>
+                    
+                    <div class="bg-orange-50/80 border-l-[4px] border-orange-500 p-6 md:p-8 rounded-r-2xl my-8 shadow-sm">
+                        <h4 class="text-orange-900 mt-0 mb-2 font-black text-sm uppercase tracking-widest">Waiver of Financial Liability</h4>
+                        <p class="text-orange-800 text-sm md:text-base font-medium mb-0 leading-relaxed">
+                            A "SAFE" verdict from our scanner does not constitute a legal guarantee of safety. A "MALWARE" verdict does not constitute absolute proof of malicious intent (False Positives/Negatives may occur). Under no circumstances shall CyberKavach, its engineers, or directors be held liable for financial loss, data breach, or emotional distress suffered if you interact with a threat that our engine failed to catch, or if you ignore our engine's warnings.
+                        </p>
+                    </div>
+                    
+                    <p>Our tools are an augmented layer of defense. They do not replace human common sense. If the Reserve Bank of India (RBI) or your bank issues a warning contrary to our scanner, the Bank's directive supersedes our AI.</p>
+                </section>
+
+                <div class="w-full h-px bg-gradient-to-r from-slate-200 via-slate-300 to-transparent my-10"></div>
+
+                <section id="prohibited" class="scroll-mt-32">
+                    <h3><div class="p-2 bg-cyan-50 rounded-lg"><i data-lucide="shield-alert" class="w-5 h-5 text-cyan-500"></i></div> 4. Prohibited Conduct</h3>
+                    <p>CyberKavach is engineered to act as a Shield, not a Weapon. You are strictly prohibited from utilizing our infrastructure for the following activities:</p>
+                    <ul>
+                        <li><strong>Adversarial Training:</strong> Uploading generated deepfakes to Satark AI to test and improve your own malicious generative models (Red-teaming our engine for malicious intent).</li>
+                        <li><strong>Doxing & Harassment:</strong> Using Shadow Scout to query the passwords or UPI IDs of politicians, celebrities, or ex-partners. (Note: While we use K-Anonymity and don't log your queries, exploiting the tool for harassment violates ethical cyber-norms).</li>
+                        <li><strong>Reverse Engineering:</strong> Attempting to decompile the Extension, scrape the FastAPI <code>/scan-apk</code> endpoint, or clone our Smali heuristics database.</li>
+                        <li><strong>Payload Distribution:</strong> Uploading known safe files with embedded malware strictly to corrupt our telemetry or poison our heuristic models.</li>
+                    </ul>
+                </section>
+
+                <div class="w-full h-px bg-gradient-to-r from-slate-200 via-slate-300 to-transparent my-10"></div>
+
+                <section id="payments" class="scroll-mt-32">
+                    <h3><div class="p-2 bg-cyan-50 rounded-lg"><i data-lucide="credit-card" class="w-5 h-5 text-cyan-500"></i></div> 5. Billing, Lifetime Access & Revocation</h3>
+                    <p>Purchases for the "Titan Elite" tier are processed securely via <strong>Razorpay</strong>. The fee of ₹199 is a one-time payment for the "Lifetime" of the current major product version (V1.x).</p>
+                    <ul>
+                        <li><strong>No Refund Policy:</strong> Because the product is a digital cryptographic key that unlocks API access instantly, <strong>all sales are strictly final and non-refundable</strong>. Once a <code>CK-PRO-XXXX</code> key is generated and emailed, the transaction is closed.</li>
+                        <li><strong>Service Availability:</strong> While we strive for 99.9% uptime, API nodes may occasionally go offline for maintenance. Lifetime access implies access for as long as CyberKavach maintains these specific server nodes.</li>
+                    </ul>
+                </section>
+
+                <div class="w-full h-px bg-gradient-to-r from-slate-200 via-slate-300 to-transparent my-10"></div>
+
+                <section id="jurisdiction" class="scroll-mt-32 mb-16">
+                    <h3><div class="p-2 bg-cyan-50 rounded-lg"><i data-lucide="gavel" class="w-5 h-5 text-cyan-500"></i></div> 6. Governing Law & Jurisdiction</h3>
+                    <p>These terms are governed exclusively by the laws of the Republic of India, specifically the <strong>Information Technology Act, 2000</strong> and the <strong>Digital Personal Data Protection Act, 2023</strong>.</p>
+                    <p>Any dispute, controversy, or claim arising out of your use of the CyberKavach Engine shall be subject to the exclusive jurisdiction of the competent courts located in New Delhi, India.</p>
+                </section>
+
+            </div>
+        </article>
+    </main>
+
+    <footer class="bg-slate-900 pt-16 pb-10 px-4 md:px-6 border-t border-slate-800 w-full mt-12">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 p-2 rounded-xl"><i data-lucide="shield" class="w-5 h-5 text-white"></i></div>
+                <span class="font-black text-xl text-white tracking-wide">CyberKavach<span class="text-indigo-400">.AI</span></span>
+            </div>
+            <div class="flex flex-wrap justify-center gap-6 text-sm font-medium text-slate-400">
+                <a href="index.html" class="hover:text-white transition">Home</a>
+                <a href="#" class="text-white font-bold">Terms of Service</a>
+                <a href="privacy.html" class="hover:text-white transition">Privacy Architecture</a>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto border-t border-slate-800 pt-6 mt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+            <p class="text-[10px] sm:text-xs text-slate-500 font-bold uppercase tracking-widest">© 2026 CyberKavach AI. Designed for Bharat.</p>
+            <div class="text-[10px] sm:text-xs text-slate-500 font-bold uppercase tracking-widest">Ver 11.0.2 / IT Act 2000 Compliant</div>
+        </div>
+    </footer>
+
+    <script>
+        // ==========================================
+        // LEGAL PROTOCOL UX LOGIC 
+        // ==========================================
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            // 1. Initialize Icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // 2. Fade-Up Animations Observer
+            const fadeObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => { 
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible'); 
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
+
+            // 3. Scroll Spy (Table of Contents Highlight)
+            const sections = document.querySelectorAll('section[id]');
+            const tocLinks = document.querySelectorAll('.nav-link');
+
+            // Options tuned for reading flow
+            const spyOptions = {
+                root: null,
+                rootMargin: '-20% 0px -70% 0px',
+                threshold: 0
+            };
+
+            const spyObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        
+                        // Clear active states
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active-link');
+                        });
+                        
+                        // Add active state
+                        const activeLink = document.querySelector(`.nav-link[href="#${id}"]`);
+                        if (activeLink) activeLink.classList.add('active-link');
+                    }
+                });
+            }, spyOptions);
+
+            sections.forEach(section => spyObserver.observe(section));
+
+            // 4. Smooth Scroll Offset (Fixes navbar overlap on click)
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    
+                    if (targetSection) {
+                        const navHeight = document.getElementById('navbar').offsetHeight;
+                        const targetOffset = targetSection.offsetTop - navHeight - 20; 
+                        
+                        window.scrollTo({
+                            top: targetOffset,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

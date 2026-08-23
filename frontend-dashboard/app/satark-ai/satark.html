@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Satark AI by CyberKavach - Enterprise Forensic Tool for Deepfakes, Digital Arrest Warrants, and QR Scams.">
+    <title>Satark AI Forensics | CyberKavach</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script src="../config.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #f8fafc; color: #0f172a; overflow-x: hidden; }
+        
+        /* Clean SaaS Grid Background */
+        .bg-grid {
+            position: fixed; inset: 0; z-index: -1;
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .drag-active { border-color: #ef4444 !important; background-color: rgba(239, 68, 68, 0.05) !important; }
+        
+        .fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        .hidden-state { display: none !important; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        @keyframes scanline { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
+        .animate-scanline { animation: scanline 2s linear infinite; }
+    </style>
+</head>
+<body class="antialiased font-sans">
+
+    <div class="bg-grid"></div>
+
+    <main class="relative z-10 max-w-7xl mx-auto p-6 lg:p-12">
+        
+        <header class="flex flex-col md:flex-row justify-between items-center mb-16 gap-6 fade-up">
+             <a href="/index.html#ecosystem" class="group flex justify-center items-center gap-2 px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition-all text-xs font-bold uppercase tracking-widest text-slate-600 hover:text-slate-900 shadow-sm w-full sm:w-auto">
+                <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i> Return to Main
+            </a>
+
+            <div class="flex items-center gap-6 bg-white border border-slate-200 p-3 pl-6 rounded-2xl shadow-sm">
+                <div class="text-right">
+                    <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Node Status</div>
+                    <div class="text-xs font-bold text-red-500 flex items-center justify-end gap-1.5 mt-0.5" id="planBox">
+                        <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span> 
+                        <span id="planName">SYNCING...</span>
+                    </div>
+                </div>
+                <div class="h-8 w-px bg-slate-200"></div>
+                <div class="flex items-center gap-4 pr-1">
+                    <div class="text-right">
+                        <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">AI Scans Left</div>
+                        <div id="creditCount" class="text-sm font-black text-slate-800 font-mono mt-0.5">--</div>
+                    </div>
+                    <div class="p-2.5 bg-red-50 rounded-xl text-red-600 border border-red-100">
+                        <i data-lucide="zap" class="w-4 h-4"></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start mb-24">
+            
+            <div class="lg:col-span-5 space-y-8">
+                <div class="fade-up">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-[10px] font-black uppercase tracking-widest mb-6">
+                        <i data-lucide="siren" class="w-3.5 h-3.5"></i> Threat Intelligence
+                    </div>
+                    <h1 class="text-4xl lg:text-6xl font-black text-slate-900 mb-6 tracking-tight leading-[1.1]">
+                        Satark <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-500">AI Shield</span>
+                    </h1>
+                    <p class="text-slate-600 text-base leading-relaxed font-medium">
+                        Advanced forensic suite to combat India's rising <strong>Digital Arrest</strong> scams, <strong>AI Voice</strong> clones, and <strong>Malicious UPI QRs</strong>. We detect threats hidden deep inside pixels and soundwaves.
+                    </p>
+                </div>
+
+                <div class="grid gap-4">
+                    <div class="fade-up flex items-center gap-5 p-5 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-all">
+                        <div class="p-3 bg-red-50 rounded-xl text-red-600"><i data-lucide="qr-code" class="w-5 h-5"></i></div>
+                        <div>
+                            <h4 class="text-slate-900 text-xs font-bold uppercase tracking-widest mb-1">QR & Stego Decode</h4>
+                            <p class="text-slate-500 text-xs font-medium">Unmasks 'Quishing' (Fake UPI QRs) & payloads.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="fade-up flex items-center gap-5 p-5 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-all" style="transition-delay: 100ms;">
+                        <div class="p-3 bg-orange-50 rounded-xl text-orange-600"><i data-lucide="fingerprint" class="w-5 h-5"></i></div>
+                        <div>
+                            <h4 class="text-slate-900 text-xs font-bold uppercase tracking-widest mb-1">Spectral Voice Pulse</h4>
+                            <p class="text-slate-500 text-xs font-medium">Detects robotic cadence in AI deepfake audio.</p>
+                        </div>
+                    </div>
+
+                    <div class="fade-up flex items-center gap-5 p-5 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-all" style="transition-delay: 200ms;">
+                        <div class="p-3 bg-emerald-50 rounded-xl text-emerald-600"><i data-lucide="scan" class="w-5 h-5"></i></div>
+                        <div>
+                            <h4 class="text-slate-900 text-xs font-bold uppercase tracking-widest mb-1">Pixel Forensics (ELA)</h4>
+                            <p class="text-slate-500 text-xs font-medium">Spots edits in fake CBI/Police warrants.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-7 w-full fade-up" style="transition-delay: 300ms;">
+                <div class="bg-white border border-slate-200 rounded-[2rem] p-6 lg:p-10 shadow-xl relative overflow-hidden">
+                    
+                    <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500"></div>
+
+                    <div class="flex flex-col sm:flex-row bg-slate-100 p-1.5 rounded-2xl mb-8 border border-slate-200 relative z-10 gap-2">
+                        <button onclick="setScanType('image')" id="btnImage" class="type-btn flex-1 py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 bg-white text-red-600 shadow-sm border border-slate-200">
+                            <i data-lucide="image" class="w-3.5 h-3.5"></i> Image / Warrant
+                        </button>
+                        <button onclick="setScanType('audio')" id="btnAudio" class="type-btn flex-1 py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-200/50 border border-transparent">
+                            <i data-lucide="mic" class="w-3.5 h-3.5"></i> Voice / Audio
+                        </button>
+                        <button onclick="setScanType('qr')" id="btnQR" class="type-btn flex-1 py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-200/50 border border-transparent">
+                            <i data-lucide="qr-code" class="w-3.5 h-3.5"></i> QR / Stego
+                        </button>
+                    </div>
+
+                    <div id="stateUpload" class="border-2 border-dashed border-slate-300 rounded-3xl p-8 md:p-12 flex flex-col items-center justify-center min-h-[450px] transition-all duration-300 hover:border-red-400 hover:bg-slate-50 bg-white">
+                        <input type="file" id="fileInput" class="hidden" accept="image/*" />
+                        
+                        <label for="fileInput" class="cursor-pointer text-center group w-full h-full flex flex-col items-center justify-center" id="dropZone">
+                            <div id="uploadIconBox" class="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center mb-6 group-hover:bg-red-600 group-hover:text-white group-hover:shadow-[0_10px_30px_rgba(220,38,38,0.3)] transition-all duration-300">
+                                <i id="uploadIcon" data-lucide="upload" class="w-8 h-8"></i>
+                            </div>
+                            <h3 id="uploadTitle" class="text-2xl font-bold text-slate-900 mb-2 group-hover:text-red-600 transition-colors">Upload Warrant Image</h3>
+                            <p id="uploadDesc" class="text-slate-500 text-sm mb-8 max-w-sm mx-auto font-medium">Inspect legal documents for digital forgery and editing artifacts.</p>
+                            <span class="px-8 py-3.5 bg-slate-900 border border-transparent text-white rounded-xl text-xs font-bold uppercase tracking-widest group-hover:bg-red-600 transition-all shadow-md">Browse Files</span>
+                        </label>
+                    </div>
+
+                    <div id="stateLoading" class="hidden-state min-h-[450px] flex flex-col items-center justify-center fade-in">
+                        <div class="w-20 h-20 rounded-2xl bg-red-600 text-white shadow-[0_10px_30px_rgba(220,38,38,0.3)] flex items-center justify-center mb-6">
+                            <i data-lucide="activity" class="w-10 h-10"></i>
+                        </div>
+                        <h3 id="fileNameDisplay" class="text-xl font-bold text-slate-900 mb-2 truncate max-w-[250px] mx-auto">evidence_file.jpg</h3>
+                        <p class="text-red-600 text-[10px] font-black uppercase tracking-widest mb-8">Evidence Loaded • Running Neural Core</p>
+                        
+                        <div class="w-full max-w-md mx-auto">
+                            <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl font-mono text-[11px] text-left mb-6 shadow-inner relative h-36 overflow-hidden">
+                                <div class="flex items-center gap-2 text-red-400 mb-3 font-bold uppercase tracking-wider text-[9px] border-b border-slate-800 pb-2">
+                                    <i data-lucide="terminal" class="w-3 h-3"></i> Core Forensics Output
+                                </div>
+                                <div id="consoleText" class="text-slate-400 space-y-1.5 opacity-90 overflow-y-auto max-h-20 pr-2">
+                                    <p>> Initializing tensor model...</p>
+                                </div>
+                                <div class="absolute bottom-4 left-5 text-red-400 font-bold animate-pulse">
+                                    > <span id="activeStep">Extracting EXIF Data...</span><span class="animate-ping">_</span>
+                                </div>
+                            </div>
+
+                            <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden relative">
+                                <div class="absolute top-0 left-0 h-full w-1/3 bg-red-500 animate-scanline rounded-full"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="stateResult" class="hidden-state fade-in space-y-6 py-2">
+                        <div id="verdictBox" class="text-center p-8 rounded-3xl border bg-red-50 border-red-200">
+                            <div id="verdictIconBox" class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 bg-red-100 text-red-600 shadow-sm">
+                                <i id="verdictIcon" data-lucide="alert-triangle" class="w-8 h-8"></i>
+                            </div>
+                            <h2 id="verdictTitle" class="text-3xl font-black uppercase tracking-tight mb-2 text-red-600">HIGH RISK</h2>
+                            <p id="verdictMessage" class="text-slate-700 text-sm font-medium leading-relaxed">Forgery Detected.</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 text-center">
+                                <div class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">AI Confidence</div>
+                                <div id="threatScore" class="text-3xl font-black text-slate-900 font-mono">94<span class="text-base text-slate-500">%</span></div>
+                            </div>
+                            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 text-center">
+                                <div class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Analysis Target</div>
+                                <div id="displayType" class="text-xl font-black text-slate-900 uppercase mt-1">IMAGE</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                            <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-3">
+                                <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                                    <i data-lucide="bar-chart-2" class="w-4 h-4 text-indigo-500"></i> Forensic Triggers Found
+                                </h4>
+                                <span class="text-[10px] font-bold text-slate-400 font-mono" id="reportDate">Oct 24, 2026 14:30</span>
+                            </div>
+                            <ul id="permissionsList" class="space-y-3 text-xs font-mono text-slate-700">
+                                </ul>
+                        </div>
+
+                        <button onclick="resetScanner()" class="w-full py-4 bg-slate-900 hover:bg-red-600 text-white rounded-xl font-bold uppercase text-xs tracking-widest transition-all flex items-center justify-center gap-2 shadow-md mt-2">
+                            <i data-lucide="refresh-ccw" class="w-4 h-4"></i> Analyze New Evidence
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="mt-32 border-t border-slate-200 pt-24 pb-20 fade-up">
+            <div class="text-center max-w-3xl mx-auto mb-20">
+                <h2 class="text-3xl lg:text-5xl font-black text-slate-900 mb-6 tracking-tight">Defeating Next-Gen Scams in India</h2>
+                <p class="text-slate-500 text-lg leading-relaxed">
+                    Hackers are no longer just sending suspicious links; they are using psychological manipulation, AI voice cloning, and fabricated legal documents to extort money. <strong>Satark AI</strong> acts as your personal digital forensics lab to instantly verify the truth behind the media you receive.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white border border-slate-200 p-8 rounded-3xl relative overflow-hidden group hover:border-red-300 hover:shadow-lg transition-all">
+                    <div class="w-14 h-14 bg-red-50 text-red-600 flex items-center justify-center rounded-2xl mb-6"><i data-lucide="file-warning" class="w-6 h-6"></i></div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-3">Digital Arrest Forgery</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        <strong>The Scam:</strong> You receive a WhatsApp message containing a "CBI or Supreme Court Warrant" claiming you are implicated in a money laundering case. They demand an immediate "security deposit" to avoid arrest.
+                    </p>
+                    <div class="p-4 bg-slate-50 rounded-xl text-xs text-slate-500 leading-relaxed border border-slate-100">
+                        <strong>Satark Defense:</strong> Our engine runs Error Level Analysis (ELA) on the uploaded image. We detect mismatched pixels, unnatural font overlays, and missing digital signatures that prove the document was photoshopped.
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 p-8 rounded-3xl relative overflow-hidden group hover:border-orange-300 hover:shadow-lg transition-all">
+                    <div class="w-14 h-14 bg-orange-50 text-orange-600 flex items-center justify-center rounded-2xl mb-6"><i data-lucide="mic-2" class="w-6 h-6"></i></div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-3">Deepfake Voice Clones</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        <strong>The Scam:</strong> You get a frantic phone call or voice note that sounds exactly like your son, daughter, or friend, claiming they had an accident and urgently need ₹20,000 sent via UPI.
+                    </p>
+                    <div class="p-4 bg-slate-50 rounded-xl text-xs text-slate-500 leading-relaxed border border-slate-100">
+                        <strong>Satark Defense:</strong> By uploading the audio clip, Satark AI analyzes the sound's frequency spectrum. Human voices have natural breathing pauses. AI clones have "Spectral Flatness". We catch this in seconds.
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 p-8 rounded-3xl relative overflow-hidden group hover:border-emerald-300 hover:shadow-lg transition-all">
+                    <div class="w-14 h-14 bg-emerald-50 text-emerald-600 flex items-center justify-center rounded-2xl mb-6"><i data-lucide="qr-code" class="w-6 h-6"></i></div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-3">Quishing & Steganography</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        <strong>The Scam:</strong> You receive a QR code via email promising a "Free Paytm Cashback". Alternatively, you download an innocent-looking picture that secretly contains malicious code.
+                    </p>
+                    <div class="p-4 bg-slate-50 rounded-xl text-xs text-slate-500 leading-relaxed border border-slate-100">
+                        <strong>Satark Defense:</strong> Our engine decodes the QR matrix *without* opening the link. It checks the destination URL. Furthermore, it scans the Least Significant Bits (LSB) of images to extract hidden payloads.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mt-16 border-t border-slate-200 pt-24 pb-12 fade-up">
+            <div class="max-w-4xl mx-auto text-center mb-20">
+                <h2 class="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">Deep Dive: Satark AI Neural Core</h2>
+                <p class="text-slate-600 text-lg leading-relaxed font-medium">
+                    Satark AI goes beyond surface-level metadata. It utilizes complex mathematical models and tensor-based neural networks on our backend to detect microscopic anomalies invisible to the human eye.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center mb-24">
+                <div class="order-2 lg:order-1">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-[10px] font-black uppercase tracking-widest mb-6">
+                        <i data-lucide="scan" class="w-3.5 h-3.5"></i> Pixel-Level Forensics
+                    </div>
+                    <h3 class="text-2xl md:text-3xl font-black text-slate-900 mb-6 leading-tight">Error Level Analysis (ELA)</h3>
+                    <p class="text-slate-600 font-medium leading-relaxed mb-6">
+                        When scammers forge a "Digital Arrest Warrant," they typically copy official CBI or Police logos and paste them onto a fake document. This process leaves a digital footprint.
+                    </p>
+                    <p class="text-slate-600 font-medium leading-relaxed mb-8">
+                        Our backend runs an Error Level Analysis algorithm. It intentionally re-compresses the uploaded image to identify areas with differing compression levels. The pasted logo will glow brightly on our forensic radar compared to the rest of the document.
+                    </p>
+                    <ul class="space-y-4 text-sm text-slate-800 font-bold bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                        <li class="flex items-start gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-red-500 shrink-0"></i> Exposes cloned signatures and forged official stamps.</li>
+                        <li class="flex items-start gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-red-500 shrink-0"></i> Extracts hidden EXIF metadata (GPS, Device info) instantly.</li>
+                    </ul>
+                </div>
+                
+                <div class="order-1 lg:order-2 bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-xl h-80 flex items-center justify-center p-4 text-center text-slate-400 font-medium italic">
+                    
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center mb-24">
+                <div class="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-xl h-80 flex items-center justify-center p-4 text-center text-slate-400 font-medium italic">
+                     
+                </div>
+                
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-orange-50 border border-orange-200 text-orange-700 text-[10px] font-black uppercase tracking-widest mb-6">
+                        <i data-lucide="mic-2" class="w-3.5 h-3.5"></i> Biometric Analysis
+                    </div>
+                    <h3 class="text-2xl md:text-3xl font-black text-slate-900 mb-6 leading-tight">Spectral Flatness & Voice Cloning</h3>
+                    <p class="text-slate-600 font-medium leading-relaxed mb-6">
+                        AI-generated voices (Deepfakes) sound incredibly realistic to the human ear. However, generative algorithms struggle to replicate the natural micro-pauses, breathing patterns, and organic frequency variance of an actual human throat.
+                    </p>
+                    <p class="text-slate-600 font-medium leading-relaxed mb-8">
+                        Satark AI converts audio files into a visual spectrogram. The neural network then scans for "robotic cadence" and unnatural harmonic alignment, flagging synthetic audio within seconds before you fall victim to the scam.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                <div class="order-2 lg:order-1">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 text-[10px] font-black uppercase tracking-widest mb-6">
+                        <i data-lucide="server" class="w-3.5 h-3.5"></i> Infrastructure
+                    </div>
+                    <h3 class="text-2xl md:text-3xl font-black text-slate-900 mb-6 leading-tight">Edge-to-Cloud Neural Sync</h3>
+                    <p class="text-slate-600 font-medium leading-relaxed mb-6">
+                        Running complex TensorFlow or PyTorch models directly on a mobile device or browser is impossible without crashing it. Satark uses a streamlined Edge-to-Cloud architecture via FastAPI.
+                    </p>
+                    <p class="text-slate-600 font-medium leading-relaxed mb-8">
+                        When you upload media, it is transmitted via a 256-bit encrypted pipeline to our secure Indian servers. The payload is kept purely in RAM, analyzed by our GPU clusters in under 0.8 seconds, and immediately purged from memory once the forensic JSON report is returned to your dashboard.
+                    </p>
+                    <div class="border-l-4 border-indigo-500 pl-4 bg-indigo-50 p-4 rounded-r-xl">
+                        <p class="text-sm font-bold text-slate-800">
+                            <strong>Privacy Guarantee:</strong> No media (audio, images, or PDFs) is ever saved to persistent storage. Your sensitive files remain strictly confidential.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="order-1 lg:order-2 bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-xl h-80 flex items-center justify-center p-4 text-center text-slate-400 font-medium italic">
+                     
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 pt-12 pb-8 mt-12">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <i data-lucide="shield" class="w-5 h-5 text-red-600"></i>
+                <span class="font-bold text-lg text-slate-900">CyberKavach.AI</span>
+            </div>
+            <p class="text-slate-500 text-xs font-medium">© 2026 CyberKavach AI. Protecting India's Digital Identity.</p>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // Scroll Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+        // State Variables & API
+        const API_URL = window.CYBERKAVACH_CONFIG.API_URL;
+        let userKey = localStorage.getItem("cyberkavach_key");
+        if (!userKey || userKey === "GUEST_SESSION") {
+            userKey = `FREE-${crypto.randomUUID().replaceAll('-', '').toUpperCase()}`;
+            localStorage.setItem("cyberkavach_key", userKey);
+        }
+        let currentType = 'image'; // image, audio, qr
+        
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+
+        // 1. Fetch User Quota on Load
+        async function fetchQuota() {
+            try {
+                const res = await fetch(`${API_URL}/user-status`, { headers: { "x-api-key": userKey } });
+                if (!res.ok) throw new Error("Offline");
+                const data = await res.json();
+                
+                document.getElementById('planName').innerText = data.plan;
+                document.getElementById('creditCount').innerText = data.ai_remaining;
+                
+                if (data.plan === "PRO") {
+                    document.getElementById('planBox').className = "text-xs font-bold text-red-600 flex items-center justify-end gap-1.5 mt-0.5";
+                    document.getElementById('planBox').innerHTML = `<span class="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></span> ${data.plan} ACTIVE`;
+                }
+            } catch (err) {
+                document.getElementById('creditCount').innerText = "OFFLINE";
+            }
+        }
+        fetchQuota();
+
+        // 2. Type Switcher Logic
+        function setScanType(type) {
+            currentType = type;
+            
+            // Reset UI styles for buttons
+            const buttons = {
+                'image': document.getElementById('btnImage'),
+                'audio': document.getElementById('btnAudio'),
+                'qr': document.getElementById('btnQR')
+            };
+
+            for (const [key, btn] of Object.entries(buttons)) {
+                if (key === type) {
+                    btn.className = "type-btn flex-1 py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 bg-white text-red-600 shadow-sm border border-slate-200";
+                } else {
+                    btn.className = "type-btn flex-1 py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-200/50 border border-transparent";
+                }
+            }
+
+            // Update Text & Accept Type Dynamically
+            const title = document.getElementById('uploadTitle');
+            const desc = document.getElementById('uploadDesc');
+            const icon = document.getElementById('uploadIcon');
+
+            if (type === 'image') {
+                title.innerText = "Upload Warrant Image";
+                desc.innerText = "Inspect legal documents for digital forgery and editing artifacts.";
+                icon.setAttribute('data-lucide', 'image');
+                fileInput.accept = "image/*,.pdf,application/pdf";
+            } else if (type === 'audio') {
+                title.innerText = "Upload Audio Clip";
+                desc.innerText = "Analyze voice clips for deepfake synthesis and robotic signatures.";
+                icon.setAttribute('data-lucide', 'mic');
+                fileInput.accept = "audio/*";
+            } else {
+                title.innerText = "Upload QR Code / Image";
+                desc.innerText = "Decode suspicious QR codes or analyze images for Steganography payloads.";
+                icon.setAttribute('data-lucide', 'qr-code');
+                fileInput.accept = "image/*";
+            }
+            
+            lucide.createIcons();
+            resetScanner();
+        }
+
+        // 3. Drag & Drop Handling
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eName => dropZone.addEventListener(eName, (e)=>{e.preventDefault(); e.stopPropagation();}, false));
+        ['dragenter', 'dragover'].forEach(eName => dropZone.addEventListener(eName, () => dropZone.parentElement.classList.add('drag-active'), false));
+        ['dragleave', 'drop'].forEach(eName => dropZone.addEventListener(eName, () => dropZone.parentElement.classList.remove('drag-active'), false));
+
+        dropZone.addEventListener('drop', (e) => {
+            if(e.dataTransfer.files.length > 0) processFile(e.dataTransfer.files[0]);
+        });
+        fileInput.addEventListener('change', function() {
+            if(this.files.length > 0) processFile(this.files[0]);
+        });
+
+        // 4. Process File & Sync with Backend API
+        function processFile(file) {
+            document.getElementById('fileNameDisplay').innerText = file.name;
+            document.getElementById('stateUpload').classList.add('hidden-state');
+            document.getElementById('stateLoading').classList.remove('hidden-state');
+            
+            runForensicsSimulation(file);
+        }
+
+        async function runForensicsSimulation(file) {
+            const selectedType = currentType === 'image' && file.name.toLowerCase().endsWith('.pdf') ? 'pdf' : currentType;
+            let steps = [];
+            if (selectedType === 'image') steps = ["Extracting EXIF Meta-Data...", "Running ELA (Error Level Analysis)...", "Checking image integrity...", "Preparing conservative forensic verdict..."];
+            else if (selectedType === 'pdf') steps = ["Validating PDF structure...", "Inspecting document metadata...", "Checking active PDF actions...", "Preparing safety guidance..."];
+            else if (currentType === 'audio') steps = ["Validating audio container...", "Reading available audio metadata...", "Checking stream integrity...", "Preparing conservative forensic verdict..."];
+            else steps = ["Decoding QR payload locally...", "Inspecting destination structure...", "Checking image end markers...", "Preparing safety guidance..."];
+
+            const consoleText = document.getElementById('consoleText');
+            const activeStepText = document.getElementById('activeStep');
+            consoleText.innerHTML = '';
+            
+            // Send request to backend
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("scan_type", selectedType);
+
+            const apiTask = fetch(`${API_URL}/satark-scan`, {
+                method: "POST",
+                headers: { "x-api-key": userKey },
+                body: formData
+            });
+            
+            // Animate Terminal Text
+            for (let i = 0; i < steps.length; i++) {
+                activeStepText.innerText = steps[i];
+                if(i > 0) {
+                    consoleText.innerHTML += `<p class="fade-in">> [OK] ${steps[i-1]}</p>`;
+                    consoleText.scrollTop = consoleText.scrollHeight;
+                }
+                await new Promise(r => setTimeout(r, 800)); // Fake UX Delay
+            }
+            activeStepText.innerText = "Awaiting Server Verdict...";
+
+            // Wait for Backend Response
+            try {
+                const response = await apiTask;
+                if (response.status === 429) {
+                    alert("Daily Quota Exhausted! Upgrade to PRO for deep forensics.");
+                    resetScanner();
+                    return;
+                }
+                if (!response.ok) throw new Error("Server Error");
+
+                const data = await response.json();
+                showResult(data, selectedType);
+                fetchQuota(); // Update quota UI
+
+            } catch (error) {
+                alert("Failed to connect to Satark Titan Core. Is main.py running?");
+                resetScanner();
+            }
+        }
+
+        // 5. Render Results from Backend
+        function showResult(data, scannedType = currentType) {
+            document.getElementById('stateLoading').classList.add('hidden-state');
+            document.getElementById('stateResult').classList.remove('hidden-state');
+
+            const isThreat = data.verdict === 'HIGH RISK' || data.verdict === 'SUSPICIOUS' || data.verdict.includes('DETECTED');
+            const color = isThreat ? 'red' : 'emerald';
+            const icon = isThreat ? 'alert-triangle' : 'shield-check';
+
+            // Box Styling
+            document.getElementById('verdictBox').className = `text-center p-8 rounded-3xl border bg-${color}-50 border-${color}-200`;
+            document.getElementById('verdictIconBox').className = `w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 bg-${color}-100 text-${color}-600 shadow-sm`;
+            document.getElementById('verdictIcon').setAttribute('data-lucide', icon);
+            
+            document.getElementById('verdictTitle').className = `text-3xl font-black uppercase tracking-tight mb-2 text-${color}-600`;
+            document.getElementById('verdictTitle').innerText = data.verdict;
+            document.getElementById('verdictMessage').innerText = data.message;
+            
+            document.getElementById('threatScore').innerHTML = `${data.risk_score}<span class="text-lg text-slate-500 font-sans">%</span>`;
+            document.getElementById('displayType').innerText = scannedType;
+            
+            // Set Date
+            const now = new Date();
+            document.getElementById('reportDate').innerText = now.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+
+            // Detailed List Format for Triggers
+            const pList = document.getElementById('permissionsList');
+            pList.innerHTML = '';
+            
+            if(data.triggers && data.triggers.length > 0) {
+                data.triggers.forEach(t => {
+                    const li = document.createElement('li');
+                    li.className = `flex items-start gap-2 border-b border-slate-100 pb-2`;
+                    const marker = document.createElement('span');
+                    marker.className = `text-${color}-500 font-bold`;
+                    marker.textContent = '>';
+                    const text = document.createElement('span');
+                    text.textContent = String(t);
+                    li.append(marker, text);
+                    pList.appendChild(li);
+                });
+            } else {
+                pList.innerHTML = `<li class="text-slate-500 italic">No specific anomalies flagged by engine.</li>`;
+            }
+
+            lucide.createIcons();
+        }
+
+        function resetScanner() {
+            fileInput.value = "";
+            document.getElementById('stateResult').classList.add('hidden-state');
+            document.getElementById('stateLoading').classList.add('hidden-state');
+            document.getElementById('stateUpload').classList.remove('hidden-state');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="CyberKavach Privacy Architecture. Learn how we comply with the DPDP Act 2023 and employ a strict Zero-Logs policy to protect Indian citizens.">
+    <title>Privacy Architecture | CyberKavach AI</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'], 
+                        mono: ['JetBrains Mono', 'monospace'] 
+                    },
+                    colors: { primary: '#10b981', secondary: '#0ea5e9' } /* Emerald Theme for Privacy */
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ========================================== */
+        /* PRIVACY PROTOCOL STYLES (100% RESPONSIVE)  */
+        /* ========================================== */
+
+        body, html {
+            overflow-x: hidden;
+            width: 100%;
+            background-color: #fdfdfd;
+        }
+
+        /* Abstract Security Grid Background */
+        .bg-grid {
+            position: fixed; inset: 0; z-index: -1;
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+        }
+
+        /* Glowing Orbs for UI Depth (Emerald / Indigo) */
+        .glow-orb-1 { position: absolute; top: -10%; left: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;}
+        .glow-orb-2 { position: absolute; top: 40%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(79, 70, 229, 0.04) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;}
+
+        /* Universal Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Typography for Legal/Privacy Document */
+        .privacy-content {
+            font-size: 1.05rem;
+            color: #334155;
+            line-height: 1.8;
+            word-wrap: break-word; /* Crucial for mobile URLs */
+        }
+        @media (min-width: 768px) { .privacy-content { font-size: 1.1rem; } }
+
+        .privacy-content p { margin-bottom: 1.5rem; }
+
+        .privacy-content h3 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            letter-spacing: -0.01em;
+        }
+        @media (min-width: 768px) { .privacy-content h3 { font-size: 1.6rem; margin-top: 3.5rem; margin-bottom: 1.25rem; } }
+
+        .privacy-content h4 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-top: 1.75rem;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .privacy-content ul {
+            margin-bottom: 1.5rem;
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .privacy-content ul li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+        .privacy-content ul li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #10b981; /* Emerald */
+            font-weight: 900;
+        }
+
+        .privacy-content strong { color: #0f172a; font-weight: 700; }
+        
+        .privacy-content code {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.375rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+            word-break: break-all;
+        }
+
+        /* Sidebar Navigation Active State */
+        .nav-link {
+            transition: all 0.3s ease;
+            position: relative;
+            display: block;
+        }
+        .nav-link.active-link {
+            color: #10b981;
+            font-weight: 800;
+            background: rgba(16, 185, 129, 0.08);
+            border-left: 3px solid #10b981;
+            padding-left: 0.75rem;
+        }
+
+        /* Animations */
+        .fade-up { opacity: 0; transform: translateY(20px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+    </style>
+</head>
+<body class="selection:bg-emerald-100 selection:text-emerald-900">
+
+    <div class="bg-grid"></div>
+    <div class="glow-orb-1"></div>
+    <div class="glow-orb-2"></div>
+
+     <header id="navbar" class="fixed w-full z-50 top-0 bg-white/90 backdrop-blur-xl border-b border-slate-200/60 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex justify-between items-center w-full">
+            
+            <div class="flex items-center gap-3 shrink-0">
+                <a href="index.html" class="flex items-center gap-2 group">
+                   <div class="bg-indigo-600 p-2 md:p-2.5 rounded-xl shadow-lg group-hover:rotate-12 group-hover:shadow-indigo-500/50 transition-all duration-300">
+                    <i data-lucide="shield" class="w-4 h-4 md:w-5 md:h-5 text-white"></i>
+                </div>
+                    <span class="font-black text-lg md:text-xl tracking-tight text-slate-900">CyberKavach<span class="text-indigo-600">.AI</span></span>
+                </a>
+            </div>
+            
+            <nav class="hidden md:flex items-center gap-8 bg-slate-50/80 px-6 py-2 rounded-full border border-slate-200 shadow-sm">
+                <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Scanner</a>
+                <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Pricing</a>
+            </nav>
+
+            <div class="flex items-center shrink-0">
+                <a href="/index.html#blog" class="px-4 py-2.5 md:px-6 bg-white border border-slate-200 text-slate-700 font-bold text-[10px] md:text-xs uppercase tracking-widest rounded-lg md:rounded-xl hover:bg-slate-50 hover:text-indigo-600 transition-all shadow-sm flex items-center gap-2 whitespace-nowrap">
+                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Back to Home</span>
+                    <span class="sm:hidden">Back</span>
+                </a>
+            </div>
+        </div>
+    </header>
+    <section class="pt-32 md:pt-48 pb-12 md:pb-20 px-4 md:px-6 relative z-10 w-full border-b border-slate-200 bg-gradient-to-b from-white to-slate-50/50">
+        <div class="max-w-4xl mx-auto text-center w-full">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 text-[10px] font-bold mb-6 uppercase tracking-widest shadow-sm fade-up">
+                <i data-lucide="lock" class="w-3.5 h-3.5"></i> DPDP Act 2023 Compliant
+            </div>
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-slate-900 mb-6 leading-[1.1] fade-up delay-100 break-words">
+                Privacy is a Right.<br>
+                <span class="text-emerald-600">Not a Premium Feature.</span>
+            </h1>
+            <p class="text-sm sm:text-lg lg:text-xl text-slate-500 font-medium max-w-2xl mx-auto leading-relaxed fade-up delay-200 px-2">
+                In the age of AI surveillance and data brokering, CyberKavach adopts a radical approach: <strong>We do not want your data.</strong> Read our engineering-first privacy manifesto below.
+            </p>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-20 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 relative z-10 w-full">
+        
+        <aside class="hidden lg:block lg:col-span-3 relative">
+            <div class="sticky top-32 bg-white border border-slate-200 p-6 rounded-3xl shadow-sm">
+                <h4 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6 px-2 flex items-center gap-2">
+                    <i data-lucide="file-text" class="w-3.5 h-3.5 text-emerald-500"></i> Index
+                </h4>
+                <nav class="flex flex-col space-y-1.5" id="toc-nav">
+                    <a href="#manifesto" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">1. The Zero-Data Manifesto</a>
+                    <a href="#dpdp" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">2. DPDP Act Alignment</a>
+                    <a href="#mechanics" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">3. Engine Mechanics</a>
+                    <a href="#financial" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">4. Financial Data & RBI</a>
+                    <a href="#contact" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">5. Transparency & Grievance</a>
+                </nav>
+            </div>
+        </aside>
+
+        <article class="col-span-1 lg:col-span-9 w-full max-w-4xl mx-auto lg:mx-0 overflow-hidden fade-up delay-300">
+            
+            <p class="text-[10px] sm:text-xs font-mono text-slate-400 mb-8 border-b border-slate-200 pb-4 uppercase tracking-widest">
+                Last Updated: October 24, 2026 | Effective Date: Immediately
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
+                <div class="p-6 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl">
+                    <i data-lucide="eye-off" class="text-emerald-400 w-6 h-6 mb-3"></i>
+                    <div class="text-2xl font-black text-white mb-1">0 Bytes</div>
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Browsing History Stored</div>
+                </div>
+                <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <i data-lucide="cpu" class="text-indigo-600 w-6 h-6 mb-3"></i>
+                    <div class="text-2xl font-black text-slate-900 mb-1">RAM-Only</div>
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Forensic Processing</div>
+                </div>
+                <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <i data-lucide="shield-check" class="text-cyan-600 w-6 h-6 mb-3"></i>
+                    <div class="text-2xl font-black text-slate-900 mb-1">K-Anon</div>
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Cryptographic Routing</div>
+                </div>
+            </div>
+
+            <div class="privacy-content">
+                
+                <section id="manifesto" class="scroll-mt-32 pt-4">
+                    <h3><div class="p-2 bg-emerald-50 rounded-lg"><i data-lucide="scroll-text" class="w-5 h-5 text-emerald-500"></i></div> 1. The Zero-Data Manifesto</h3>
+                    <p>Most cybersecurity companies operate on a flawed business model: they monitor your traffic to protect you, but simultaneously log your digital footprint to train their proprietary AI models or sell telemetry data to third-party brokers. At CyberKavach, we believe this fundamentally violates user sovereignty.</p>
+                    <p>We are a SaaS company, not a data broker. Our revenue is generated exclusively through the sale of <strong>Titan Elite Licenses</strong>. Because our financial incentives are aligned directly with your security, we have engineered our systems to process threats locally or ephemerally. If a server gets compromised, the hackers will find nothing but encrypted API keys and anonymized scan logs.</p>
+                </section>
+
+                <div class="w-full h-px bg-gradient-to-r from-slate-200 via-slate-300 to-transparent my-10"></div>
+
+                <section id="dpdp" class="scroll-mt-32">
+                    <h3><div class="p-2 bg-emerald-50 rounded-lg"><i data-lucide="scale" class="w-5 h-5 text-emerald-500"></i></div> 2. Digital Personal Data Protection (DPDP) Act, 2023 Alignment</h3>
+                    <p>Designed natively for the Indian demographic, our architecture strictly adheres to the mandates set forth by the <strong>DPDP Act of 2023</strong> by the Ministry of Electronics and Information Technology (MeitY).</p>
+                    <ul>
+                        <li><strong>Notice and Consent:</strong> You are explicitly informed when an external server call is required (e.g., uploading a CBI warrant to Satark AI). We do not run background telemetry without your active invocation.</li>
+                        <li><strong>Data Minimization:</strong> The only personal identifier we retain is the email address used during the Razorpay checkout process (solely for delivering your License Key and invoices).</li>
+                        <li><strong>Data Deletion:</strong> Any digital artifact (Audio, Video, APK, or Image) uploaded to our API nodes is processed entirely in the Volatile Memory (RAM). It is cryptographically shredded the millisecond a verdict is generated.</li>
+                        <li><strong>Data Principal Rights:</strong> As an Indian citizen, you hold the absolute right to erasure. By clicking "Terminate Session" in your extension, your local identity is permanently revoked.</li>
+                    </ul>
+                </section>
+
+                <div class="w-full h-px bg-gradient-to-r from-slate-200 via-slate-300 to-transparent my-10"></div>
+
+                <section id="mechanics" class="scroll-mt-32">
+                    <h3><div class="p-2 bg-emerald-50 rounded-lg"><i data-lucide="cogs" class="w-5 h-5 text-emerald-500"></i></div> 3. Technical Mechanics by Module</h3>
+                    <p>To provide complete transparency, here is the exact data flow for each of our Titan AI modules:</p>
+                    
+                    <div class="bg-slate-50/80 border border-slate-200 rounded-2xl p-6 sm:p-8 mt-6">
+                        <h4 class="font-bold text-slate-900 mb-2 flex items-center gap-2"><i data-lucide="zap" class="w-4 h-4 text-emerald-500"></i> A. Web Interceptor (Browser Extension)</h4>
+                        <p class="text-sm md:text-base mb-0 leading-relaxed">The extension analyzes the Document Object Model (DOM) directly inside your local Chrome/Edge environment. When checking a suspicious URL against our global threat database, the URL is hashed on your machine before transmission. We do not know *which* specific page you are visiting, only that a mathematical hash requested a threat lookup.</p>
+                    </div>
+
+                    <div class="bg-slate-50/80 border border-slate-200 rounded-2xl p-6 sm:p-8 mt-4">
+                        <h4 class="font-bold text-slate-900 mb-2 flex items-center gap-2"><i data-lucide="globe" class="w-4 h-4 text-indigo-500"></i> B. Shadow Scout (Dark Web Node)</h4>
+                        <p class="text-sm md:text-base mb-0 leading-relaxed">When checking if your password or UPI ID has been leaked, we utilize the <strong>K-Anonymity Protocol</strong> via secure SHA-1 hashing. If your password is "bharat@123", it converts to <code>E9A5B...</code>. We only transmit the first 5 characters (<code>E9A5B</code>) to the backend. The server returns thousands of potential matches, and the final verification happens locally on your computer. Your real password never traverses the internet.</p>
+                    </div>
+
+                    <div class="bg-slate-50/80 border border-slate-200 rounded-2xl p-6 sm:p-8 mt-4">
+                        <h4 class="font-bold text-slate-900 mb-2 flex items-center gap-2"><i data-lucide="cpu" class="w-4 h-4 text-cyan-500"></i> C. Satark AI & APK Kavach</h4>
+                        <p class="text-sm md:text-base mb-0 leading-relaxed">Files (Images, Audio, .APK) are transmitted over TLS 1.3 (bank-grade encryption). The FastAPI master node loads the file into a temporary virtual sandbox. Once the heuristics (Smali decompilation or ELA analysis) are complete, the sandbox is destroyed. We <strong>do not</strong> use your uploaded evidence to train our Machine Learning models.</p>
+                    </div>
+                </section>
+
+                <div class="w-full h-px bg-gradient-to-r from-slate-200 via-slate-300 to-transparent my-10"></div>
+
+                <section id="financial" class="scroll-mt-32">
+                    <h3><div class="p-2 bg-emerald-50 rounded-lg"><i data-lucide="landmark" class="w-5 h-5 text-emerald-500"></i></div> 4. Financial Data & RBI Compliance</h3>
+                    <p>CyberKavach utilizes <strong>Razorpay</strong> as our exclusive payment gateway. We do not collect, process, or store your Credit Card, Debit Card, UPI, or Netbanking details on our servers.</p>
+                    <p>All transactions are processed directly within Razorpay's PCI-DSS compliant infrastructure, strictly adhering to the <strong>Reserve Bank of India (RBI)</strong> guidelines regarding payment data localization and tokenization. The only data Razorpay returns to our system is a binary <code>Success/Failure</code> webhook to generate your license key.</p>
+                </section>
+
+                <div class="w-full h-px bg-gradient-to-r from-slate-200 via-slate-300 to-transparent my-10"></div>
+
+                <section id="contact" class="scroll-mt-32 mb-16">
+                    <h3><div class="p-2 bg-emerald-50 rounded-lg"><i data-lucide="mail-warning" class="w-5 h-5 text-emerald-500"></i></div> 5. Law Enforcement & Grievance Redressal</h3>
+                    <p>As an entity operating under Indian jurisdiction, we comply fully with the directives of <strong>CERT-In</strong> (Computer Emergency Response Team - India) and lawful court orders. However, because our architecture is strictly "Zero-Logs", we cannot surrender browsing histories, decrypted passwords, or scanned files to law enforcement, simply because that data does not exist on our servers.</p>
+                    
+                    <div class="bg-white border-2 border-emerald-100 rounded-2xl p-6 sm:p-8 mt-8 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-bl-xl">Contact Hub</div>
+                        <h4 class="font-black text-slate-900 mb-3 text-sm uppercase tracking-widest mt-0">Grievance Officer</h4>
+                        <p class="text-sm text-slate-600 mb-4">As per the Information Technology (Intermediary Guidelines) Rules, 2021:</p>
+                        
+                        <div class="flex flex-col gap-2">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="user" class="w-4 h-4 text-emerald-500"></i>
+                                <span class="text-sm text-slate-900 font-mono font-bold">Nodal Officer, CyberKavach AI</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="mail" class="w-4 h-4 text-emerald-500"></i>
+                                <span class="text-sm text-slate-900 font-mono font-bold">legal@cyberkavach.ai</span>
+                            </div>
+                        </div>
+                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-6">Response Time: Within 24-48 Business Hours.</p>
+                    </div>
+                </section>
+
+            </div>
+        </article>
+    </main>
+
+    <footer class="bg-slate-900 pt-16 pb-10 px-4 md:px-6 border-t border-slate-800 w-full mt-12">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 p-2 rounded-xl"><i data-lucide="shield" class="w-5 h-5 text-white"></i></div>
+                <span class="font-black text-xl text-white tracking-wide">CyberKavach<span class="text-emerald-400">.AI</span></span>
+            </div>
+            <div class="flex flex-wrap justify-center gap-6 text-sm font-medium text-slate-400">
+                <a href="index.html" class="hover:text-white transition">Home</a>
+                <a href="terms.html" class="hover:text-white transition">Terms of Service</a>
+                <a href="#" class="text-white font-bold">Privacy Architecture</a>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto border-t border-slate-800 pt-6 mt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+            <p class="text-[10px] sm:text-xs text-slate-500 font-bold uppercase tracking-widest">© 2026 CyberKavach AI. Designed for Bharat.</p>
+            <div class="text-[10px] sm:text-xs text-slate-500 font-bold uppercase tracking-widest">Ver 11.0.2 / DPDP-2023 Compliant</div>
+        </div>
+    </footer>
+
+    <script>
+        // ==========================================
+        // PRIVACY PROTOCOL UX LOGIC 
+        // ==========================================
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            // 1. Initialize Icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // 2. Fade-Up Animations Observer
+            const fadeObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => { 
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible'); 
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
+
+            // 3. Scroll Spy (Table of Contents Highlight)
+            const sections = document.querySelectorAll('section[id]');
+            const tocLinks = document.querySelectorAll('.nav-link');
+
+            // Options tuned for reading flow
+            const spyOptions = {
+                root: null,
+                rootMargin: '-20% 0px -70% 0px',
+                threshold: 0
+            };
+
+            const spyObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        
+                        // Clear active states
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active-link');
+                        });
+                        
+                        // Add active state
+                        const activeLink = document.querySelector(`.nav-link[href="#${id}"]`);
+                        if (activeLink) activeLink.classList.add('active-link');
+                    }
+                });
+            }, spyOptions);
+
+            sections.forEach(section => spyObserver.observe(section));
+
+            // 4. Smooth Scroll Offset (Fixes navbar overlap on click)
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    
+                    if (targetSection) {
+                        const navHeight = document.getElementById('navbar').offsetHeight;
+                        const targetOffset = targetSection.offsetTop - navHeight - 20; 
+                        
+                        window.scrollTo({
+                            top: targetOffset,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

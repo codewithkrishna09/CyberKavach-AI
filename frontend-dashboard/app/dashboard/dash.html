@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberKavach | OpsCenter</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script src="../config.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: { 
+                        bgDark: '#f8fafc',  // Light SaaS Background
+                        panel: '#ffffff',   // White Card
+                        primary: '#4f46e5', // Indigo
+                        textDark: '#0f172a',
+                        textMuted: '#64748b'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #f8fafc; color: #0f172a; overflow: hidden; }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .hidden-state { display: none !important; }
+        
+        /* Subtle Grid Background for SaaS vibe */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+        }
+        
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="flex h-screen font-sans antialiased bg-grid">
+
+    <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity"></div>
+    
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col shadow-xl">
+        <div class="p-6 flex items-center justify-between border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 p-2 rounded-xl shadow-md">
+                    <i data-lucide="shield" class="w-5 h-5 text-white"></i>
+                </div>
+                <span class="font-black text-lg tracking-tight text-slate-900">CyberKavach.AI</span>
+            </div>
+            <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-slate-900"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+
+        <nav class="flex-1 p-4 space-y-1">
+            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 mt-2 px-4">Core Modules</div>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-50 text-indigo-700 font-semibold transition group">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                <span>OpsCenter</span>
+            </a>
+            <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition group">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span>Public Portal</span>
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-slate-100 bg-slate-50">
+            <div class="p-4 rounded-xl border border-indigo-200 bg-indigo-50 mb-4 shadow-sm">
+                <div class="flex items-center gap-2 mb-1" id="planIconBox">
+                    </div>
+                <p class="text-[10px] text-slate-500 font-mono truncate" id="userKeyDisplay">Loading Identity...</p>
+            </div>
+            <button onclick="logoutSession()" class="flex items-center justify-center gap-2 px-4 py-2.5 text-red-600 hover:bg-red-50 hover:border-red-200 border border-transparent rounded-xl w-full transition-all text-xs font-bold uppercase tracking-wide">
+                <i data-lucide="log-out" class="w-4 h-4"></i> Terminate Session
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 lg:ml-64 flex flex-col h-screen overflow-hidden relative">
+        
+        <header class="h-[72px] border-b border-slate-200 bg-white/80 backdrop-blur-md flex items-center justify-between px-6 shrink-0 z-10 sticky top-0">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-slate-900"><i data-lucide="menu"></i></button>
+                <div class="flex items-center gap-2 text-xs font-semibold text-slate-500">
+                    <span>Overview</span> <i data-lucide="chevron-right" class="w-4 h-4"></i> <span class="text-slate-900 font-bold">Threat Intelligence</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-bold tracking-wider uppercase">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> DB Synced
+                </div>
+                <button onclick="fetchDashboardData()" id="refreshBtn" class="p-2 border border-slate-200 hover:bg-slate-50 rounded-xl transition text-slate-600 shadow-sm bg-white">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 lg:p-8 space-y-8 relative z-10 pb-24">
+            
+            <div class="mb-2 fade-in">
+                <h1 class="text-2xl font-bold text-slate-900">Welcome to OpsCenter</h1>
+                <p class="text-slate-500 text-sm mt-1">Live monitoring of your browser and system-level threat intercepts.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 fade-in" style="transition-delay: 100ms;">
+                <div class="p-6 rounded-2xl bg-white border border-slate-200 relative overflow-hidden shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mb-4">
+                        <i data-lucide="activity" class="w-6 h-6"></i>
+                    </div>
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Total Web Scans</p>
+                    <h3 class="text-4xl font-black text-slate-900" id="statTotal">0</h3>
+                </div>
+                
+                <div class="p-6 rounded-2xl bg-white border border-slate-200 relative overflow-hidden shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-red-50 text-red-600 rounded-full flex items-center justify-center mb-4">
+                        <i data-lucide="shield-alert" class="w-6 h-6"></i>
+                    </div>
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Threats Blocked</p>
+                    <h3 class="text-4xl font-black text-red-600" id="statThreats">0</h3>
+                </div>
+                
+                <div class="p-6 rounded-2xl bg-white border border-slate-200 relative overflow-hidden shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mb-4">
+                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    </div>
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Verified Safe Nodes</p>
+                    <h3 class="text-4xl font-black text-emerald-600" id="statSafe">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm fade-in" style="transition-delay: 200ms;">
+                <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="list-filter" class="w-5 h-5 text-indigo-600"></i>
+                        <h3 class="text-slate-900 font-bold text-base">Network Intercept Logs</h3>
+                    </div>
+                    <button onclick="clearLogs()" class="text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 text-xs font-bold px-4 py-2 rounded-lg border border-red-100 transition flex items-center gap-2">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> Purge History
+                    </button>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[600px]">
+                        <thead class="bg-slate-50 text-xs font-bold text-slate-500 uppercase border-b border-slate-200">
+                            <tr>
+                                <th class="p-4 pl-6">Time</th>
+                                <th class="p-4">Target URL / Asset</th>
+                                <th class="p-4 text-center">Engine</th>
+                                <th class="p-4 text-center">Verdict</th>
+                                <th class="p-4 pr-6 text-right">Risk Score</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsTable" class="divide-y divide-slate-100 text-sm font-medium text-slate-700">
+                            <tr><td colSpan="5" class="p-10 text-center text-slate-400">Loading Database...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="detailModal" class="hidden-state fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl relative transform transition-all scale-95 opacity-0 flex flex-col max-h-[90vh]" id="modalContent">
+            
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide flex items-center gap-2">
+                    <i data-lucide="file-search" class="w-5 h-5 text-indigo-600"></i> Forensic Threat Report
+                </h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-800 p-1 rounded-lg transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            
+            <div class="p-8 space-y-6 overflow-y-auto">
+                <div class="flex flex-col sm:flex-row items-start gap-5">
+                    <div id="mIconBox" class="p-4 rounded-full shrink-0 flex items-center justify-center border-4">
+                        <i id="mIcon" data-lucide="alert-triangle" class="w-8 h-8"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h2 id="mVerdict" class="text-2xl font-black mb-1 uppercase tracking-tight">VERDICT</h2>
+                        <p id="mUrl" class="text-slate-600 text-sm font-mono break-all bg-slate-100 p-3 rounded-lg border border-slate-200 mt-2">url</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-5 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-1.5 mb-1"><i data-lucide="activity" class="w-3 h-3"></i> AI Confidence</span>
+                        <div id="mScore" class="text-3xl font-black">0<span class="text-sm text-slate-400">%</span></div>
+                    </div>
+                    <div class="p-5 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-1.5 mb-1"><i data-lucide="cpu" class="w-3 h-3"></i> Detection Node</span>
+                        <div id="mMethod" class="text-lg font-bold text-slate-800 mt-1 uppercase">Method</div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold text-slate-800 uppercase tracking-widest mb-3 flex items-center gap-2"><i data-lucide="list-checks" class="w-4 h-4"></i> Extracted Threat Indicators:</h4>
+                    <div class="bg-slate-900 rounded-xl p-5 shadow-inner">
+                        <ul id="mAnalysis" class="space-y-2 text-xs font-mono text-emerald-400">
+                            </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-6 border-t border-slate-100 bg-slate-50 flex gap-4 shrink-0">
+                <button onclick="downloadPDF()" class="flex-1 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-md">
+                    <i data-lucide="download" class="w-4 h-4"></i> Download PDF Report
+                </button>
+                <button onclick="closeModal()" class="px-6 py-3.5 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold rounded-xl transition text-sm">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Mobile Sidebar Toggle
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        function toggleSidebar() {
+            const isClosed = sidebar.classList.contains('-translate-x-full');
+            if(isClosed) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        // ==========================================
+        // API CONFIGURATION & IDENTITY
+        // ==========================================
+        const API_URL = window.CYBERKAVACH_CONFIG.API_URL;
+        let userKey = "";
+        let logsData = [];
+        let currentModalData = null; // For PDF
+
+        function escapeHtml(value) {
+            return String(value).replace(/[&<>'"]/g, char => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            })[char]);
+        }
+
+        // 1. Establish Identity
+        function syncIdentity() {
+            const fragmentParams = new URLSearchParams(window.location.hash.slice(1));
+            const keyFromUrl = fragmentParams.get('key');
+            
+            if (keyFromUrl) {
+                localStorage.setItem("cyberkavach_key", keyFromUrl);
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+            }
+            userKey = localStorage.getItem("cyberkavach_key");
+            if (!userKey || userKey === "GUEST_SESSION") {
+                userKey = `FREE-${crypto.randomUUID().replaceAll('-', '').toUpperCase()}`;
+                localStorage.setItem("cyberkavach_key", userKey);
+            }
+            
+            // Update Sidebar UI based on PRO status
+            const isPro = userKey.includes("PRO");
+            document.getElementById('userKeyDisplay').innerText = userKey;
+            
+            const iconBox = document.getElementById('planIconBox');
+            if(isPro) {
+                iconBox.innerHTML = `<i data-lucide="zap" class="w-4 h-4 text-indigo-600 fill-indigo-600"></i><span class="text-xs font-black uppercase tracking-widest text-indigo-700">Elite Node Active</span>`;
+                iconBox.parentElement.className = "p-4 rounded-xl border border-indigo-200 bg-indigo-50 mb-4 shadow-sm";
+            } else {
+                iconBox.innerHTML = `<i data-lucide="user" class="w-4 h-4 text-slate-500"></i><span class="text-xs font-black uppercase tracking-widest text-slate-600">Community Node</span>`;
+                iconBox.parentElement.className = "p-4 rounded-xl border border-slate-200 bg-white mb-4 shadow-sm";
+            }
+            lucide.createIcons();
+        }
+
+        // 2. Fetch Data from DB
+        async function fetchDashboardData() {
+            const refreshBtn = document.getElementById('refreshBtn');
+            if(refreshBtn) refreshBtn.classList.add('animate-spin');
+
+            try {
+                const response = await fetch(`${API_URL}/dashboard-data`, {
+                    headers: { 'x-api-key': userKey }
+                });
+                
+                if (response.status === 401) {
+                    // A stale licence in localStorage must not leave the whole
+                    // dashboard unusable. Start a new valid FREE session once.
+                    localStorage.removeItem("cyberkavach_key");
+                    syncIdentity();
+                    return fetchDashboardData();
+                }
+                if (!response.ok) throw new Error("API Offline");
+                const data = await response.json();
+                
+                // Update Widgets
+                document.getElementById('statTotal').innerText = data.stats.total.toLocaleString();
+                document.getElementById('statThreats').innerText = data.stats.phishing.toLocaleString();
+                document.getElementById('statSafe').innerText = data.stats.safe.toLocaleString();
+                
+                // Update Table
+                logsData = data.logs;
+                renderLogs();
+
+            } catch (error) {
+                console.error("Dashboard Sync Failed:", error);
+                document.getElementById('logsTable').innerHTML = `<tr><td colSpan="5" class="p-10 text-center text-red-500 font-bold bg-red-50 rounded-xl m-4">⚠️ CONNECTION TO DATABASE FAILED. Ensure main.py is running.</td></tr>`;
+            } finally {
+                if(refreshBtn) setTimeout(() => refreshBtn.classList.remove('animate-spin'), 500);
+            }
+        }
+
+        // 3. Render Table
+        function renderLogs() {
+            const tbody = document.getElementById('logsTable');
+            tbody.innerHTML = '';
+            
+            if(!logsData || logsData.length === 0) {
+                tbody.innerHTML = `<tr><td colSpan="5" class="p-10 text-center text-slate-400 font-medium">No traffic records found. Scans will appear here.</td></tr>`;
+                return;
+            }
+
+            logsData.forEach(log => {
+                const isSafe = log.verdict === 'SAFE' || log.verdict === 'CLEAN';
+                const color = isSafe ? 'emerald' : (log.verdict === 'SUSPICIOUS' ? 'amber' : 'red');
+                const icon = isSafe ? 'shield-check' : 'alert-triangle';
+
+                const tr = document.createElement('tr');
+                tr.className = "cursor-pointer hover:bg-slate-50 transition-colors group";
+                tr.onclick = () => openModal(log);
+                
+                tr.innerHTML = `
+                    <td class="p-4 pl-6 text-slate-500 whitespace-nowrap">${log.time}</td>
+                    <td class="p-4">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="${icon}" class="w-4 h-4 text-${color}-500"></i>
+                            <span class="text-slate-700 truncate max-w-[200px] md:max-w-xs block group-hover:text-indigo-600 transition">${escapeHtml(log.url)}</span>
+                        </div>
+                    </td>
+                    <td class="p-4 text-center text-slate-500 uppercase font-bold text-[10px] tracking-wider">${escapeHtml(log.method)}</td>
+                    <td class="p-4 text-center">
+                        <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest bg-${color}-50 text-${color}-600 border border-${color}-200">${escapeHtml(log.verdict)}</span>
+                    </td>
+                    <td class="p-4 pr-6 text-right font-black text-${color}-600">${log.score}%</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            lucide.createIcons();
+        }
+
+        // 4. Delete Logs
+        async function clearLogs() {
+            if(confirm("⚠️ Permanently delete all log history from the database?")) {
+                try {
+                    await fetch(`${API_URL}/clear-history`, {
+                        method: 'DELETE',
+                        headers: { 'x-api-key': userKey }
+                    });
+                    fetchDashboardData();
+                } catch (e) {
+                    alert("Purge Failed. Server unreachable.");
+                }
+            }
+        }
+
+        // 5. Logout
+        function logoutSession() {
+            if(confirm("Return to community plan?")) {
+                localStorage.removeItem("cyberkavach_key");
+                window.location.href = "index.html"; // Go back to landing
+            }
+        }
+
+        // ==========================================
+        // 🛑 MODAL & PDF LOGIC
+        // ==========================================
+        const modal = document.getElementById('detailModal');
+        const mContent = document.getElementById('modalContent');
+
+        function openModal(log) {
+            currentModalData = log; // Save for PDF
+
+            const isSafe = log.verdict === 'SAFE' || log.verdict === 'CLEAN';
+            const color = isSafe ? 'emerald' : (log.verdict === 'SUSPICIOUS' ? 'amber' : 'red');
+
+            document.getElementById('mVerdict').innerText = log.verdict;
+            document.getElementById('mVerdict').className = `text-2xl font-black mb-1 uppercase tracking-tight text-${color}-600`;
+            document.getElementById('mUrl').innerText = log.url;
+            
+            document.getElementById('mScore').innerText = log.score;
+            document.getElementById('mScore').className = `text-3xl font-black text-${color}-600`;
+            
+            document.getElementById('mMethod').innerText = log.method || "Web Scan";
+
+            const iconBox = document.getElementById('mIconBox');
+            iconBox.className = `p-4 rounded-full shrink-0 flex items-center justify-center border-4 bg-${color}-50 text-${color}-500 border-${color}-100`;
+            document.getElementById('mIcon').setAttribute('data-lucide', isSafe ? 'shield-check' : 'alert-triangle');
+
+            const ul = document.getElementById('mAnalysis');
+            let analysisHtml = "";
+            if (log.analysis && Array.isArray(log.analysis) && log.analysis.length > 0) {
+                analysisHtml = log.analysis.map(item => `<li class="flex items-start gap-2"><span class="text-slate-500">></span> <span>${escapeHtml(item)}</span></li>`).join('');
+            } else {
+                analysisHtml = `<li class="text-slate-500 italic">Standard API trace complete. No further data.</li>`;
+            }
+            ul.innerHTML = analysisHtml;
+
+            modal.classList.remove('hidden-state');
+            setTimeout(() => {
+                mContent.classList.remove('scale-95', 'opacity-0');
+                mContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            mContent.classList.remove('scale-100', 'opacity-100');
+            mContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => modal.classList.add('hidden-state'), 200);
+        }
+
+        // 📝 PDF Generation
+        function downloadPDF() {
+            if (!currentModalData) return;
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const log = currentModalData;
+            
+            // Header
+            doc.setFontSize(20);
+            doc.setTextColor(79, 70, 229); // Indigo
+            doc.text("CyberKavach Forensic Report", 20, 20);
+            
+            doc.setFontSize(10);
+            doc.setTextColor(100, 116, 139);
+            doc.text(`Generated on: ${new Date().toLocaleString()}`, 20, 30);
+            doc.line(20, 35, 190, 35); // Horizontal line
+
+            // Details
+            doc.setFontSize(12);
+            doc.setTextColor(15, 23, 42); // Black
+            
+            doc.text("Target Analyzed:", 20, 50);
+            doc.setFont("courier", "normal");
+            doc.text(log.url, 20, 58, { maxWidth: 170 });
+            
+            doc.setFont("helvetica", "bold");
+            doc.text(`Verdict: ${log.verdict}`, 20, 75);
+            doc.text(`Risk Score: ${log.score}/100`, 20, 85);
+            doc.text(`Scan Engine: ${log.method}`, 20, 95);
+
+            // Indicators
+            doc.text("Neural Indicators:", 20, 110);
+            doc.setFont("courier", "normal");
+            doc.setFontSize(10);
+            
+            let y = 120;
+            if (log.analysis && log.analysis.length > 0) {
+                log.analysis.forEach((item) => {
+                    doc.text(`> ${item}`, 20, y, { maxWidth: 170 });
+                    y += 10;
+                });
+            } else {
+                doc.text("> No detailed indicators provided by engine.", 20, y);
+            }
+
+            // Footer
+            doc.setFontSize(8);
+            doc.setTextColor(150, 150, 150);
+            doc.text("This is an automatically generated AI forensic report. Not for legal use.", 20, 280);
+
+            // Save
+            doc.save(`CyberKavach_Report_${log.id}.pdf`);
+        }
+
+        // ==========================================
+        // STARTUP
+        // ==========================================
+        syncIdentity();
+        fetchDashboardData();
+
+    </script>
+</body>
+</html>

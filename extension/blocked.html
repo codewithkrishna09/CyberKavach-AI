@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚫  CyberKavach Shield</title>
+    <style>
+        :root {
+            --bg-blur: rgba(2, 6, 23, 0.7);
+            --danger: #ef4444;
+            --text-main: #f8fafc;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: #020617; /* Solid background for security */
+            color: var(--text-main);
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Glassmorphism Card (Small Popup look) */
+        .popup-card {
+            width: 320px; /* Small Fixed Width */
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(239, 68, 68, 0.2);
+            animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .icon-box {
+            width: 50px; height: 50px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid var(--danger);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px;
+            color: var(--danger);
+        }
+
+        h1 { font-size: 1.2rem; font-weight: 800; margin-bottom: 8px; color: #fff; }
+        p { color: #94a3b8; font-size: 0.85rem; line-height: 1.4; margin-bottom: 16px; }
+
+        .info-box {
+            background: #000;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .label { font-size: 10px; color: #64748b; font-weight: 800; text-transform: uppercase; }
+        .val { font-family: monospace; color: #cbd5e1; font-size: 11px; word-break: break-all; }
+
+        .btn {
+            width: 100%; padding: 12px; border-radius: 8px; border: none;
+            font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: 0.2s;
+            margin-bottom: 8px;
+        }
+
+        .btn-safe { background: #10b981; color: #022c22; }
+        .btn-safe:hover { background: #059669; }
+
+        .btn-ignore { 
+            background: transparent; color: #64748b; font-size: 11px;
+            text-decoration: underline;
+        }
+        .btn-ignore:not(:disabled):hover { color: var(--danger); }
+        .btn-ignore:disabled { opacity: 0.5; cursor: not-allowed; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div class="popup-card">
+        <div class="icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+
+        <h1>Threat Blocked</h1>
+        <p>CyberKavach AI has detected a credential harvesting pattern on this site.</p>
+
+        <div class="info-box">
+            <div class="label">Dangerous Node</div>
+            <div class="val" id="targetUrl">...</div>
+        </div>
+
+        <button id="backBtn" class="btn btn-safe">Exit to Safety</button>
+        <button id="ignoreBtn" class="btn btn-ignore" disabled>Verify threat (5s)</button>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const requestedTarget = params.get('target') || '';
+        let target = 'https://google.com';
+        try {
+            const parsedTarget = new URL(requestedTarget);
+            if (parsedTarget.protocol === 'http:' || parsedTarget.protocol === 'https:') target = parsedTarget.href;
+        } catch (_) {
+            // Keep the safe fallback for malformed or non-web destinations.
+        }
+        document.getElementById('targetUrl').innerText = target;
+
+        document.getElementById('backBtn').onclick = () => {
+            history.length > 1 ? history.back() : window.location.replace("https://www.google.com/");
+        };
+
+        let timeLeft = 5;
+        const ignoreBtn = document.getElementById('ignoreBtn');
+        const timer = setInterval(() => {
+            timeLeft--;
+            if(timeLeft > 0) {
+                ignoreBtn.innerText = `Verify threat (${timeLeft}s)`;
+            } else {
+                clearInterval(timer);
+                ignoreBtn.disabled = false;
+                ignoreBtn.innerText = "Proceed anyway (Unsafe)";
+            }
+        }, 1000);
+
+        ignoreBtn.onclick = () => {
+            if(confirm("🚨 CRITICAL WARNING: This site is confirmed as Phishing. Do you want to proceed at your own risk?")) {
+                chrome.runtime.sendMessage({ action: 'ALLOW_TEMPORARILY', url: target }, () => {
+                    window.location.assign(target);
+                });
+            }
+        };
+    </script>
+</body>
+</html>

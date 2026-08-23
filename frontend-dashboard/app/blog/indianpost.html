@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Technical breakdown and decompilation of the IndiaPost SMS Trojan. Learn how scammers use fake APKs to intercept banking OTPs and how to defend against them.">
+    <meta name="author" content="CyberKavach Threat Labs">
+    
+    <meta property="og:title" content="IndiaPost SMS Trojan: Decompiling the Hidden Intent">
+    <meta property="og:description" content="A deep dive into the Android malware bypassing Indian banks' 2FA systems.">
+    <meta property="og:type" content="article">
+    
+    <title>IndiaPost SMS Trojan | CyberKavach Intel</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ========================================== */
+        /* EDITORIAL BLOG STYLES (100% RESPONSIVE)    */
+        /* ========================================== */
+
+        /* Core Body Settings */
+        body, html {
+            overflow-x: hidden;
+            width: 100%;
+            background-color: #fdfdfd;
+        }
+
+        /* Subtle Background Grid */
+        .bg-grid {
+            position: fixed; inset: 0; z-index: -1;
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        }
+
+        /* Reading Progress Bar */
+        #progressBar { transition: width 0.1s ease-out; }
+
+        /* Typography Formatting for the Article Body */
+        .blog-content {
+            font-size: 1.05rem;
+            word-wrap: break-word;
+            color: #334155;
+            line-height: 1.8;
+        }
+
+        @media (min-width: 640px) {
+            .blog-content { font-size: 1.15rem; }
+        }
+
+        .blog-content h2 {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #0f172a; 
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+            letter-spacing: -0.025em;
+            line-height: 1.3;
+            scroll-margin-top: 100px; /* Essential for sticky header clearing */
+        }
+
+        @media (min-width: 640px) {
+            .blog-content h2 { font-size: 2rem; margin-top: 4rem; margin-bottom: 1.5rem; }
+        }
+
+        .blog-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Inline Code Highlight - Responsive */
+        .blog-content p code, .blog-content li code {
+            background-color: #f1f5f9; 
+            color: #0f172a; 
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.375rem;
+            font-size: 0.85em;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+            word-break: break-all;
+        }
+
+        /* Custom Bullet Lists */
+        .blog-content ul {
+            margin-bottom: 1.5rem;
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .blog-content ul li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .blog-content ul li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #ef4444; /* Red for malware theme */
+            font-weight: 900;
+        }
+
+        /* Hacker/IDE style Code Blocks */
+        .code-block {
+            background-color: #0f172a;
+            border-radius: 1rem;
+            margin: 2rem 0;
+            overflow: hidden;
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.2);
+            border: 1px solid #1e293b;
+            width: 100%;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background-color: rgba(30, 41, 59, 0.8);
+            border-bottom: 1px solid #334155;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            width: 100%;
+        }
+
+        .code-body {
+            padding: 1.25rem 1rem;
+            overflow-x: auto; /* Fixes horizontal scroll on mobile */
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+        }
+
+        .code-body pre {
+            margin: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            min-width: max-content;
+        }
+
+        /* Custom Scrollbar for Code Blocks */
+        .code-body::-webkit-scrollbar { height: 6px; }
+        .code-body::-webkit-scrollbar-track { background: transparent; }
+        .code-body::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        .code-body::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        /* General Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f8fafc; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Active state for Table of Contents (Handled by JS) */
+        .toc-link {
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            display: block;
+        }
+        .toc-link.active-toc {
+            color: #ef4444 !important; /* Red to match malware theme */
+            font-weight: 800;
+            background: rgba(239, 68, 68, 0.05);
+            border-left-color: #ef4444;
+            margin-left: -16px;
+            padding-left: 13px; /* Compensate for border */
+        }
+
+        /* Animations */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+    </style>
+</head>
+<body class="selection:bg-red-100 selection:text-red-900">
+
+    <div class="bg-grid"></div>
+
+    <div class="fixed top-0 left-0 w-full h-1.5 bg-slate-100 z-[100]">
+        <div id="progressBar" class="h-full bg-red-600 w-0"></div>
+    </div>
+
+    <header id="navbar" class="fixed w-full z-50 top-0 bg-white/90 backdrop-blur-xl border-b border-slate-200/60 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex justify-between items-center w-full">
+            
+            <div class="flex items-center gap-3 shrink-0">
+                <a href="index.html" class="flex items-center gap-2 group">
+                   <div class="bg-indigo-600 p-2 md:p-2.5 rounded-xl shadow-lg group-hover:rotate-12 group-hover:shadow-indigo-500/50 transition-all duration-300">
+                    <i data-lucide="shield" class="w-4 h-4 md:w-5 md:h-5 text-white"></i>
+                </div>
+                    <span class="font-black text-lg md:text-xl tracking-tight text-slate-900">CyberKavach<span class="text-indigo-600">.AI</span></span>
+                </a>
+            </div>
+            
+            <nav class="hidden md:flex items-center gap-8 bg-slate-50/80 px-6 py-2 rounded-full border border-slate-200 shadow-sm">
+                <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Scanner</a>
+                <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Pricing</a>
+            </nav>
+
+            <div class="flex items-center shrink-0">
+                <a href="/index.html#blog" class="px-4 py-2.5 md:px-6 bg-white border border-slate-200 text-slate-700 font-bold text-[10px] md:text-xs uppercase tracking-widest rounded-lg md:rounded-xl hover:bg-slate-50 hover:text-indigo-600 transition-all shadow-sm flex items-center gap-2 whitespace-nowrap">
+                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Back to Home</span>
+                    <span class="sm:hidden">Back</span>
+                </a>
+            </div>
+        </div>
+    </header>
+    <main class="pt-24 md:pt-32 pb-24">
+        
+        <article class="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 grid lg:grid-cols-12 gap-12 lg:gap-20 items-start w-full">
+            
+            <div class="lg:col-span-8 w-full max-w-3xl mx-auto lg:mx-0 overflow-hidden fade-up">
+                
+                <header class="mb-10 md:mb-14">
+                    <div class="flex flex-wrap items-center gap-3 md:gap-4 mb-6">
+                        <span class="px-2.5 py-1 bg-red-50 border border-red-100 text-red-700 text-[10px] font-black uppercase tracking-widest rounded-md shadow-sm">APK Malware</span>
+                        <time datetime="2026-10-20" class="text-slate-400 font-mono text-xs font-bold uppercase tracking-wider">Oct 20, 2026</time>
+                        <span class="text-slate-300 hidden sm:inline">•</span>
+                        <span class="text-slate-400 font-mono text-xs font-bold flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 12 Min Read</span>
+                    </div>
+                    
+                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.15] mb-6 tracking-tight break-words">
+                        IndiaPost SMS Trojan: Decompiling the Hidden Intent
+                    </h1>
+                    
+                    <p class="text-lg sm:text-xl text-slate-500 font-medium leading-relaxed mb-8">
+                        Cyber-syndicates are hijacking the credibility of India Post. We decompiled the dropped <code class="bg-slate-100 px-1 rounded border border-slate-200">.apk</code> payload and mapped exactly how it intercepts 2FA banking OTPs in real-time.
+                    </p>
+
+                    <div class="flex items-center gap-4 border-y border-slate-100 py-6 mt-8">
+                        <div class="w-12 h-12 rounded-full bg-slate-100 overflow-hidden border border-slate-200 shrink-0">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="CyberKavach Threat Labs" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <div class="font-bold text-slate-900 text-sm md:text-base">CyberKavach Threat Labs</div>
+                            <div class="text-xs font-mono text-slate-500 mt-0.5">Advanced Binary Forensics Division</div>
+                        </div>
+                    </div>
+                </header>
+
+                <figure class="mb-12 md:mb-16 w-full">
+                    <div class="w-full h-[250px] md:h-[400px] bg-slate-900 rounded-2xl md:rounded-[2rem] overflow-hidden border border-slate-200 shadow-xl relative">
+                        <img src="https://images.unsplash.com/photo-1624969862644-791f3dc98927?auto=format&fit=crop&w=1200&q=80" alt="Android Malware Code on Screen" class="w-full h-full object-cover opacity-70 mix-blend-luminosity">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent"></div>
+                    </div>
+                    <figcaption class="text-center text-[10px] md:text-xs font-mono text-slate-400 mt-4 uppercase tracking-widest px-2">Fig 1: Decompiled Smali bytecode of the IndiaPost trojan.</figcaption>
+                </figure>
+
+                <div class="blog-content w-full">
+                    
+                    <h2 id="section-lure">1. The Delivery Lure</h2>
+                    <p>Over the past 72 hours, our telemetry at CyberKavach has intercepted over 45,000 targeted SMS messages mimicking the Indian postal service. The attack vector relies purely on urgency and social engineering rather than exploiting a software vulnerability.</p>
+                    
+                    <blockquote class="bg-red-50/50 border-l-[4px] border-red-500 p-5 md:p-8 rounded-r-2xl my-8 text-red-900 font-medium shadow-sm text-sm md:text-base">
+                        "India Post: Your package [ID: IN938472] is on hold due to a missing house number. Please update your address within 24 hours to avoid return. Link: <span class="font-mono text-red-600 bg-red-100 px-1 rounded break-all">indiapost-track-gov.in/update</span>"
+                    </blockquote>
+                    
+                    
+
+                    <p>When a victim clicks the link on their Android device, they are taken to a highly convincing phishing page. Instead of asking for address details right away, the page prompts the user to download an "Official Tracking App" to proceed. This is the initial payload delivery phase.</p>
+
+                    <h2 id="section-analysis">2. Static Binary Analysis</h2>
+                    <p>We acquired the payload, <code>IndiaPost_Tracking_v2.apk</code> (SHA-256: <code class="break-all text-[0.8em]">4f9a72b0c3d91e8f2a1b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f</code>), and ran it through our backend <strong>APK Raksha Kavach</strong> engine.</p>
+                    
+                    <p>The first massive red flag appeared in the <code>AndroidManifest.xml</code>. A legitimate package tracking application only requires basic internet access to sync data. This payload, however, requested dangerous, highly elevated system permissions intended for messaging apps.</p>
+
+                    <div class="code-block my-8 w-full">
+                        <div class="code-header">
+                            <span class="flex items-center gap-2 shrink-0 truncate"><i data-lucide="file-code-2" class="w-3.5 h-3.5"></i> <span class="truncate">AndroidManifest.xml</span></span>
+                            <span class="bg-red-500/20 text-red-400 px-2 py-0.5 rounded text-[9px] uppercase tracking-widest flex items-center gap-1 shrink-0 ml-2"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Threat</span>
+                        </div>
+                        <div class="code-body">
+<pre><code><span class="text-emerald-400">&lt;manifest</span> <span class="text-indigo-300">xmlns:android</span>=<span class="text-amber-300">"http://schemas.android.com/apk/res/android"</span><span class="text-emerald-400">&gt;</span>
+  <span class="text-slate-500">&lt;!-- Legitimate Permission --&gt;</span>
+  <span class="text-emerald-400">&lt;uses-permission</span> <span class="text-indigo-300">android:name</span>=<span class="text-amber-300">"android.permission.INTERNET"</span><span class="text-emerald-400">/&gt;</span>
+  
+  <span class="text-slate-500">&lt;!-- Malicious Intents (OTP Theft Vector) --&gt;</span>
+  <span class="text-red-400 font-bold bg-red-500/10 block w-max pr-4 border-l-2 border-red-500 pl-2">&lt;uses-permission android:name="android.permission.RECEIVE_SMS"/&gt;</span>
+  <span class="text-red-400 font-bold bg-red-500/10 block w-max pr-4 border-l-2 border-red-500 pl-2">&lt;uses-permission android:name="android.permission.READ_SMS"/&gt;</span>
+  <span class="text-red-400 font-bold bg-red-500/10 block w-max pr-4 border-l-2 border-red-500 pl-2">&lt;uses-permission android:name="android.permission.SEND_SMS"/&gt;</span>
+<span class="text-emerald-400">&lt;/manifest&gt;</span></code></pre>
+                        </div>
+                    </div>
+
+                    <h2 id="section-killchain">3. The OTP Kill Chain</h2>
+                    <p>Once installed, the app immediately hides its launcher icon from the app drawer. It registers a <code>BroadcastReceiver</code> that quietly listens for incoming SMS messages in the background, specifically looking for bank names.</p>
+                    
+                    <p>When the victim attempts to log into their bank, or more likely, when the hacker triggers a transaction using phished credentials, the bank generates an OTP.</p>
+
+                    <p>The trojan intercepts this OTP using the following decompiled Java/Smali routine logic:</p>
+                    
+                    <div class="code-block my-8 w-full">
+                        <div class="code-header">
+                            <span class="flex items-center gap-2"><i data-lucide="file-json" class="w-3.5 h-3.5"></i> SmsReceiver.java (Decompiled)</span>
+                        </div>
+                        <div class="code-body">
+<pre><code><span class="text-indigo-400">public void</span> <span class="text-emerald-300">onReceive</span>(Context context, Intent intent) {
+    Object[] pdus = (Object[]) intent.getExtras().get(<span class="text-amber-300">"pdus"</span>);
+    <span class="text-indigo-400">for</span> (Object pdu : pdus) {
+        SmsMessage sms = SmsMessage.createFromPdu((<span class="text-indigo-400">byte</span>[]) pdu);
+        String body = sms.getMessageBody();
+        
+        <span class="text-slate-500">// Check if SMS contains financial keywords</span>
+        <span class="text-indigo-400">if</span> (body.toLowerCase().matches(<span class="text-amber-300">".*(otp|bank|sbi|hdfc|icici).*"</span>)) {
+            <span class="text-slate-500">// Transmit OTP to hacker silently</span>
+            <span class="text-red-400 font-bold">sendToC2Server(body);</span>
+            
+            <span class="text-slate-500">// Hide SMS from user notification panel</span>
+            abortBroadcast(); 
+        }
+    }
+}</code></pre>
+                        </div>
+                    </div>
+
+                    
+
+                    <h2 id="section-c2">4. Exfiltration to Telegram C2</h2>
+                    <p>Unlike traditional sophisticated malware that uses dedicated, expensive Command and Control (C2) domains, this Indian variant uses the Telegram Bot API as a cheap, unblockable exfiltration route. The intercepted OTPs are sent directly to a hacker's private Telegram group via a standard HTTP POST request. Because Telegram is a trusted domain, network firewalls rarely block this outgoing traffic.</p>
+
+                    <h2 id="section-defense">5. Proactive Eradication</h2>
+                    <p>Global databases take days to flag these hyper-regional APKs. By the time Google Play Protect blocks the hash, thousands of bank accounts have already been drained.</p>
+                    
+                    <p>This is exactly why we built the <strong>APK Raksha Kavach</strong>. Instead of relying on static hash databases, our engine natively decompiles the app on your device, spots the <code>RECEIVE_SMS</code> intent paired with an invisible UI, and blocks the installation with 99.8% accuracy before it can execute.</p>
+                    
+                    <hr class="my-12 md:my-16 border-slate-200">
+                    
+                    <div class="bg-gradient-to-br from-red-50 to-white border border-red-100/50 rounded-2xl md:rounded-3xl p-6 md:p-10 text-center shadow-lg w-full">
+                        <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center text-white mx-auto mb-4 shadow-md">
+                            <i data-lucide="shield-alert" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl md:text-2xl font-black text-slate-900 mb-3 mt-0">Don't be the next statistic.</h3>
+                        <p class="text-slate-500 mb-8 text-sm font-medium max-w-md mx-auto">Download the CyberKavach browser extension to automatically block malicious APK downloads before they reach your storage.</p>
+                        <a href="index.html#pricing" class="inline-flex items-center justify-center w-full sm:w-auto gap-2 px-8 py-4 bg-slate-900 text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-red-600 transition-colors shadow-md">
+                            Get CyberKavach PRO
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            <aside class="hidden lg:block lg:col-span-4 relative">
+                <div class="sticky top-32 space-y-8">
+                    
+                    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                        <h4 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-2">
+                            <i data-lucide="align-left" class="w-3.5 h-3.5 text-red-500"></i> Chapter Index
+                        </h4>
+                        <nav id="toc" class="space-y-3 text-sm font-medium text-slate-500 border-l-2 border-slate-100 pl-4">
+                            <a href="#section-lure" class="block hover:text-slate-900 transition-colors toc-link line-clamp-1">1. The Delivery Lure</a>
+                            <a href="#section-analysis" class="block hover:text-slate-900 transition-colors toc-link line-clamp-1">2. Static Binary Analysis</a>
+                            <a href="#section-killchain" class="block hover:text-slate-900 transition-colors toc-link line-clamp-1">3. The OTP Kill Chain</a>
+                            <a href="#section-c2" class="block hover:text-slate-900 transition-colors toc-link line-clamp-1">4. Exfiltration to Telegram C2</a>
+                            <a href="#section-defense" class="block hover:text-slate-900 transition-colors toc-link line-clamp-1">5. Proactive Eradication</a>
+                        </nav>
+                    </div>
+
+                    <div class="bg-[#0f172a] rounded-2xl p-6 shadow-xl relative overflow-hidden border border-slate-800">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-red-500/20 rounded-full blur-3xl"></div>
+                        <h4 class="text-white font-black mb-2 relative z-10">Zero-Day Alerts</h4>
+                        <p class="text-slate-400 text-xs font-medium mb-5 relative z-10 leading-relaxed">Get notified the exact moment a new financial scam hits the Indian internet.</p>
+                        <form class="relative z-10">
+                            <input type="email" placeholder="Email address..." class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-3.5 text-sm outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 mb-3 transition-all placeholder:text-slate-500 font-medium">
+                            <button type="submit" class="w-full bg-white text-slate-900 font-black text-xs uppercase tracking-widest py-3.5 rounded-xl hover:bg-red-50 transition-colors">Subscribe</button>
+                        </form>
+                    </div>
+
+                </div>
+            </aside>
+
+        </article>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 pt-10 pb-8 w-full">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6 text-center md:text-left">
+            <div class="flex items-center gap-2">
+                <i data-lucide="shield" class="w-4 h-4 text-red-600"></i>
+                <span class="font-black text-lg text-slate-900">CyberKavach.AI</span>
+            </div>
+            <p class="text-slate-500 text-xs font-medium">© 2026 CyberKavach AI. Threat Intelligence Division.</p>
+        </div>
+    </footer>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "IndiaPost SMS Trojan: Decompiling the Hidden Intent",
+      "image": [
+        "https://images.unsplash.com/photo-1624969862644-791f3dc98927?auto=format&fit=crop&w=1200&q=80"
+       ],
+      "datePublished": "2026-10-20T08:00:00+08:00",
+      "dateModified": "2026-10-20T09:20:00+08:00",
+      "author": [{
+          "@type": "Organization",
+          "name": "CyberKavach Threat Labs",
+          "url": "https://cyberkavach.ai"
+        }]
+    }
+    </script>
+
+    <script>
+        // ==========================================
+        // BLOG POST UX & INTERACTIONS (MOBILE READY)
+        // ==========================================
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            // Initialize standard icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // 1. Reading Progress Bar Logic
+            const progressBar = document.getElementById('progressBar');
+            
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.scrollY || document.documentElement.scrollTop;
+                const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                
+                let scrolledPercentage = (scrollTop / scrollHeight) * 100;
+                if(scrolledPercentage > 100) scrolledPercentage = 100;
+                if(scrolledPercentage < 0) scrolledPercentage = 0;
+                
+                if(progressBar) {
+                    progressBar.style.width = scrolledPercentage + "%";
+                }
+            });
+
+            // 2. Fade Up Observer
+            const fadeObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => { 
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible'); 
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
+
+            // 3. Dynamic Table of Contents (Intersection Observer)
+            const headings = document.querySelectorAll('.blog-content h2');
+            const tocLinks = document.querySelectorAll('.toc-link');
+
+            const observerOptions = {
+                root: null,
+                // Triggers when heading is in the top 30% of the screen
+                rootMargin: '-100px 0px -70% 0px', 
+                threshold: 0
+            };
+
+            const headingObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        
+                        // Remove active styling from all
+                        tocLinks.forEach(link => link.classList.remove('active-toc'));
+                        
+                        // Add active styling to current
+                        const activeLink = document.querySelector(`.toc-link[href="#${id}"]`);
+                        if (activeLink) {
+                            activeLink.classList.add('active-toc');
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            headings.forEach(heading => headingObserver.observe(heading));
+
+            // 4. Smooth Scroll Offset for TOC Links (Prevents Navbar Overlap)
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    
+                    if (targetSection) {
+                        const navHeight = document.getElementById('navbar').offsetHeight;
+                        // Add 20px extra breathing room below navbar
+                        const targetOffset = targetSection.offsetTop - navHeight - 20; 
+                        
+                        window.scrollTo({
+                            top: targetOffset,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>

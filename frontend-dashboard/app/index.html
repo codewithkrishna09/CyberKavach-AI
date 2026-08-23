@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberKavach | Sovereign Digital Defense for India</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] } } }
+        }
+    </script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<div class="bg-grid"></div>
+<div class="glow-orb-1"></div>
+<div class="glow-orb-2"></div>
+
+<div class="fixed w-full z-50 top-0 transition-all duration-500" id="nav-wrapper">
+    <header id="navbar" class="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-5 transition-all duration-500">
+        <div class="flex justify-between items-center bg-transparent rounded-2xl transition-all duration-500" id="nav-inner">
+            
+            <div class="flex items-center gap-2 md:gap-3 cursor-pointer group" onclick="window.scrollTo(0,0)">
+                <div class="bg-indigo-600 p-2 md:p-2.5 rounded-xl shadow-lg group-hover:rotate-12 group-hover:shadow-indigo-500/50 transition-all duration-300">
+                    <i data-lucide="shield" class="w-4 h-4 md:w-5 md:h-5 text-white"></i>
+                </div>
+                <span class="font-black text-lg md:text-xl tracking-tight text-slate-900">CyberKavach<span class="text-indigo-600">.AI</span></span>
+            </div>
+
+            <nav class="hidden lg:flex items-center gap-8 px-2">
+                <a href="#about" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors">About Us</a>
+                <a href="#ecosystem" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors">AI & Features</a>
+                <a href="#extension" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors">Extension</a>
+                <a href="#pricing" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors">Pricing</a>
+                <a href="#faq" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors">FAQ</a>
+                <a href="/blog/blog.html" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors">Blog</a>
+            </nav>
+
+            <div class="flex gap-3 items-center">
+                <button onclick="document.getElementById('pricing').scrollIntoView({behavior: 'smooth'})" class="hidden md:flex px-6 py-2.5 bg-slate-900 text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-indigo-600 hover:shadow-[0_0_20px_rgba(79,70,229,0.3)] transition-all">
+                    Get Elite
+                </button>
+                <button id="mobileMenuBtn" class="lg:hidden p-2 text-slate-900 bg-white rounded-xl border border-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+        </div>
+    </header>
+</div>
+
+<div id="newMobileOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-md z-[990] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+<div id="newMobileDrawer" class="fixed top-0 right-0 h-full w-[85%] sm:w-[400px] bg-white z-[999] shadow-2xl translate-x-full transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col border-l border-slate-200/50 rounded-l-3xl">
+    
+    <div class="flex justify-between items-center p-6 border-b border-slate-100">
+        <span class="font-black text-xl text-slate-900 flex items-center gap-3">
+            <div class="bg-indigo-600 p-2 rounded-xl shadow-md"><i data-lucide="shield" class="w-5 h-5 text-white"></i></div>
+            CyberKavach
+        </span>
+        <button id="closeDrawerBtn" class="w-10 h-10 flex items-center justify-center text-slate-500 bg-slate-50 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all focus:outline-none">
+            <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+    </div>
+
+    <nav class="flex flex-col gap-1 p-6 overflow-y-auto" id="drawerNavLinks">
+        
+        <a href="#about" class="menu-item-anim group flex items-center gap-4 p-3.5 rounded-2xl hover:bg-slate-50 transition-colors">
+            <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors"><i data-lucide="crosshair" class="w-4 h-4"></i></div>
+            <span class="text-lg font-bold text-slate-700 group-hover:text-slate-900">About Us</span>
+        </a>
+        
+        <a href="#ecosystem" class="menu-item-anim group flex items-center gap-4 p-3.5 rounded-2xl hover:bg-slate-50 transition-colors">
+            <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors"><i data-lucide="cpu" class="w-4 h-4"></i></div>
+            <span class="text-lg font-bold text-slate-700 group-hover:text-slate-900">AI & Feature</span>
+        </a>
+        
+        <a href="#extension" class="menu-item-anim group flex items-center gap-4 p-3.5 rounded-2xl hover:bg-slate-50 transition-colors">
+            <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors"><i data-lucide="zap" class="w-4 h-4"></i></div>
+            <span class="text-lg font-bold text-slate-700 group-hover:text-slate-900">Browser Extension</span>
+        </a>
+        
+        <a href="#pricing" class="menu-item-anim group flex items-center gap-4 p-3.5 rounded-2xl hover:bg-slate-50 transition-colors">
+            <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors"><i data-lucide="credit-card" class="w-4 h-4"></i></div>
+            <span class="text-lg font-bold text-slate-700 group-hover:text-slate-900">Pricing Tiers</span>
+        </a>
+        
+        <a href="#faq" class="menu-item-anim group flex items-center gap-4 p-3.5 rounded-2xl hover:bg-slate-50 transition-colors">
+            <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors"><i data-lucide="help-circle" class="w-4 h-4"></i></div>
+            <span class="text-lg font-bold text-slate-700 group-hover:text-slate-900">FAQ & Support</span>
+        </a>
+        
+        <a href="/blog/blog.html" class="menu-item-anim group flex items-center gap-4 p-3.5 rounded-2xl hover:bg-slate-50 transition-colors">
+            <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors"><i data-lucide="book-open" class="w-4 h-4"></i></div>
+            <span class="text-lg font-bold text-slate-700 group-hover:text-slate-900">Blogs</span>
+        </a>
+
+    </nav>
+
+    <div class="mt-auto p-6 border-t border-slate-100 bg-slate-50/50 rounded-bl-3xl">
+        <button onclick="document.getElementById('pricing').scrollIntoView(); closeMobileMenu();" class="menu-item-anim w-full py-4 bg-slate-900 text-white font-bold rounded-xl uppercase tracking-widest text-xs shadow-lg flex justify-center items-center gap-2 hover:bg-indigo-600 transition-all hover:scale-[1.02] hover:shadow-indigo-500/30">
+            <i data-lucide="shield-check" class="w-4 h-4"></i> Activate License
+        </button>
+    </div>
+</div>
+
+<section class="relative pt-36 md:pt-48 pb-16 md:pb-24 px-4 md:px-6 z-10 flex flex-col items-center text-center">
+    <div class="max-w-4xl mx-auto w-full">
+        
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-indigo-200/60 bg-indigo-50/50 text-indigo-700 text-[10px] font-bold mb-8 uppercase tracking-widest shadow-sm backdrop-blur-sm hero-fade-up">
+            <span class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse-glow"></span> Cyberkavach AI
+        </div>
+        
+        <h1 class="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight text-slate-900 mb-6 leading-[1.1] hero-fade-up delay-100">
+            Sovereign Digital <br class="hidden sm:block"/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500">Defense for India</span>
+        </h1>
+        
+        <p class="text-sm md:text-lg text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed font-medium hero-fade-up delay-200">
+            Built to protect 1.4 Billion identities. We neutralize fake bank portals, WhatsApp APK stealers, and AI Deepfake calls in real-time.
+        </p>
+
+        <div class="max-w-3xl mx-auto w-full hero-fade-up delay-300 relative group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-[2.5rem] blur opacity-10 group-hover:opacity-30 transition duration-500"></div>
+            
+            <div class="relative bg-white p-2 md:p-2.5 rounded-[2rem] shadow-2xl border border-slate-200 transition-all duration-300" id="scannerContainer">
+                <form id="scanForm" class="relative flex flex-col sm:flex-row items-center gap-2 sm:gap-0">
+                    <i data-lucide="globe" class="hidden sm:block text-slate-400 w-6 h-6 ml-5 mr-1"></i>
+                    <input type="text" id="scanInput" placeholder="Try scanning a suspicious URL (e.g. sbi-kyc-alert.com)..." required class="w-full sm:flex-1 bg-slate-50 sm:bg-transparent rounded-xl sm:rounded-none border border-slate-200 sm:border-none text-slate-900 placeholder:text-slate-400 outline-none font-medium text-sm py-4 sm:py-0 px-4 focus:ring-0">
+                    <button type="submit" id="scanBtn" class="w-full sm:w-auto bg-slate-900 hover:bg-indigo-600 text-white px-8 py-4 rounded-xl md:rounded-[1.25rem] font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-md">
+                        <span id="scanBtnText">Scan URL</span> <i data-lucide="arrow-right" class="w-4 h-4" id="scanBtnIcon"></i>
+                    </button>
+                </form>
+            </div>
+
+            <div id="scanResultBox" class="hidden-state mt-6 text-left animate-float relative z-20">
+                <div id="resultCard" class="p-5 md:p-6 rounded-2xl md:rounded-[2rem] border shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 md:gap-6 bg-white">
+                    <div class="flex items-start gap-4">
+                        <div id="rIconBox" class="p-3 md:p-4 rounded-xl md:rounded-2xl"><i id="rIcon" data-lucide="activity" class="w-6 h-6 md:w-8 md:h-8"></i></div>
+                        <div>
+                            <div class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Engine Verdict</div>
+                            <div id="rTitle" class="text-xl md:text-2xl font-black uppercase">--</div>
+                            <div class="text-xs md:text-sm font-medium mt-1 text-slate-500">Risk Score: <span id="rScore" class="font-mono font-bold">--%</span></div>
+                            <div class="text-xs md:text-sm font-medium mt-1 text-slate-500">Assessment confidence: <span id="rConfidence" class="font-mono font-bold">--</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="rDetails" class="hidden-state mt-4 bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-sm">
+                    <h4 class="text-[9px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2"><i data-lucide="terminal" class="w-4 h-4 text-indigo-500"></i> Forensic Logs</h4>
+                    <ul id="rFactorsList" class="font-mono text-xs text-slate-700 space-y-2"></ul>
+                    <p id="rDisclaimer" class="mt-4 text-[11px] leading-relaxed text-slate-500"></p>
+                    <div class="mt-4 flex flex-wrap items-center gap-2">
+                        <span class="text-[11px] font-semibold text-slate-600">Was this result helpful?</span>
+                        <button id="falsePositiveBtn" type="button" class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-[11px] font-bold text-amber-800 hover:bg-amber-100">Wrongly flagged</button>
+                        <button id="reportScamBtn" type="button" class="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-[11px] font-bold text-red-700 hover:bg-red-100">Report scam</button>
+                        <span id="feedbackStatus" class="text-[11px] font-medium text-slate-500" aria-live="polite"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 flex flex-wrap justify-center items-center gap-3 md:gap-6 hero-fade-up delay-400">
+            <div class="flex items-center gap-2 bg-white/60 backdrop-blur-sm border border-slate-200 px-4 py-2 rounded-full shadow-sm text-xs font-bold text-slate-700">
+                <i data-lucide="shield-alert" class="w-4 h-4 text-emerald-500"></i> 1.2M+ Threats Blocked
+            </div>
+            <div class="flex items-center gap-2 bg-white/60 backdrop-blur-sm border border-slate-200 px-4 py-2 rounded-full shadow-sm text-xs font-bold text-slate-700">
+                <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i> 0.2ms Latency
+            </div>
+            <div class="flex items-center gap-2 bg-white/60 backdrop-blur-sm border border-slate-200 px-4 py-2 rounded-full shadow-sm text-xs font-bold text-slate-700">
+                <i data-lucide="database" class="w-4 h-4 text-indigo-500"></i> Zero Data Logged
+            </div>
+        </div>
+
+    </div>
+</section>
+
+    <div class="border-y border-slate-200 bg-white py-10 relative z-10">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:flex md:flex-wrap justify-center md:justify-between gap-8 md:gap-4 text-center fade-up">
+            <div>
+                <div class="text-3xl md:text-4xl font-black text-slate-900 flex justify-center"><span class="counter" data-target="1.2">0</span>M+</div>
+                <div class="text-[9px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Threats Blocked</div>
+            </div>
+            <div>
+                <div class="text-3xl md:text-4xl font-black text-slate-900 flex justify-center"><span class="counter" data-target="0.2">0</span>ms</div>
+                <div class="text-[9px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Engine Latency</div>
+            </div>
+            <div>
+                <div class="text-3xl md:text-4xl font-black text-slate-900 flex justify-center"><span class="counter" data-target="15">0</span>B+</div>
+                <div class="text-[9px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Dark Web Records</div>
+            </div>
+            <div>
+                <div class="text-3xl md:text-4xl font-black text-emerald-500 flex justify-center"><span class="counter" data-target="99.2">0</span>%</div>
+                <div class="text-[9px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Accuracy Rate</div>
+            </div>
+        </div>
+    </div>
+
+   <section id="about" class="py-24 px-4 md:px-6 bg-white border-y border-slate-200 relative overflow-hidden z-10">
+    <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-slate-50 rounded-full blur-3xl opacity-50 -z-10 translate-x-1/3 -translate-y-1/3"></div>
+
+    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        
+        <div class="about-fade-up">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-700 text-[10px] font-bold uppercase tracking-widest mb-6 shadow-sm">
+                <i data-lucide="crosshair" class="w-3.5 h-3.5"></i>About Us
+            </div>
+            
+            <h2 class="text-3xl md:text-5xl font-black mb-6 text-slate-900 leading-tight tracking-tight">
+                Securing India's Digital <br>
+                <span class="text-indigo-600">Financial Infrastructure.</span>
+            </h2>
+            
+            <p class="text-slate-600 font-medium leading-relaxed text-sm md:text-lg mb-6">
+                With the explosive adoption of UPI and affordable mobile internet, India has become the world's primary target for organized cyber-syndicates. In 2023 alone, Indian citizens lost over <strong class="text-slate-900">₹7,400 Crores</strong> to sophisticated digital fraud.
+            </p>
+
+            <p class="text-slate-600 font-medium leading-relaxed text-sm md:text-lg mb-8">
+                Traditional antivirus software is obsolete—it relies on databases and is completely blind to psychological manipulation (like Fake CBI Warrants or AnyDesk Scams). CyberKavach uses <strong>proactive neural forensics</strong> to intercept threats at the browser level before they execute.
+            </p>
+
+            <ul class="space-y-4 mb-10 text-sm md:text-base font-bold text-slate-800">
+                <li class="flex items-center gap-3">
+                    <div class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0"><i data-lucide="check" class="w-3 h-3"></i></div>
+                    Zero-Latency Pre-DOM Interception
+                </li>
+                <li class="flex items-center gap-3">
+                    <div class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0"><i data-lucide="check" class="w-3 h-3"></i></div>
+                    Deepfake Audio & PDF Forensics
+                </li>
+                <li class="flex items-center gap-3">
+                    <div class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0"><i data-lucide="check" class="w-3 h-3"></i></div>
+                    APK Malware Smali Decompilation
+                </li>
+            </ul>
+
+            <a href="/aboutus.html" class="inline-flex items-center gap-2 px-8 py-4 bg-slate-900 hover:bg-indigo-600 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md group">
+                Read Full 
+                <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+            </a>
+        </div>
+
+        <div class="relative w-full h-[400px] md:h-[500px] about-fade-up about-delay-200">
+            <div class="absolute inset-0 bg-slate-100 rounded-[2rem] overflow-hidden border border-slate-200 shadow-lg">
+                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1000" alt="Cyber Security Data Center" loading="lazy" class="w-full h-full object-cover opacity-90">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+            </div>
+
+            <div class="absolute -bottom-6 -left-6 md:-left-10 bg-white p-5 rounded-2xl shadow-2xl border border-slate-200 flex items-center gap-4 about-float-anim z-10 w-[280px]">
+                <div class="w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600 shrink-0">
+                    <i data-lucide="activity" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <div class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Titan Engine Status</div>
+                    <div class="text-xl font-black text-slate-900 leading-none tracking-tight">Active Defense</div>
+                </div>
+            </div>
+            
+            <div class="absolute -top-6 -right-6 text-slate-300 z-0 hidden md:grid grid-cols-4 gap-2 opacity-50">
+                <div class="w-2 h-2 bg-current rounded-full"></div><div class="w-2 h-2 bg-current rounded-full"></div><div class="w-2 h-2 bg-current rounded-full"></div><div class="w-2 h-2 bg-current rounded-full"></div>
+                <div class="w-2 h-2 bg-current rounded-full"></div><div class="w-2 h-2 bg-current rounded-full"></div><div class="w-2 h-2 bg-current rounded-full"></div><div class="w-2 h-2 bg-current rounded-full"></div>
+                <div class="w-2 h-2 bg-current rounded-full"></div><div class="w-2 h-2 bg-current rounded-full"></div><div class="w-2 h-2 bg-current rounded-full"></div><div class="w-2 h-2 bg-current rounded-full"></div>
+            </div>
+        </div>
+
+    </div>
+</section>
+      
+    <section id="extension" class="py-24 px-4 md:px-6 border-y border-slate-200 bg-white relative overflow-hidden">
+    <div class="ext-ambient-glow"></div>
+
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+        
+        <div class="lg:w-1/2 w-full ext-fade-up">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-700 text-[10px] font-bold uppercase tracking-widest mb-6 shadow-sm">
+                <i data-lucide="zap" class="w-3.5 h-3.5"></i> Zero-Latency Protection
+            </div>
+            
+            <h2 class="text-3xl md:text-5xl font-black mb-6 text-slate-900 leading-tight tracking-tight">
+                Why a Browser <span class="text-indigo-600">Extension?</span>
+            </h2>
+            <p class="text-slate-600 leading-relaxed mb-8 font-medium text-sm md:text-base">
+                Websites load in milliseconds. If we send every URL to a distant cloud server for analysis, the malicious script has already executed by the time the warning arrives. <strong>The browser is the ultimate endpoint.</strong>
+            </p>
+            
+            <div class="space-y-6 mb-10">
+                <div class="ext-feature-card group">
+                    <div class="ext-feature-icon bg-slate-50 border-slate-200 text-indigo-500 group-hover:bg-indigo-50 group-hover:border-indigo-200">
+                        <i data-lucide="code-2" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-slate-900 font-bold mb-1 text-base">Pre-DOM Interception</h4>
+                        <p class="text-sm text-slate-500 font-medium leading-relaxed">The extension blocks malicious IFrames and obfuscated JavaScript in your device's memory, preventing the browser from even rendering the fake page visually.</p>
+                    </div>
+                </div>
+
+                <div class="ext-feature-card group">
+                    <div class="ext-feature-icon bg-slate-50 border-slate-200 text-red-500 group-hover:bg-red-50 group-hover:border-red-200">
+                        <i data-lucide="download-cloud" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-slate-900 font-bold mb-1 text-base">Drive-By Download Blocks</h4>
+                        <p class="text-sm text-slate-500 font-medium leading-relaxed">Instantly severs the HTTP connection if a website attempts to force-download an invisible <code class="ext-code-tag text-red-500">.exe</code> or <code class="ext-code-tag text-red-500">.apk</code> payload in the background.</p>
+                    </div>
+                </div>
+
+                <div class="ext-feature-card group">
+                    <div class="ext-feature-icon bg-slate-50 border-slate-200 text-emerald-500 group-hover:bg-emerald-50 group-hover:border-emerald-200">
+                        <i data-lucide="eye-off" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-slate-900 font-bold mb-1 text-base">Absolute Anonymity</h4>
+                        <p class="text-sm text-slate-500 font-medium leading-relaxed">Scanning occurs completely locally via the OpsCenter Engine. We do not track your browsing history or log the URLs you visit. True Zero-Knowledge architecture.</p>
+                    </div>
+                </div>
+            </div>
+
+            <a href="/explore.html" class="ext-btn-primary group">
+                <span>Explore Full Architecture</span> 
+                <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+            </a>
+        </div>
+        <div class="lg:w-1/2 w-full ext-fade-up ext-delay-200">
+            <div class="ext-browser-mockup group">
+                <div class="ext-browser-header">
+                    <div class="flex gap-1.5">
+                        <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                        <div class="w-3 h-3 rounded-full bg-amber-400"></div>
+                        <div class="w-3 h-3 rounded-full bg-emerald-400"></div>
+                    </div>
+                    <div class="ext-address-bar">
+                        <i data-lucide="lock" class="w-3 h-3 text-red-500"></i> https://onlinesbi-kyc-verify.vercel.app
+                    </div>
+                    <div class="ext-icon-active">
+                        <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                <div class="h-80 bg-white relative p-6 overflow-hidden">
+                    <div class="ext-blurred-site">
+                        <div class="w-32 h-8 bg-blue-100 rounded mb-6"></div>
+                        <div class="w-48 h-4 bg-slate-200 rounded mb-4"></div>
+                        <div class="w-full h-10 bg-slate-100 rounded border border-slate-200 mb-3"></div>
+                        <div class="w-full h-10 bg-slate-100 rounded border border-slate-200 mb-6"></div>
+                        <div class="w-32 h-10 bg-blue-600 rounded"></div>
+                    </div>
+
+                    <div class="ext-dashboard-popup">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="shield" class="w-4 h-4 text-indigo-600"></i>
+                                <span class="font-black text-slate-900 text-sm tracking-tight">OpsCenter</span>
+                            </div>
+                            <span class="px-2 py-0.5 bg-red-100 text-red-600 text-[8px] font-black uppercase tracking-widest rounded-sm">Threat Blocked</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-2 mb-4">
+                            <div class="bg-slate-50 p-2 rounded-lg border border-slate-100">
+                                <div class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-1">Engine Latency</div>
+                                <div class="text-sm font-black text-slate-900 font-mono">0.14ms</div>
+                            </div>
+                            <div class="bg-slate-50 p-2 rounded-lg border border-slate-100">
+                                <div class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-1">Risk Score</div>
+                                <div class="text-sm font-black text-red-500 font-mono">99.8%</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-red-50 border border-red-100 p-3 rounded-xl mb-3">
+                            <p class="text-xs font-medium text-red-900 leading-tight">
+                                <strong>DOM Anomaly:</strong> Invisible credential harvesting script detected. Connection to remote server severed locally.
+                            </p>
+                        </div>
+
+                        <button class="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors">
+                            Return to Safety
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-6 flex justify-center items-center gap-2">
+                <i data-lucide="cpu" class="w-3.5 h-3.5"></i>Dashboard terminal
+            </p>
+        </div>
+    </div>
+</section>
+
+  
+<section id="ecosystem" class="py-24 px-4 md:px-6 bg-slate-50 relative z-10">
+    <div class="max-w-7xl mx-auto">
+        
+        <div class="text-center mb-16 md:mb-20 module-fade-up">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-100/50 border border-indigo-200 text-indigo-700 text-[10px] font-bold uppercase tracking-widest mb-4 shadow-sm">
+                <i data-lucide="network" class="w-3.5 h-3.5"></i> Threat Intelligence Arsenal
+            </div>
+            <h2 class="text-3xl md:text-5xl font-black mb-4 text-slate-900 tracking-tight">The Neural <span class="text-indigo-600">Ecosystem.</span></h2>
+            <p class="text-slate-600 font-medium text-sm md:text-lg max-w-2xl mx-auto">
+                Three specialized AI engines operating in cryptographic harmony. Covering every modern vulnerability vector from WhatsApp to the Dark Web.
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            
+            <div class="module-card group module-fade-up">
+                <div class="module-hover-bg bg-red-500/5"></div>
+                
+                <div class="relative z-10 flex flex-col h-full">
+                    <div class="module-icon-box bg-red-50 text-red-600 border-red-100 group-hover:bg-red-600 group-hover:text-white group-hover:border-red-600 group-hover:shadow-[0_0_20px_rgba(220,38,38,0.4)]">
+                        <i data-lucide="siren" class="w-6 h-6"></i>
+                    </div>
+                    
+                    <h3 class="text-2xl font-black mb-3 text-slate-900 tracking-tight group-hover:text-red-600 transition-colors duration-300">Satark AI</h3>
+                    
+                    <p class="text-slate-600 text-sm leading-relaxed mb-8 font-medium flex-grow">
+                        Your absolute defense against "Digital Arrests". Upload suspicious CBI warrants or audio clips. The engine runs <span class="module-code-tag text-red-600 bg-red-50">Pixel Discontinuity</span> checks and spectral analysis to unmask Photoshop anomalies and AI-voice clones instantly.
+                    </p>
+                    
+                    <a href="/satark-ai/satark.html" class="module-btn text-red-600 bg-red-50 hover:bg-red-600 hover:text-white">
+                        <span>Access Satark</span> 
+                        <i data-lucide="arrow-right" class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="module-card group module-fade-up module-delay-100">
+                <div class="module-hover-bg bg-emerald-500/5"></div>
+                
+                <div class="relative z-10 flex flex-col h-full">
+                    <div class="module-icon-box bg-emerald-50 text-emerald-600 border-emerald-100 group-hover:bg-emerald-600 group-hover:text-white group-hover:border-emerald-600 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+                        <i data-lucide="smartphone" class="w-6 h-6"></i>
+                    </div>
+                    
+                    <h3 class="text-2xl font-black mb-3 text-slate-900 tracking-tight group-hover:text-emerald-600 transition-colors duration-300">APK Kavach</h3>
+                    
+                    <p class="text-slate-600 text-sm leading-relaxed mb-8 font-medium flex-grow">
+                        Stop WhatsApp APK distribution scams. We decompile the code of any suspicious Android app (.apk), proactively hunting for malicious intents and background permissions like <span class="module-code-tag text-emerald-600 bg-emerald-50 font-bold">RECEIVE_SMS</span> used to intercept your banking OTPs.
+                    </p>
+                    
+                    <a href="/apk-shield/apk.html" class="module-btn text-emerald-700 bg-emerald-50 hover:bg-emerald-600 hover:text-white">
+                        <span>Deploy Kavach</span> 
+                        <i data-lucide="arrow-right" class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="module-card group module-fade-up module-delay-200">
+                <div class="module-hover-bg bg-purple-500/5"></div>
+                
+                <div class="relative z-10 flex flex-col h-full">
+                    <div class="module-icon-box bg-purple-50 text-purple-600 border-purple-100 group-hover:bg-purple-600 group-hover:text-white group-hover:border-purple-600 group-hover:shadow-[0_0_20px_rgba(147,51,234,0.4)]">
+                        <i data-lucide="globe" class="w-6 h-6"></i>
+                    </div>
+                    
+                    <h3 class="text-2xl font-black mb-3 text-slate-900 tracking-tight group-hover:text-purple-600 transition-colors duration-300">Shadow Scout</h3>
+                    
+                    <p class="text-slate-600 text-sm leading-relaxed mb-8 font-medium flex-grow">
+                        Military-grade Darknet Intelligence. Cross-reference your Passwords and UPI VPAs against 15 Billion leaked records and Indian cybercrime registries. Uses strict <span class="module-code-tag text-purple-600 bg-purple-50">K-Anonymity hashing</span> to ensure your search queries are never logged.
+                    </p>
+                    
+                    <a href="/shadow-scout/shadow.html" class="module-btn text-purple-700 bg-purple-50 hover:bg-purple-600 hover:text-white">
+                        <span>Launch Scout</span> 
+                        <i data-lucide="arrow-right" class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+  
+<section id="pricing" class="py-24 px-4 md:px-6 bg-white border-y border-slate-200 relative z-10">
+    <div class="max-w-5xl mx-auto">
+        
+        <div class="text-center mb-16 md:mb-20 pricing-fade-up">
+            <h2 class="text-4xl md:text-5xl font-black mb-4 text-slate-900 tracking-tight">Transparent Pricing.</h2>
+            <p class="text-slate-500 font-medium text-lg max-w-xl mx-auto">
+                Enterprise-grade AI security. No hidden fees. No recurring subscriptions. Just pure proactive defense.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 md:gap-8 items-stretch max-w-4xl mx-auto">
+            
+            <div class="pricing-card flex flex-col bg-white border border-slate-200 rounded-3xl p-8 md:p-10 pricing-fade-up">
+                <div class="mb-8">
+                    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-widest rounded-md mb-4">Community</span>
+                    <div class="flex items-baseline gap-2 text-slate-900">
+                        <span class="text-5xl font-black tracking-tighter">₹0</span>
+                    </div>
+                    <p class="text-slate-500 text-sm mt-4 font-medium">Basic protection for casual web browsing.</p>
+                </div>
+
+                <div class="space-y-4 mb-10 flex-grow">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="check" class="w-4 h-4 text-slate-900 shrink-0"></i>
+                        <span class="text-sm font-medium text-slate-700">10 Browser Scans / Day</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="check" class="w-4 h-4 text-slate-900 shrink-0"></i>
+                        <span class="text-sm font-medium text-slate-700">10 AI Forensics / Day</span>
+                    </div>
+                    <div class="flex items-center gap-3 opacity-50">
+                        <i data-lucide="minus" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                        <span class="text-sm font-medium text-slate-500">No Shadow Scout Access</span>
+                    </div>
+                    <div class="flex items-center gap-3 opacity-50">
+                        <i data-lucide="minus" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                        <span class="text-sm font-medium text-slate-500">Community Support Only</span>
+                    </div>
+                </div>
+
+                <button class="w-full py-4 rounded-xl border border-slate-200 text-slate-900 font-bold text-xs uppercase tracking-widest hover:bg-slate-50 transition-colors">
+                    Current Plan
+                </button>
+            </div>
+
+            <div class="pricing-card flex flex-col relative bg-slate-900 border border-slate-900 rounded-3xl p-8 md:p-10 pricing-fade-up pricing-delay-100 shadow-xl">
+                <div class="absolute top-0 right-8 transform -translate-y-1/2 bg-indigo-600 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-[0.2em] shadow-md">
+                   Pro
+                </div>
+                
+                <div class="mb-8">
+                    <span class="inline-block px-3 py-1 bg-slate-800 text-slate-300 text-[10px] font-bold uppercase tracking-widest rounded-md mb-4">Pro Feature</span>
+                    <div class="flex items-baseline gap-2 text-white">
+                        <span class="text-5xl font-black tracking-tighter">₹199</span>
+                    </div>
+                    <p class="text-slate-400 text-sm mt-4 font-medium">Full AI arsenal unlocked. Secure your digital identity forever.</p>
+                </div>
+                
+                <div class="space-y-4 mb-8 flex-grow">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="check" class="w-4 h-4 text-indigo-400 shrink-0"></i>
+                        <span class="text-sm font-medium text-slate-200">2,000 Extension Scans Credits </span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="check" class="w-4 h-4 text-indigo-400 shrink-0"></i>
+                        <span class="text-sm font-medium text-slate-200">200 Deep AI Forensics Credits</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="check" class="w-4 h-4 text-indigo-400 shrink-0"></i>
+                        <span class="text-sm font-medium text-slate-200">Unrestricted Shadow Scout</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="check" class="w-4 h-4 text-indigo-400 shrink-0"></i>
+                        <span class="text-sm font-medium text-slate-200">Priority Threat Reports</span>
+                    </div>
+                </div>
+                
+                <div id="paymentArea" class="mt-auto">
+                    <div class="relative mb-3">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i data-lucide="mail" class="w-4 h-4 text-slate-500"></i>
+                        </div>
+                        <input type="email" id="checkoutEmail" placeholder="Enter delivery email" required class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl pl-11 pr-4 py-4 text-sm outline-none focus:border-indigo-500 transition-colors font-medium placeholder:text-slate-500">
+                    </div>
+                    
+                    <button id="payBtn" onclick="initiateCheckout()" class="w-full py-4 rounded-xl bg-white text-slate-900 font-black text-xs uppercase tracking-widest hover:bg-indigo-50 transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i> Secure Checkout
+                    </button>
+                    <p class="text-[10px] text-center text-slate-500 mt-4 font-bold uppercase tracking-widest flex items-center justify-center gap-1.5">
+                        <i data-lucide="lock" class="w-3 h-3"></i> Encrypted by Razorpay
+                    </p>
+                </div>
+
+                <div id="successArea" class="hidden-state flex-col items-center justify-center text-center p-6 bg-slate-800 rounded-2xl border border-slate-700 mt-auto">
+                    <div class="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center text-white mb-4">
+                        <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+                    </div>
+                    <p class="text-white font-bold text-sm mb-2">Payment Verified!</p>
+                    <p class="text-slate-400 text-xs mb-3">Your Elite License Key:</p>
+                    <code id="genKey" class="block w-full bg-slate-900 p-3 rounded-lg border border-slate-700 font-mono font-black text-emerald-400 text-lg tracking-widest mb-3 select-all"></code>
+                    <p class="text-[10px] text-slate-500 font-medium">Copy & paste this into your extension.</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="threat-intel" class="py-24 px-4 md:px-6 bg-slate-50 relative z-10 border-t border-slate-200">
+    <div class="max-w-7xl mx-auto">
+        
+        <div class="flex flex-col md:flex-row justify-between items-end mb-12 blog-fade-up">
+            <div class="max-w-2xl">
+                <div class="text-indigo-600 font-bold uppercase tracking-widest text-[10px] mb-4 flex items-center gap-2">
+                    <i data-lucide="book-open" class="w-4 h-4"></i> Research Hub
+                </div>
+                <h2 class="text-3xl md:text-5xl font-black mb-4 text-slate-900 tracking-tight">Threat Intelligence.</h2>
+                <p class="text-slate-600 font-medium text-lg">Real-time advisories, zero-day alerts, and technical breakdowns of Indian cyber scams.</p>
+            </div>
+            
+            <a href="/blog/blog.html" class="hidden md:inline-flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-800 font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-colors shadow-sm mt-6 md:mt-0">
+                View Blog <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </a>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <article class="blog-card group flex flex-col bg-white border border-slate-200 rounded-[1.5rem] overflow-hidden shadow-sm blog-fade-up">
+                <div class="blog-img-wrapper h-56 relative overflow-hidden bg-slate-100">
+                    <img src="https://images.unsplash.com/photo-1614064641913-6b83c5000571?auto=format&fit=crop&q=80&w=800" alt="Android Malware Source Code" loading="lazy" class="w-full h-full object-cover">
+                    <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest text-slate-800 shadow-sm flex items-center gap-1.5">
+                        <i data-lucide="cpu" class="w-3.5 h-3.5 text-indigo-600"></i> APK Malware
+                    </div>
+                </div>
+                
+                <div class="p-6 md:p-8 flex flex-col flex-1">
+                    <time datetime="2026-10-20" class="text-[10px] font-mono font-bold text-slate-400 mb-3 block">Oct 20, 2026 • 12 Min Read</time>
+                    <h3 class="text-xl font-black text-slate-900 mb-3 leading-snug group-hover:text-indigo-600 transition-colors">
+                        <a href="/blog/indianpost.html" class="focus:outline-none">
+                            <span class="absolute inset-0" aria-hidden="true"></span>
+                            IndiaPost SMS Trojan: Decompiling the Hidden Intent
+                        </a>
+                    </h3>
+                    <p class="text-sm text-slate-600 font-medium line-clamp-3 mb-6 flex-grow">
+                        Scammers are sending fake delivery links. We decompiled the dropped <code>.apk</code> and found the <span class="bg-slate-100 text-slate-800 px-1 rounded font-mono text-xs border border-slate-200">RECEIVE_SMS</span> intent actively stealing banking OTPs.
+                    </p>
+                    
+                    <div class="mt-auto flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-900 group-hover:text-indigo-600 transition-colors">
+                        Read Analysis <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+                    </div>
+                </div>
+            </article>
+
+            <article class="blog-card group flex flex-col bg-white border border-slate-200 rounded-[1.5rem] overflow-hidden shadow-sm blog-fade-up blog-delay-100">
+                <div class="blog-img-wrapper h-56 relative overflow-hidden bg-slate-100">
+                    <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=800" alt="Mobile Screen Share Fraud" loading="lazy" class="w-full h-full object-cover">
+                    <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest text-slate-800 shadow-sm flex items-center gap-1.5">
+                        <i data-lucide="landmark" class="w-3.5 h-3.5 text-indigo-600"></i> Bank Phishing
+                    </div>
+                </div>
+                
+                <div class="p-6 md:p-8 flex flex-col flex-1">
+                    <time datetime="2026-10-15" class="text-[10px] font-mono font-bold text-slate-400 mb-3 block">Oct 15, 2026 • 10 Min Read</time>
+                    <h3 class="text-xl font-black text-slate-900 mb-3 leading-snug group-hover:text-indigo-600 transition-colors">
+                        <a href="/blog/anydesk.html" class="focus:outline-none">
+                            <span class="absolute inset-0" aria-hidden="true"></span>
+                            The Screen-Share Epidemic: Weaponizing AnyDesk
+                        </a>
+                    </h3>
+                    <p class="text-sm text-slate-600 font-medium line-clamp-3 mb-6 flex-grow">
+                        How fraudsters convince victims to install legitimate remote-desktop tools to silently capture UPI PINs during fake customer support calls.
+                    </p>
+                    
+                    <div class="mt-auto flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-900 group-hover:text-indigo-600 transition-colors">
+                        Read Analysis <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+                    </div>
+                </div>
+            </article>
+
+            <article class="blog-card group flex flex-col bg-white border border-slate-200 rounded-[1.5rem] overflow-hidden shadow-sm blog-fade-up blog-delay-200">
+                <div class="blog-img-wrapper h-56 relative overflow-hidden bg-slate-100">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=800" alt="Code Matrix Zero Day" loading="lazy" class="w-full h-full object-cover">
+                    <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest text-slate-800 shadow-sm flex items-center gap-1.5">
+                        <i data-lucide="globe" class="w-3.5 h-3.5 text-indigo-600"></i> Zero-Day Exploit
+                    </div>
+                </div>
+                
+                <div class="p-6 md:p-8 flex flex-col flex-1">
+                    <time datetime="2026-09-28" class="text-[10px] font-mono font-bold text-slate-400 mb-3 block">Sep 28, 2026 • 16 Min Read</time>
+                    <h3 class="text-xl font-black text-slate-900 mb-3 leading-snug group-hover:text-indigo-600 transition-colors">
+                        <a href="/blog/bypssing.html" class="focus:outline-none">
+                            <span class="absolute inset-0" aria-hidden="true"></span>
+                            Bypassing the Bots: Captcha Walls & Obfuscation
+                        </a>
+                    </h3>
+                    <p class="text-sm text-slate-600 font-medium line-clamp-3 mb-6 flex-grow">
+                        Phishers are throwing legitimate CAPTCHA challenges before the fake login page, successfully blocking Google Safe Browsing bots from indexing them.
+                    </p>
+                    
+                    <div class="mt-auto flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-900 group-hover:text-indigo-600 transition-colors">
+                        Read Analysis <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+
+        <div class="mt-10 flex justify-center md:hidden blog-fade-up">
+            <a href="blog.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-slate-900 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md w-full active:bg-indigo-600">
+                View All Intelligence Logs <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<section id="honesty" class="py-24 px-4 md:px-6 bg-white border-y border-slate-200 relative z-10 overflow-hidden">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-20 items-center">
+        
+        <div class="lg:w-1/2 w-full honesty-fade-up">
+            
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-100 border border-slate-200 text-slate-700 text-[10px] font-black uppercase tracking-widest mb-6 shadow-sm">
+                <i data-lucide="scale" class="w-3.5 h-3.5"></i> The Honesty Protocol
+            </div>
+            
+            <h2 class="text-3xl md:text-5xl font-black mb-6 text-slate-900 leading-tight tracking-tight">
+                Why 100% Security <br>
+                <span class="text-slate-400">is a Myth.</span>
+            </h2>
+            
+            <div class="prose prose-slate max-w-none text-slate-600 font-medium leading-relaxed text-sm md:text-base mb-10">
+                <p class="mb-4">
+                    If a cybersecurity vendor promises you absolute 100% protection, they are selling you snake oil. The cyber landscape is an endless cat-and-mouse game. Hackers continuously invent novel "Zero-Day" payloads and use Generative AI to bypass filters.
+                </p>
+                <p>
+                    <strong>Our AI is probabilistic, not deterministic.</strong> It analyzes DOM patterns, pixel structures, and spectral anomalies to catch what traditional antivirus misses. We act as a formidable augmented shield—but human common sense remains the ultimate firewall.
+                </p>
+            </div>
+            
+            <div class="bg-slate-50 border border-slate-200 p-6 md:p-8 rounded-2xl shadow-sm relative overflow-hidden">
+                <div class="absolute top-4 right-4 text-slate-200 grid grid-cols-3 gap-1">
+                    <div class="w-1 h-1 bg-slate-300 rounded-full"></div><div class="w-1 h-1 bg-slate-300 rounded-full"></div><div class="w-1 h-1 bg-slate-300 rounded-full"></div>
+                    <div class="w-1 h-1 bg-slate-300 rounded-full"></div><div class="w-1 h-1 bg-slate-300 rounded-full"></div><div class="w-1 h-1 bg-slate-300 rounded-full"></div>
+                </div>
+
+                <div class="flex justify-between items-end mb-4 relative z-10">
+                    <span class="text-xs font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
+                        <i data-lucide="target" class="w-4 h-4 text-slate-400"></i> Accuracy
+                    </span>
+                    <span class="text-3xl font-black text-slate-900 font-mono tracking-tighter flex items-center">
+                        <span id="accuracy-counter">0</span>%
+                    </span>
+                </div>
+                
+                <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden mb-4">
+                    <div id="accuracy-bar-fill" class="h-full bg-slate-900 rounded-full w-0 relative"></div>
+                </div>
+                
+                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
+                    The remaining 0.8% accounts for unprecedented zero-day adversarial attacks.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="lg:w-1/2 w-full flex flex-col gap-5">
+            
+            <div class="honesty-risk-card bg-white border border-slate-200 p-6 md:p-8 rounded-[1.5rem] shadow-sm honesty-fade-up">
+                <div class="flex items-start gap-4">
+                    <div class="honesty-icon-box bg-slate-50 border border-slate-100 text-slate-600 rounded-xl p-3 shrink-0">
+                        <i data-lucide="clock" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-black text-slate-900 mb-2 tracking-tight">Zero-Day Phishing</h3>
+                        <p class="text-slate-600 text-sm font-medium leading-relaxed">
+                            Scammers launch thousands of new domains daily. They harvest data and destroy the site within hours, long before global blacklists (like Google Safe Browsing) can even detect them.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="honesty-risk-card bg-white border border-slate-200 p-6 md:p-8 rounded-[1.5rem] shadow-sm honesty-fade-up honesty-delay-100">
+                <div class="flex items-start gap-4">
+                    <div class="honesty-icon-box bg-slate-50 border border-slate-100 text-slate-600 rounded-xl p-3 shrink-0">
+                        <i data-lucide="bot" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-black text-slate-900 mb-2 tracking-tight">Adversarial AI</h3>
+                        <p class="text-slate-600 text-sm font-medium leading-relaxed">
+                            Hackers now use machine learning to test their own deepfakes against detection algorithms. They constantly mutate the malicious payload until it learns how to slip through the system.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="honesty-risk-card bg-white border border-slate-200 p-6 md:p-8 rounded-[1.5rem] shadow-sm honesty-fade-up honesty-delay-200">
+                <div class="flex items-start gap-4">
+                    <div class="honesty-icon-box bg-slate-50 border border-slate-100 text-slate-600 rounded-xl p-3 shrink-0">
+                        <i data-lucide="user-x" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-black text-slate-900 mb-2 tracking-tight">The Human Exploit</h3>
+                        <p class="text-slate-600 text-sm font-medium leading-relaxed">
+                            No line of code can stop a user from willingly transferring money out of panic. Social engineering targets human psychology directly, making it the hardest vulnerability to patch.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+    
+<section id="faq" class="py-24 px-4 md:px-6 bg-white border-t border-slate-200 relative z-10">
+    <div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+        
+        <div class="lg:col-span-4 lg:sticky lg:top-32 faq-fade-up">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-100 border border-slate-200 text-slate-700 text-[10px] font-black uppercase tracking-widest mb-6 shadow-sm">
+                <i data-lucide="help-circle" class="w-3.5 h-3.5"></i> Clarity & Support
+            </div>
+            <h2 class="text-3xl md:text-5xl font-black mb-6 text-slate-900 tracking-tight leading-tight">
+                Frequently <br>Asked <span class="text-slate-400">Questions.</span>
+            </h2>
+            <p class="text-slate-600 font-medium mb-8 leading-relaxed">
+                Everything you need to know about the Titan Engine, our privacy architecture, and how we protect your digital identity.
+            </p>
+            <div class="bg-slate-50 border border-slate-200 p-6 rounded-2xl">
+                <p class="text-sm font-bold text-slate-900 mb-2">Still have questions?</p>
+                <p class="text-xs text-slate-500 font-medium mb-4">Our enterprise support team is available 24/7 to assist you.</p>
+                <a href="/contact.html" class="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-indigo-600 hover:text-indigo-800 transition-colors">
+                    Contact Support <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="lg:col-span-8 flex flex-col gap-4">
+            <div class="faq-card bg-white border border-slate-200 rounded-2xl overflow-hidden faq-fade-up">
+                <button class="faq-btn w-full flex items-center justify-between p-6 md:p-8 text-left focus:outline-none group" aria-expanded="false">
+                    <span class="text-base md:text-lg font-bold text-slate-900 pr-4 group-hover:text-indigo-600 transition-colors">How is CyberKavach different from traditional antivirus software?</span>
+                    <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0 group-hover:bg-indigo-50 group-hover:border-indigo-200 transition-colors">
+                        <i data-lucide="plus" class="faq-icon w-4 h-4 text-slate-500 group-hover:text-indigo-600 transition-transform duration-300"></i>
+                    </div>
+                </button>
+                <div class="faq-content bg-slate-50/50">
+                    <div class="px-6 md:px-8 pb-6 md:pb-8 pt-0">
+                        <p class="text-slate-600 text-sm md:text-base font-medium leading-relaxed">
+                            Traditional antiviruses rely on signature databases—they only block known viruses. CyberKavach uses <strong>proactive neural heuristics</strong>. We analyze the invisible code (DOM) of websites, detect pixel anomalies in fake PDFs, and catch AI-voice clones. We stop social engineering and zero-day phishing, not just old malware files.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-card bg-white border border-slate-200 rounded-2xl overflow-hidden faq-fade-up faq-delay-100">
+                <button class="faq-btn w-full flex items-center justify-between p-6 md:p-8 text-left focus:outline-none group" aria-expanded="false">
+                    <span class="text-base md:text-lg font-bold text-slate-900 pr-4 group-hover:text-indigo-600 transition-colors">Will the browser extension slow down my internet speed?</span>
+                    <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0 group-hover:bg-indigo-50 group-hover:border-indigo-200 transition-colors">
+                        <i data-lucide="plus" class="faq-icon w-4 h-4 text-slate-500 group-hover:text-indigo-600 transition-transform duration-300"></i>
+                    </div>
+                </button>
+                <div class="faq-content bg-slate-50/50">
+                    <div class="px-6 md:px-8 pb-6 md:pb-8 pt-0">
+                        <p class="text-slate-600 text-sm md:text-base font-medium leading-relaxed">
+                            Not at all. The Titan Engine is engineered for zero-latency. It processes the webpage locally in your browser memory within <strong>0.2 milliseconds</strong> before rendering. You will experience absolute security without any noticeable drop in browsing speed or computer performance.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-card bg-white border border-slate-200 rounded-2xl overflow-hidden faq-fade-up faq-delay-200">
+                <button class="faq-btn w-full flex items-center justify-between p-6 md:p-8 text-left focus:outline-none group" aria-expanded="false">
+                    <span class="text-base md:text-lg font-bold text-slate-900 pr-4 group-hover:text-indigo-600 transition-colors">Do you store my browsing history or passwords?</span>
+                    <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0 group-hover:bg-indigo-50 group-hover:border-indigo-200 transition-colors">
+                        <i data-lucide="plus" class="faq-icon w-4 h-4 text-slate-500 group-hover:text-indigo-600 transition-transform duration-300"></i>
+                    </div>
+                </button>
+                <div class="faq-content bg-slate-50/50">
+                    <div class="px-6 md:px-8 pb-6 md:pb-8 pt-0">
+                        <p class="text-slate-600 text-sm md:text-base font-medium leading-relaxed">
+                            Absolutely not. We operate on a strict <strong>Zero-Logs policy</strong>. All DOM scanning happens locally on your device. For our Dark Web Shadow Scout feature, we use <code class="bg-slate-200 px-1 rounded text-slate-800 text-xs">K-Anonymity SHA-1 Hashing</code>, meaning we only send a mathematical fragment of your data to our servers, ensuring your actual passwords remain completely invisible to us.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-card bg-white border border-slate-200 rounded-2xl overflow-hidden faq-fade-up faq-delay-300">
+                <button class="faq-btn w-full flex items-center justify-between p-6 md:p-8 text-left focus:outline-none group" aria-expanded="false">
+                    <span class="text-base md:text-lg font-bold text-slate-900 pr-4 group-hover:text-indigo-600 transition-colors">Is the Titan Elite license a subscription?</span>
+                    <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0 group-hover:bg-indigo-50 group-hover:border-indigo-200 transition-colors">
+                        <i data-lucide="plus" class="faq-icon w-4 h-4 text-slate-500 group-hover:text-indigo-600 transition-transform duration-300"></i>
+                    </div>
+                </button>
+                <div class="faq-content bg-slate-50/50">
+                    <div class="px-6 md:px-8 pb-6 md:pb-8 pt-0">
+                        <p class="text-slate-600 text-sm md:text-base font-medium leading-relaxed">
+                            No. We hate recurring fees as much as you do. The Titan Elite plan is a <strong>one-time payment for lifetime access</strong>. Pay ₹199 once, and get unrestricted access to 2,000 daily extension scans, AI forensics, and priority threat intelligence updates forever.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-card bg-white border border-slate-200 rounded-2xl overflow-hidden faq-fade-up faq-delay-400">
+                <button class="faq-btn w-full flex items-center justify-between p-6 md:p-8 text-left focus:outline-none group" aria-expanded="false">
+                    <span class="text-base md:text-lg font-bold text-slate-900 pr-4 group-hover:text-indigo-600 transition-colors">How do I verify a "Digital Arrest" warrant?</span>
+                    <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0 group-hover:bg-indigo-50 group-hover:border-indigo-200 transition-colors">
+                        <i data-lucide="plus" class="faq-icon w-4 h-4 text-slate-500 group-hover:text-indigo-600 transition-transform duration-300"></i>
+                    </div>
+                </button>
+                <div class="faq-content bg-slate-50/50">
+                    <div class="px-6 md:px-8 pb-6 md:pb-8 pt-0">
+                        <p class="text-slate-600 text-sm md:text-base font-medium leading-relaxed">
+                            If you receive a suspicious CBI, Police, or Customs warrant via WhatsApp, do not panic. Open our <strong>Satark AI</strong> dashboard and upload the PDF or image. The engine will instantly run an Error Level Analysis (ELA) to detect manipulated pixels, fake stamps, and forged signatures, providing you with a definitive forensic report.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [{
+    "@type": "Question",
+    "name": "How is CyberKavach different from traditional antivirus software?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Traditional antiviruses rely on signature databases. CyberKavach uses proactive neural heuristics to analyze the DOM of websites, detect pixel anomalies in fake PDFs, and catch AI-voice clones."
+    }
+  },{
+    "@type": "Question",
+    "name": "Will the browser extension slow down my internet speed?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Not at all. The Titan Engine is engineered for zero-latency. It processes the webpage locally in your browser memory within 0.2 milliseconds before rendering."
+    }
+  },{
+    "@type": "Question",
+    "name": "Do you store my browsing history or passwords?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Absolutely not. We operate on a strict Zero-Logs policy. For our Dark Web Shadow Scout feature, we use K-Anonymity SHA-1 Hashing to ensure privacy."
+    }
+  }]
+}
+</script>
+
+<section id="final-cta" class="py-24 px-4 md:px-6 bg-white relative z-10">
+    <div class="max-w-5xl mx-auto">
+        <div class="cta-card bg-[#0f172a] rounded-[2.5rem] p-8 md:p-16 text-center relative overflow-hidden shadow-2xl cta-fade-up">
+            
+            <div class="cta-glow-left"></div>
+            <div class="cta-glow-right"></div>
+            <div class="cta-grid-pattern"></div>
+
+            <div class="relative z-10">
+                <h2 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight leading-[1.1]">
+                    Don't leave your digital identity to chance. <br class="hidden md:block">
+                    <span class="text-indigo-400">Secure it proactively.</span>
+                </h2>
+                
+                <p class="text-slate-400 text-sm md:text-lg mb-10 max-w-2xl mx-auto font-medium leading-relaxed">
+                    Join thousands of Indians protecting their financial assets and personal data with our enterprise-grade neural shield.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-10">
+                    <button onclick="document.getElementById('pricing').scrollIntoView({behavior: 'smooth'})" class="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs md:text-sm uppercase tracking-widest rounded-xl transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] flex items-center justify-center gap-2 group">
+                        <i data-lucide="shield-check" class="w-5 h-5 group-hover:scale-110 transition-transform duration-300"></i> Get CyberKavach PRO
+                    </button>
+                    
+                    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-full sm:w-auto px-8 py-4 bg-slate-800/80 hover:bg-slate-700 text-white font-bold text-xs md:text-sm uppercase tracking-widest rounded-xl border border-slate-700 hover:border-slate-500 transition-all flex items-center justify-center gap-2 group">
+                        <i data-lucide="scan-line" class="w-4 h-4 text-slate-400 group-hover:text-white transition-colors"></i> Try Live Scanner
+                    </button>
+                </div>
+                
+                <div class="flex flex-wrap justify-center items-center gap-4 md:gap-8 text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest border-t border-slate-800/80 pt-8">
+                    <span class="flex items-center gap-1.5">
+                        <div class="w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center"><i data-lucide="check" class="w-3 h-3 text-emerald-400"></i></div>
+                        No Recurring Fees
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <div class="w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center"><i data-lucide="check" class="w-3 h-3 text-emerald-400"></i></div>
+                        Zero-Logs Privacy
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <div class="w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center"><i data-lucide="check" class="w-3 h-3 text-emerald-400"></i></div>
+                        Instant Setup
+                    </span>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+<footer class="bg-slate-900 pt-20 pb-10 px-4 md:px-6 border-t border-slate-800 relative z-10 overflow-hidden">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent"></div>
+
+    <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-8 mb-16">
+            
+            <div class="md:col-span-12 lg:col-span-5">
+                <div class="flex items-center gap-3 mb-6 cursor-pointer group" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                    <div class="bg-indigo-600 p-2 rounded-xl shadow-[0_0_15px_rgba(79,70,229,0.3)] group-hover:shadow-[0_0_25px_rgba(79,70,229,0.5)] transition-shadow">
+                        <i data-lucide="shield" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <span class="font-black text-2xl tracking-tight text-white">CyberKavach<span class="text-indigo-400">.AI</span></span>
+                </div>
+                <p class="text-slate-400 text-sm leading-relaxed max-w-sm font-medium mb-8">
+                    A sovereign cyber initiative dedicated to making the Indian internet safe. We process heuristics and detect what humans miss.
+                </p>
+                
+                <div class="flex gap-3">
+                    <a href="#" class="footer-social-btn" aria-label="Twitter">
+                        <i data-lucide="twitter" class="w-4 h-4"></i>
+                    </a>
+                    <a href="#" class="footer-social-btn" aria-label="GitHub">
+                        <i data-lucide="github" class="w-4 h-4"></i>
+                    </a>
+                    <a href="#" class="footer-social-btn" aria-label="LinkedIn">
+                        <i data-lucide="linkedin" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="hidden lg:block lg:col-span-1"></div>
+
+            <div class="md:col-span-6 lg:col-span-3">
+                <h4 class="text-white font-black mb-6 uppercase text-xs tracking-[0.2em] flex items-center gap-2">
+                    <i data-lucide="cpu" class="w-3 h-3 text-indigo-400"></i> Titan Modules
+                </h4>
+                <ul class="space-y-4">
+                    <li><a href="#extension" class="footer-link">Browser Extension</a></li>
+                    <li><a href="/apk-shield/apk.html" class="footer-link">APK Raksha Kavach</a></li>
+                    <li><a href="/satark-ai/satark.html" class="footer-link">Satark AI Forensics</a></li>
+                    <li><a href="/shadow-scout/shadow.html" class="footer-link flex items-center gap-2">Shadow Scout <span class="px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-400 text-[8px] font-bold uppercase tracking-wider">Dark Web</span></a></li>
+                </ul>
+            </div>
+            
+            <div class="md:col-span-6 lg:col-span-3">
+                <h4 class="text-white font-black mb-6 uppercase text-xs tracking-[0.2em] flex items-center gap-2">
+                    <i data-lucide="scale" class="w-3 h-3 text-indigo-400"></i> Legal & Protocol
+                </h4>
+                <ul class="space-y-4">
+                    <li><a href="/aboutus.html" class="footer-link">About Us</a></li>
+                    <li><a href="/blog/blog.html" class="footer-link">Blogs</a></li>
+                    <li><a href="/terms.html" class="footer-link">Terms & Conditions</a></li>
+                    <li><a href="/privacy.html" class="footer-link flex items-center gap-2">Privacy Architecture <i data-lucide="external-link" class="w-3 h-3 opacity-50"></i></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            
+            <div class="flex flex-col md:flex-row items-center gap-2 md:gap-4 text-center md:text-left">
+                <p class="text-[10px] md:text-xs text-slate-500 font-bold uppercase tracking-widest">
+                    © <span id="currentYear">2026</span> CyberKavach AI.
+                </p>
+                <span class="hidden md:inline text-slate-700">•</span>
+                <p class="text-[10px] md:text-xs text-slate-400 font-medium tracking-wide">
+                    Engineered for Bharat.
+                </p>
+            </div>
+            
+            <div class="status-badge group flex items-center gap-2.5 bg-[#0f172a] border border-slate-800 px-4 py-2 rounded-lg cursor-help transition-colors hover:border-slate-700">
+                <div class="relative flex h-2.5 w-2.5">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </div>
+                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 group-hover:text-emerald-300 transition-colors">All Systems Nominal</span>
+            </div>
+
+        </div>
+    </div>
+</footer>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

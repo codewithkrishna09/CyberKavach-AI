@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="CyberKavach Master Threat Archive. Deep technical breakdowns of Digital Arrests, Android APK stealers, UPI frauds, and Zero-Day phishing in India.">
+    <title>Master Threat Archive | CyberKavach AI</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'], 
+                        mono: ['JetBrains Mono', 'monospace'] 
+                    },
+                    colors: { primary: '#4f46e5', secondary: '#0ea5e9' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ========================================== */
+        /* MASTER ARCHIVE EDITORIAL STYLES            */
+        /* ========================================== */
+
+        body, html {
+            overflow-x: hidden;
+            width: 100%;
+            background-color: #fdfdfd;
+        }
+
+        /* Abstract Grid Background */
+        .bg-grid {
+            position: absolute; inset: 0; z-index: -1;
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+        }
+
+        /* Reading Progress Bar */
+        #progressBar { transition: width 0.1s ease-out; }
+
+        /* Typography for Long-Form Reading */
+        .dossier-content {
+            font-size: 1.05rem;
+            color: #334155;
+            line-height: 1.85;
+            word-wrap: break-word;
+        }
+        @media (min-width: 768px) { .dossier-content { font-size: 1.15rem; } }
+
+        .dossier-content p { margin-bottom: 1.75rem; }
+
+        .dossier-content h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-top: 3rem;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.02em;
+            line-height: 1.3;
+        }
+        @media (min-width: 768px) { .dossier-content h3 { font-size: 1.85rem; } }
+
+        /* Highlighted Info Boxes */
+        .info-box {
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin: 2rem 0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            border-left: 4px solid;
+        }
+        @media (min-width: 768px) { .info-box { padding: 2rem; font-size: 1.05rem; } }
+
+        /* Inline Code Styling */
+        .dossier-content code:not(pre code) {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.375rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+            word-break: break-all;
+        }
+
+        /* ========================================== */
+        /* PREMIUM TERMINAL CODE BLOCKS               */
+        /* ========================================== */
+        .terminal-window {
+            background-color: #0f172a; /* Slate 900 */
+            border-radius: 1rem;
+            margin: 2.5rem 0;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #1e293b;
+            width: 100%;
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.85rem 1.25rem;
+            background-color: #1e293b; /* Slate 800 */
+            border-bottom: 1px solid #334155;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .mac-dots { display: flex; gap: 6px; }
+        .mac-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .mac-red { background-color: #ef4444; }
+        .mac-yel { background-color: #f59e0b; }
+        .mac-grn { background-color: #10b981; }
+
+        .terminal-body {
+            padding: 1.5rem;
+            overflow-x: auto; /* Swipeable on mobile */
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .terminal-body pre {
+            margin: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.7;
+            min-width: max-content;
+        }
+        @media (min-width: 768px) { .terminal-body pre { font-size: 0.9rem; } }
+
+        .terminal-body::-webkit-scrollbar { height: 6px; }
+        .terminal-body::-webkit-scrollbar-track { background: transparent; }
+        .terminal-body::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+
+        /* ========================================== */
+        /* STICKY SIDEBAR NAVIGATION                  */
+        /* ========================================== */
+        .toc-link {
+            transition: all 0.3s ease;
+            border-left: 2px solid transparent;
+            display: block;
+            position: relative;
+        }
+        .toc-link.active-toc {
+            color: #4f46e5;
+            font-weight: 800;
+            background: rgba(79, 70, 229, 0.05);
+            border-left-color: #4f46e5;
+            margin-left: -16px;
+            padding-left: 14px;
+        }
+
+        /* Chapter Divider */
+        .chapter-divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+            margin: 5rem 0;
+            position: relative;
+        }
+        .chapter-divider::after {
+            content: "✦";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fdfdfd;
+            padding: 0 10px;
+            color: #cbd5e1;
+            font-size: 1.2rem;
+        }
+
+        /* Utilities */
+        .fade-up { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body class="selection:bg-indigo-100 selection:text-indigo-900">
+
+    <div class="fixed top-0 left-0 w-full h-1.5 bg-slate-100 z-[100]">
+        <div id="progressBar" class="h-full bg-indigo-600 w-0"></div>
+    </div>
+
+     <header id="navbar" class="fixed w-full z-50 top-0 bg-white/90 backdrop-blur-xl border-b border-slate-200/60 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex justify-between items-center w-full">
+            
+            <div class="flex items-center gap-3 shrink-0">
+                <a href="index.html" class="flex items-center gap-2 group">
+                   <div class="bg-indigo-600 p-2 md:p-2.5 rounded-xl shadow-lg group-hover:rotate-12 group-hover:shadow-indigo-500/50 transition-all duration-300">
+                    <i data-lucide="shield" class="w-4 h-4 md:w-5 md:h-5 text-white"></i>
+                </div>
+                    <span class="font-black text-lg md:text-xl tracking-tight text-slate-900">CyberKavach<span class="text-indigo-600">.AI</span></span>
+                </a>
+            </div>
+            
+            <nav class="hidden md:flex items-center gap-8 bg-slate-50/80 px-6 py-2 rounded-full border border-slate-200 shadow-sm">
+                <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Scanner</a>
+                <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Pricing</a>
+            </nav>
+
+            <div class="flex items-center shrink-0">
+                <a href="/index.html#blog" class="px-4 py-2.5 md:px-6 bg-white border border-slate-200 text-slate-700 font-bold text-[10px] md:text-xs uppercase tracking-widest rounded-lg md:rounded-xl hover:bg-slate-50 hover:text-indigo-600 transition-all shadow-sm flex items-center gap-2 whitespace-nowrap">
+                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Back to Home</span>
+                    <span class="sm:hidden">Back</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section class="pt-32 md:pt-48 pb-12 md:pb-16 px-4 md:px-6 relative z-10 w-full overflow-hidden">
+        <div class="bg-grid"></div>
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[150%] md:w-full max-w-4xl h-[400px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none -z-10"></div>
+        
+        <div class="max-w-4xl mx-auto text-center w-full">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-[10px] font-bold uppercase tracking-widest mb-6 shadow-sm fade-up">
+                <i data-lucide="database" class="w-3.5 h-3.5"></i> The Master Dossier
+            </div>
+            <h1 class="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight text-slate-900 mb-6 leading-[1.1] fade-up break-words">
+                Inside the Anatomy <br class="hidden sm:block"> of <span class="text-indigo-600">Modern Scams.</span>
+            </h1>
+            <p class="text-base sm:text-xl text-slate-500 font-medium max-w-2xl mx-auto leading-relaxed fade-up px-2">
+                A single, comprehensive archive detailing exactly how cyber-syndicates operate in India, and the deep-tech algorithms we use to dismantle them.
+            </p>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-20 grid lg:grid-cols-12 gap-8 lg:gap-16 relative z-10 w-full">
+        
+        <aside class="hidden lg:block lg:col-span-3 relative">
+            <div class="sticky top-32 bg-white border border-slate-200 p-6 rounded-[2rem] shadow-sm">
+                <h4 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6 px-2 flex items-center gap-2">
+                    <i data-lucide="crosshair" class="w-3.5 h-3.5"></i> Threat Index
+                </h4>
+                <nav class="flex flex-col space-y-1.5" id="toc-nav">
+                    <a href="#ch-1" class="toc-link px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">1. Android APK Malware</a>
+                    <a href="#ch-2" class="toc-link px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">2. Screen-Share Epidemic</a>
+                    <a href="#ch-3" class="toc-link px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">3. Digital Arrest Forensics</a>
+                    <a href="#ch-4" class="toc-link px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">4. Zero-Day Obfuscation</a>
+                </nav>
+            </div>
+        </aside>
+
+        <article class="col-span-1 lg:col-span-9 w-full max-w-3xl mx-auto lg:mx-0 overflow-hidden fade-up">
+            
+            <section id="ch-1" class="scroll-mt-32 dossier-section">
+                <div class="flex flex-wrap items-center gap-3 mb-6">
+                    <span class="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase tracking-widest rounded-md border border-emerald-200">Chapter 01</span>
+                    <span class="text-xs font-bold text-slate-400 font-mono">Binary Forensics</span>
+                </div>
+                
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-6 leading-tight tracking-tight break-words">The IndiaPost SMS Trojan: Decompiling the Intent</h2>
+                
+                <div class="dossier-content">
+                    <p>The "Package Delivery" scam has evolved. Scammers no longer ask you to enter your credit card details on a website. Instead, they send an SMS appearing to be from IndiaPost, containing a link to download a "tracking app" (an <code>.apk</code> file).</p>
+                    
+                    
+
+                    <div class="info-box bg-slate-50 border-emerald-500">
+                        <strong class="text-emerald-800">The Fatal Mistake:</strong> Once installed, the app asks for permissions. Most users instinctively click "Allow" without reading. The moment this happens, the device is compromised.
+                    </div>
+
+                    <h3>The Smali Code Deconstruction</h3>
+                    <p>When you upload a suspicious APK to CyberKavach's <strong>APK Shield</strong>, we don't just scan its hash against a database. We decompile the compiled Java bytecode back into <strong>Smali code</strong> to inspect its actual behavior. Here is an actual snippet recovered from a fake IndiaPost APK by our engine:</p>
+
+                    <div class="terminal-window">
+                        <div class="terminal-header">
+                            <div class="mac-dots">
+                                <div class="mac-dot mac-red"></div><div class="mac-dot mac-yel"></div><div class="mac-dot mac-grn"></div>
+                            </div>
+                            <span class="text-slate-400 text-[10px] sm:text-xs">AndroidManifest.xml</span>
+                        </div>
+                        <div class="terminal-body">
+<pre><code><span class="text-emerald-400">&lt;manifest</span> <span class="text-indigo-300">xmlns:android</span>=<span class="text-amber-300">"http://schemas.android.com/apk/res/android"</span><span class="text-emerald-400">&gt;</span>
+  <span class="text-slate-500">&lt;!-- The Silent Killers --&gt;</span>
+  <span class="text-emerald-400">&lt;uses-permission</span> <span class="text-indigo-300">android:name</span>=<span class="text-red-400 font-bold">"android.permission.RECEIVE_SMS"</span><span class="text-emerald-400">/&gt;</span>
+  <span class="text-emerald-400">&lt;uses-permission</span> <span class="text-indigo-300">android:name</span>=<span class="text-red-400 font-bold">"android.permission.READ_SMS"</span><span class="text-emerald-400">/&gt;</span>
+
+  <span class="text-emerald-400">&lt;receiver</span> <span class="text-indigo-300">android:name</span>=<span class="text-amber-300">".SmsInterceptor"</span><span class="text-emerald-400">&gt;</span>
+    <span class="text-emerald-400">&lt;intent-filter</span> <span class="text-indigo-300">android:priority</span>=<span class="text-amber-300">"999"</span><span class="text-emerald-400">&gt;</span>
+      <span class="text-emerald-400">&lt;action</span> <span class="text-indigo-300">android:name</span>=<span class="text-amber-300">"android.provider.Telephony.SMS_RECEIVED"</span><span class="text-emerald-400">/&gt;</span>
+    <span class="text-emerald-400">&lt;/intent-filter&gt;</span>
+  <span class="text-emerald-400">&lt;/receiver&gt;</span>
+<span class="text-emerald-400">&lt;/manifest&gt;</span></code></pre>
+                        </div>
+                    </div>
+
+                    <p>Notice the <code>android:priority="999"</code> tag. This tells the Android OS: <em>"When an SMS arrives, send it to this app FIRST, before the default messaging app."</em></p>
+
+                    
+
+                    <p>The hacker's server initiates a login to your bank account. Your bank sends an OTP. The malicious app intercepts the OTP, forwards it to the hacker's Telegram Bot via the internet, and deletes the SMS from your phone. Your account is drained, and you never even heard a notification sound.</p>
+                </div>
+            </section>
+
+            <div class="chapter-divider"></div>
+
+            <section id="ch-2" class="scroll-mt-32 dossier-section">
+                <div class="flex flex-wrap items-center gap-3 mb-6">
+                    <span class="px-3 py-1 bg-amber-50 text-amber-700 text-[10px] font-black uppercase tracking-widest rounded-md border border-amber-200">Chapter 02</span>
+                    <span class="text-xs font-bold text-slate-400 font-mono">Social Engineering</span>
+                </div>
+                
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-6 leading-tight tracking-tight break-words">The Screen-Share Epidemic: Weaponizing Trust</h2>
+                
+                <div class="dossier-content">
+                    <p>Financial fraud is increasingly moving away from pure software exploitation to psychology. The most devastating vector currently operational in India is the "Remote Access" scam. Apps like <strong>AnyDesk or TeamViewer</strong> are legitimate tools built for IT support. Because they are legal, <strong>no traditional Antivirus will flag them as malicious.</strong></p>
+
+                    
+
+                    <h3>The Attack Flow</h3>
+                    <p>Scammers manipulate Google Ads to show fraudulent "Customer Care" numbers at the top of search results. When a victim calls, the fake executive asks them to download a legitimate app from the Play Store to "fix their issue".</p>
+
+                    <div class="info-box bg-amber-50 border-amber-500">
+                        <h4 class="text-amber-900 font-bold text-lg mb-2 mt-0">The Psychological Blindspot</h4>
+                        <p class="text-amber-800 mb-0">Victims fundamentally misunderstand how UPI works. Scammers use the "Collect Request" feature and tell the victim: <em>"Enter your PIN to RECEIVE the refund money."</em> <strong>Fact: You never need to enter a UPI PIN to receive money. PINs are strictly for deductions.</strong></p>
+                    </div>
+
+                    <p>Because the app is legitimate, the victim shares the 9-digit pairing code. As the victim enters their UPI PIN for a "test transaction", the scammer watches it live on their screen. Within seconds, the balance is wiped out.</p>
+                    
+                    <p>CyberKavach addresses this via Behavioral Context. If our engine detects a remote-desktop application casting the screen <em>while</em> a banking application is opened in the foreground, it instantly freezes the screen to break the scammer's visual feed.</p>
+                </div>
+            </section>
+
+            <div class="chapter-divider"></div>
+
+            <section id="ch-3" class="scroll-mt-32 dossier-section">
+                <div class="flex flex-wrap items-center gap-3 mb-6">
+                    <span class="px-3 py-1 bg-red-50 text-red-700 text-[10px] font-black uppercase tracking-widest rounded-md border border-red-200">Chapter 03</span>
+                    <span class="text-xs font-bold text-slate-400 font-mono">AI Deepfakes & ELA</span>
+                </div>
+                
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-6 leading-tight tracking-tight break-words">Digital Arrests: Deepfakes & PDF Forensics</h2>
+                
+                <div class="dossier-content">
+                    <p>The "Digital Arrest" is a purely psychological terror campaign. Victims (often senior citizens) receive a Skype video call from individuals dressed in police uniforms, sitting in setups mimicking a CBI or Customs office.</p>
+
+                    <h3>Deconstructing the "Official" Warrant</h3>
+                    <p>The scammers send a PDF warrant carrying the Ashoka Pillar, official seals, and the victim's Aadhaar details. To a terrified citizen, it looks 100% real. To a machine, it is a glaring forgery.</p>
+
+                    <div class="info-box bg-slate-50 border-red-500">
+                        When processed through <strong>Satark AI</strong>, we apply <strong>Error Level Analysis (ELA)</strong>. When a stamp is copied from Google and pasted onto a PDF document using Photoshop, the compression level of the stamp is different from the rest of the document.
+                    </div>
+
+                    
+
+                    <p>ELA highlights this difference mathematically. The forged stamp glows bright white on our backend radar, instantly proving the document is a fabrication.</p>
+
+                    <h3>Catching the Deepfake Voice</h3>
+                    <p>Scammers also clone voices of family members using Generative AI. While humans hear a seamless sentence, the AI leaves micro-gaps (spectral discontinuities) between syllables.</p>
+
+                    
+
+                    <p>Satark AI runs a Fast Fourier Transform (FFT) on the audio file. If the spectral cadence lacks natural human breath patterns and exhibits mathematical perfection, our engine flags it with a 98% probability of being synthetically generated.</p>
+                </div>
+            </section>
+
+            <div class="chapter-divider"></div>
+
+            <section id="ch-4" class="scroll-mt-32 dossier-section mb-16">
+                <div class="flex flex-wrap items-center gap-3 mb-6">
+                    <span class="px-3 py-1 bg-purple-50 text-purple-700 text-[10px] font-black uppercase tracking-widest rounded-md border border-purple-200">Chapter 04</span>
+                    <span class="text-xs font-bold text-slate-400 font-mono">Web Exploitation</span>
+                </div>
+                
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-6 leading-tight tracking-tight break-words">Zero-Day Phishing & Cloud Abuse</h2>
+
+                <div class="dossier-content">
+                    <p>The era of buying shady domains is over. Modern phishers exploit legitimate, free Developer Platforms like <strong>Vercel, Netlify, and Firebase</strong> to host their credential harvesters. Traditional AVs cannot block an entire <code>vercel.app</code> domain without breaking millions of legitimate sites.</p>
+
+                    <h3>The Captcha Evasion Tactic</h3>
+                    <p>To prevent security bots from analyzing their fake code, hackers place a legitimate Cloudflare "Turnstile" or reCAPTCHA <em>before</em> the fake bank login. A Google Safe Browsing bot hits the CAPTCHA, cannot solve it, and assumes the site is safe.</p>
+
+                    <p>Once a human solves the CAPTCHA, the server sends a massively encrypted, obfuscated JavaScript payload using AES-256. To any network scanner, it looks like harmless gibberish.</p>
+
+                    
+
+                    <div class="terminal-window">
+                        <div class="terminal-header">
+                            <div class="mac-dots">
+                                <div class="mac-dot mac-red"></div><div class="mac-dot mac-yel"></div><div class="mac-dot mac-grn"></div>
+                            </div>
+                            <span class="text-slate-400 text-[10px] sm:text-xs">Encrypted_Payload.js</span>
+                        </div>
+                        <div class="terminal-body">
+<pre><code><span class="text-indigo-400">var</span> _0x4b2a = <span class="text-amber-300">"U2FsdGVkX1+QJk...[10k chars of Base64]...aZ9b="</span>;
+<span class="text-indigo-400">var</span> k = prompt(<span class="text-amber-300">"Verify Access"</span>); <span class="text-slate-500">// Secret from CAPTCHA</span>
+
+<span class="text-slate-500">// Decrypts payload only inside the victim's browser</span>
+document.write( CryptoJS.AES.decrypt(_0x4b2a, k).toString(CryptoJS.enc.Utf8) );</code></pre>
+                        </div>
+                    </div>
+
+                    <p><strong>The CyberKavach Solution:</strong> Our extension bypasses this entirely because it sits <em>inside</em> the user's browser. It waits for the human to solve the CAPTCHA. Once the actual DOM (HTML structure) of the fake bank unpacks and loads, our Titan Engine parses the hidden input fields in 0.2 milliseconds and freezes the page before a single password can be typed.</p>
+                </div>
+            </section>
+
+        </article>
+    </main>
+
+    <section class="py-12 md:py-16 px-4 md:px-6 w-full">
+        <div class="max-w-5xl mx-auto bg-slate-900 rounded-3xl md:rounded-[2.5rem] p-8 md:p-16 border border-slate-800 relative overflow-hidden fade-up shadow-2xl text-center w-full">
+            <div class="absolute top-0 right-0 w-40 md:w-64 h-40 md:h-64 bg-indigo-500/20 rounded-full blur-[60px] pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 w-40 md:w-64 h-40 md:h-64 bg-cyan-500/10 rounded-full blur-[60px] pointer-events-none"></div>
+            
+            <div class="relative z-10">
+                <h2 class="text-2xl sm:text-4xl md:text-5xl font-black text-white mb-4 md:mb-6 tracking-tight leading-tight">Intelligence is useless without execution.</h2>
+                <p class="text-slate-400 font-medium mb-8 md:mb-10 max-w-2xl mx-auto text-sm md:text-lg px-2">
+                    You've read the theory. Now deploy the architecture. Protect your enterprise and personal endpoints with the Titan Engine today.
+                </p>
+                <a href="/index.html#pricing" class="flex md:inline-flex justify-center px-6 md:px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs md:text-sm uppercase tracking-widest rounded-xl transition-all shadow-[0_0_20px_rgba(79,70,229,0.4)] items-center gap-2 w-full md:w-auto">
+                    <i data-lucide="shield-check" class="w-4 h-4 md:w-5 md:h-5"></i> Activate CyberKavach PRO
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-white pt-10 pb-8 px-4 md:px-6 border-t border-slate-200 w-full">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6 text-center md:text-left">
+            <div class="flex items-center gap-2">
+    <i data-lucide="shield" class="w-4 h-4 md:w-5 md:h-5 text-indigo-600"></i>
+    <span class="font-bold text-base md:text-lg text-slate-900">CyberKavach.AI</span>
+</div>
+            <div class="flex flex-wrap justify-center gap-4 md:gap-6 text-xs md:text-sm font-medium text-slate-500">
+                <a href="/index.html" class="hover:text-indigo-600 transition">Scanner</a>
+                <a href="/privacy.html" class="hover:text-indigo-600 transition">Privacy</a>
+                <a href="/terms.html" class="hover:text-indigo-600 transition">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ==========================================
+        // MASTER DOSSIER UX LOGIC
+        // ==========================================
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+
+            // 1. Reading Progress Bar 
+            const progressBar = document.getElementById('progressBar');
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.scrollY || document.documentElement.scrollTop;
+                const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                let scrolled = (scrollTop / scrollHeight) * 100;
+                
+                if(scrolled > 100) scrolled = 100;
+                if(scrolled < 0) scrolled = 0;
+                if(progressBar) progressBar.style.width = scrolled + "%";
+            });
+
+            // 2. Fade-Up Animations
+            const fadeObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => { 
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible'); 
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
+
+            // 3. Scroll Spy (Table of Contents Highlight)
+            const sections = document.querySelectorAll('.dossier-section');
+            const tocLinks = document.querySelectorAll('.toc-link');
+
+            const spyOptions = {
+                root: null,
+                rootMargin: '-30% 0px -60% 0px',
+                threshold: 0
+            };
+
+            const spyObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        
+                        tocLinks.forEach(link => link.classList.remove('active-toc'));
+                        
+                        const activeLink = document.querySelector(`.toc-link[href="#${id}"]`);
+                        if (activeLink) activeLink.classList.add('active-toc');
+                    }
+                });
+            }, spyOptions);
+
+            sections.forEach(section => spyObserver.observe(section));
+
+            // 4. Smooth Scroll Offset (Fixes navbar overlap)
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    
+                    if (targetSection) {
+                        const navHeight = document.getElementById('navbar').offsetHeight;
+                        const targetOffset = targetSection.offsetTop - navHeight - 20; 
+                        
+                        window.scrollTo({
+                            top: targetOffset,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

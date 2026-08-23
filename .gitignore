@@ -1,0 +1,27 @@
+# Local secrets and user-specific configuration
+.env
+.env.*
+!.env.example
+*.pem
+
+# Local databases, scan logs and generated model files
+*.db
+*.sqlite
+*.sqlite3
+backend-api/models/*.joblib
+
+# Python environments and generated files
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Node and operating-system generated files
+node_modules/
+.DS_Store
+Thumbs.db
+extension.crx
+
+# Local alternate Git metadata used because the workspace .git mount is read-only
+.cyberkavach-git/

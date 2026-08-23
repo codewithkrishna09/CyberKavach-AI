@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="About CyberKavach AI. We are building India's sovereign digital shield to protect 1.4 billion identities from next-gen cyber threats, UPI frauds, and deepfakes.">
+    <title>The Manifesto | CyberKavach AI</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'], 
+                        mono: ['JetBrains Mono', 'monospace'] 
+                    },
+                    colors: { 
+                        primary: '#4f46e5', 
+                        secondary: '#0ea5e9', 
+                        dark: '#0f172a',
+                        light: '#f8fafc' 
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ========================================== */
+        /* GLOBAL STYLES & RESPONSIVE FIXES           */
+        /* ========================================== */
+        body, html { 
+            background-color: #fdfdfd; 
+            color: #0f172a; 
+            overflow-x: hidden; 
+            width: 100%;
+        }
+        
+        /* Premium Background Grids */
+        .bg-grid {
+            position: fixed; inset: 0; z-index: -1;
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+        }
+
+        /* Ambient Glowing Orbs */
+        .glow-orb-1 { position: absolute; top: -10%; left: -5%; width: 70vw; height: 70vw; max-width: 600px; max-height: 600px; background: radial-gradient(circle, rgba(79, 70, 229, 0.06) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;}
+        .glow-orb-2 { position: absolute; top: 30%; right: -10%; width: 60vw; height: 60vw; max-width: 500px; max-height: 500px; background: radial-gradient(circle, rgba(14, 165, 233, 0.06) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;}
+        .glow-orb-3 { position: absolute; bottom: 10%; left: 10%; width: 80vw; height: 80vw; max-width: 700px; max-height: 700px; background: radial-gradient(circle, rgba(245, 158, 11, 0.04) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;}
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Animations */
+        .fade-up { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        
+        /* Deep Prose Typography */
+        .deep-text p { 
+            margin-bottom: 1.5rem; 
+            line-height: 1.8; 
+            color: #475569; 
+            font-size: 1.05rem; 
+            font-weight: 500; 
+            word-wrap: break-word;
+        }
+        @media (min-width: 768px) { .deep-text p { font-size: 1.15rem; } }
+        .deep-text strong { color: #0f172a; font-weight: 800; }
+        
+        /* Progress Bar Animation */
+        .progress-fill { width: 0; transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        /* Feature Card Interactions */
+        .feature-card { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease; }
+        .feature-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body class="selection:bg-indigo-100 selection:text-indigo-900">
+
+    <div class="bg-grid"></div>
+    <div class="glow-orb-1"></div>
+    <div class="glow-orb-2"></div>
+    <div class="glow-orb-3"></div>
+
+    <header id="navbar" class="fixed w-full z-50 top-0 bg-white/90 backdrop-blur-xl border-b border-slate-200/60 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex justify-between items-center w-full">
+            
+            <div class="flex items-center gap-3 shrink-0">
+                <a href="index.html" class="flex items-center gap-2 group">
+                   <div class="bg-indigo-600 p-2 md:p-2.5 rounded-xl shadow-lg group-hover:rotate-12 group-hover:shadow-indigo-500/50 transition-all duration-300">
+                    <i data-lucide="shield" class="w-4 h-4 md:w-5 md:h-5 text-white"></i>
+                </div>
+                    <span class="font-black text-lg md:text-xl tracking-tight text-slate-900">CyberKavach<span class="text-indigo-600">.AI</span></span>
+                </a>
+            </div>
+            
+            <nav class="hidden md:flex items-center gap-8 bg-slate-50/80 px-6 py-2 rounded-full border border-slate-200 shadow-sm">
+                <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Scanner</a>
+                <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Pricing</a>
+            </nav>
+
+            <div class="flex items-center shrink-0">
+                <a href="/index.html#blog" class="px-4 py-2.5 md:px-6 bg-white border border-slate-200 text-slate-700 font-bold text-[10px] md:text-xs uppercase tracking-widest rounded-lg md:rounded-xl hover:bg-slate-50 hover:text-indigo-600 transition-all shadow-sm flex items-center gap-2 whitespace-nowrap">
+                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Back to Home</span>
+                    <span class="sm:hidden">Back</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section class="pt-32 md:pt-48 pb-16 md:pb-24 px-4 md:px-6 relative z-10 text-center w-full">
+        <div class="max-w-4xl mx-auto w-full">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-slate-200 bg-white text-slate-600 text-[10px] md:text-xs font-bold mb-6 uppercase tracking-widest shadow-sm fade-up">
+                <i data-lucide="fingerprint" class="w-3.5 h-3.5 text-indigo-500"></i> Origin Story
+            </div>
+            
+            <h1 class="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-slate-900 mb-6 leading-[1.1] fade-up break-words" style="transition-delay: 100ms;">
+                We are not an Antivirus.<br/>
+                We are a <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500">Sovereign Shield.</span>
+            </h1>
+            
+            <p class="text-base sm:text-xl text-slate-600 max-w-2xl mx-auto mb-12 leading-relaxed font-medium fade-up px-2" style="transition-delay: 200ms;">
+                Built in India, for Bharat. CyberKavach was engineered to fight the asymmetric cyber war where traditional security fails to protect human psychology.
+            </p>
+        </div>
+    </section>
+
+    <section class="py-12 md:py-16 px-4 md:px-6 border-y border-slate-200 bg-white relative z-10 shadow-[0_10px_40px_rgba(0,0,0,0.02)] w-full">
+        <div class="max-w-7xl mx-auto w-full">
+            <p class="text-center text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest mb-8 md:mb-10 fade-up">The scale of the threat landscape (2023-24)</p>
+            
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 text-center fade-up" style="transition-delay: 100ms;">
+                
+                <div class="p-4 md:p-6 rounded-2xl md:rounded-3xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center">
+                    <div class="text-orange-500 mb-2 md:mb-3"><i data-lucide="alert-triangle" class="w-5 h-5 md:w-6 md:h-6"></i></div>
+                    <div class="text-2xl sm:text-4xl font-black font-mono text-slate-900 mb-1 flex items-center">
+                        ₹<span class="counter" data-target="7400">0</span>Cr+
+                    </div>
+                    <div class="text-[9px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Lost to Indian Frauds</div>
+                </div>
+                
+                <div class="p-4 md:p-6 rounded-2xl md:rounded-3xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center">
+                    <div class="text-indigo-500 mb-2 md:mb-3"><i data-lucide="bot" class="w-5 h-5 md:w-6 md:h-6"></i></div>
+                    <div class="text-2xl sm:text-4xl font-black font-mono text-slate-900 mb-1 flex items-center">
+                        <span class="counter" data-target="300">0</span>%+
+                    </div>
+                    <div class="text-[9px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Spike in Deepfakes</div>
+                </div>
+                
+                <div class="p-4 md:p-6 rounded-2xl md:rounded-3xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center">
+                    <div class="text-cyan-500 mb-2 md:mb-3"><i data-lucide="zap" class="w-5 h-5 md:w-6 md:h-6"></i></div>
+                    <div class="text-2xl sm:text-4xl font-black font-mono text-slate-900 mb-1 flex items-center">
+                        <span class="counter" data-target="0.2">0</span>ms
+                    </div>
+                    <div class="text-[9px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Titan Latency</div>
+                </div>
+                
+                <div class="p-4 md:p-6 rounded-2xl md:rounded-3xl bg-emerald-50/50 border border-emerald-100 flex flex-col items-center justify-center relative overflow-hidden group">
+                    <div class="text-emerald-500 mb-2 md:mb-3 relative z-10"><i data-lucide="target" class="w-5 h-5 md:w-6 md:h-6"></i></div>
+                    <div class="text-2xl sm:text-4xl font-black font-mono text-emerald-900 mb-1 flex items-center relative z-10">
+                        <span class="counter" data-target="99.2">0</span>%
+                    </div>
+                    <div class="text-[9px] md:text-[10px] font-bold text-emerald-700 uppercase tracking-widest mt-1 relative z-10">Heuristic Accuracy</div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 md:py-24 px-4 md:px-6 relative z-10 w-full">
+        <div class="max-w-3xl mx-auto deep-text fade-up w-full">
+            <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-8 border-l-4 border-indigo-600 pl-4 md:pl-6 leading-tight">The Asymmetric Cyber War</h2>
+            
+            <p>For the last decade, cybersecurity relied on a concept called <strong>Signature-Based Detection</strong>. When a virus was found, companies would extract its "signature" (a unique fingerprint) and add it to a massive database. If that exact file was seen again, it was blocked.</p>
+            
+            <p><strong>But the paradigm shifted.</strong> Hackers stopped attacking computers and started attacking <em>human psychology</em>.</p>
+            
+            <p>Today, a scammer doesn't need to write complex malware to steal your money. They simply clone a CBI officer's voice using AI, forge a PDF warrant with official Ashoka Pillar logos, and send you a WhatsApp message threatening "Digital Arrest". They host a fake SBI KYC update page on a legitimate free cloud server (like Vercel or Firebase) that lasts exactly 4 hours before being deleted.</p>
+
+            <div class="bg-indigo-50 border border-indigo-100 p-6 md:p-10 rounded-2xl md:rounded-3xl my-10 relative overflow-hidden shadow-sm">
+                <i data-lucide="quote" class="absolute -right-4 -bottom-4 w-24 h-24 md:w-32 md:h-32 text-indigo-500/10"></i>
+                <p class="text-lg md:text-xl font-bold text-indigo-900 italic mb-0 relative z-10 leading-relaxed">
+                    "Traditional Antiviruses are blind to these attacks because there is no 'virus' code. A deepfake audio file looks like a normal audio file to a computer. A fake bank website uses the exact same HTML tags as the real one."
+                </p>
+            </div>
+
+            <p>This is why CyberKavach was born. We realized that to fight AI-driven psychological manipulation, we needed a localized, neural-heuristic engine. An engine that doesn't just look at code, but understands <strong>intent</strong>.</p>
+        </div>
+    </section>
+
+    <section class="py-20 md:py-28 px-4 md:px-6 bg-slate-900 text-white relative z-10 border-y border-slate-800 overflow-hidden w-full">
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'#ffffff\' fill-opacity=\'0.03\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
+        
+        <div class="max-w-7xl mx-auto relative z-10 w-full">
+            <div class="text-center mb-12 md:mb-16 fade-up">
+                <div class="text-indigo-400 font-bold uppercase tracking-widest text-[10px] md:text-xs mb-3 md:mb-4 flex items-center gap-2 justify-center"><i data-lucide="layers" class="w-4 h-4"></i> The Architecture</div>
+                <h2 class="text-3xl md:text-5xl font-black mb-4">Titan AI Modules</h2>
+                <p class="text-slate-400 font-medium text-sm md:text-base">Four independent engines working in cryptographic harmony.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 fade-up w-full" style="transition-delay: 100ms;">
+                
+                <div class="feature-card bg-[#1e293b] border border-slate-700 p-6 md:p-8 rounded-2xl md:rounded-[2rem] w-full">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-indigo-500/20 rounded-xl flex items-center justify-center text-indigo-400 mb-5 md:mb-6 border border-indigo-500/30"><i data-lucide="zap" class="w-5 h-5 md:w-6 md:h-6"></i></div>
+                    <h3 class="text-xl md:text-2xl font-black mb-3 text-white">Pre-DOM Interceptor</h3>
+                    <p class="text-slate-400 text-sm md:text-base leading-relaxed font-medium">The extension intercepts the HTTP response and analyzes the Document Object Model (DOM) in memory. It blocks credential-harvesting forms, hidden iframes, and typographical brand spoofing (e.g., <code class="text-indigo-300">flpkart</code>) in under 0.2 milliseconds.</p>
+                </div>
+
+                <div class="feature-card bg-[#1e293b] border border-slate-700 p-6 md:p-8 rounded-2xl md:rounded-[2rem] w-full">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-red-500/20 rounded-xl flex items-center justify-center text-red-400 mb-5 md:mb-6 border border-red-500/30"><i data-lucide="siren" class="w-5 h-5 md:w-6 md:h-6"></i></div>
+                    <h3 class="text-xl md:text-2xl font-black mb-3 text-white">Satark AI (Forensics)</h3>
+                    <p class="text-slate-400 text-sm md:text-base leading-relaxed font-medium">Built to combat "Digital Arrests". Satark runs Error Level Analysis (ELA) to find Photoshop manipulations on official stamps. For audio, it uses spectral discontinuity mapping to identify the robotic cadence inherent in AI voice clones.</p>
+                </div>
+
+                <div class="feature-card bg-[#1e293b] border border-slate-700 p-6 md:p-8 rounded-2xl md:rounded-[2rem] w-full">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-400 mb-5 md:mb-6 border border-emerald-500/30"><i data-lucide="smartphone" class="w-5 h-5 md:w-6 md:h-6"></i></div>
+                    <h3 class="text-xl md:text-2xl font-black mb-3 text-white">APK Kavach (Smali)</h3>
+                    <p class="text-slate-400 text-sm md:text-base leading-relaxed font-medium">WhatsApp APK scams are rampant in India. Kavach decompiles the <code class="text-emerald-300">.apk</code> payload into Smali code, explicitly hunting for malicious intents like <code class="text-emerald-300">RECEIVE_SMS</code> which are designed to intercept banking OTPs.</p>
+                </div>
+
+                <div class="feature-card bg-[#1e293b] border border-slate-700 p-6 md:p-8 rounded-2xl md:rounded-[2rem] w-full">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-cyan-500/20 rounded-xl flex items-center justify-center text-cyan-400 mb-5 md:mb-6 border border-cyan-500/30"><i data-lucide="globe" class="w-5 h-5 md:w-6 md:h-6"></i></div>
+                    <h3 class="text-xl md:text-2xl font-black mb-3 text-white">Shadow Scout</h3>
+                    <p class="text-slate-400 text-sm md:text-base leading-relaxed font-medium">A database of 15 Billion+ leaked records. We use the K-Anonymity protocol (SHA-1 hashing) to cross-reference your Phone numbers, VPAs, and Passwords against dark web auctions without transmitting your actual raw data.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 md:py-24 px-4 md:px-6 bg-white border-b border-slate-200 relative overflow-hidden z-10 w-full" id="honesty-section">
+        <div class="absolute top-0 right-0 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-gradient-to-br from-orange-100 to-rose-50 rounded-full blur-3xl opacity-50 pointer-events-none -z-10"></div>
+        
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-12 lg:gap-20 items-center w-full">
+            
+            <div class="w-full lg:w-1/2 fade-up">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-orange-50 border border-orange-200 text-orange-700 text-[10px] font-bold uppercase tracking-widest mb-6 shadow-sm">
+                    <i data-lucide="info" class="w-3.5 h-3.5"></i> Truth In Engineering
+                </div>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-6 text-slate-900 leading-tight">
+                    Why 100% Security <br><span class="text-orange-600">is a Myth.</span>
+                </h2>
+                <p class="text-slate-600 leading-relaxed mb-6 font-medium text-sm md:text-lg">
+                    If a cybersecurity vendor promises you absolute 100% protection, they are selling you snake oil. The cyber landscape is an endless cat-and-mouse game. 
+                </p>
+                <p class="text-slate-600 leading-relaxed mb-8 font-medium text-sm md:text-lg">
+                    Our AI is probabilistic. We act as a formidable augmented shield, but we are honest about our limits. <strong>The ultimate firewall is human common sense.</strong>
+                </p>
+                
+                <div class="bg-slate-50 border border-slate-200 p-5 md:p-6 rounded-2xl shadow-inner w-full">
+                    <div class="flex justify-between items-end mb-3">
+                        <span class="text-[10px] md:text-xs font-bold text-slate-600 uppercase tracking-widest">System Accuracy</span>
+                        <span class="text-2xl md:text-3xl font-black text-emerald-600 font-mono"><span id="accuracyNumber">0</span>%</span>
+                    </div>
+                    <div class="w-full h-2.5 md:h-3 bg-slate-200 rounded-full overflow-hidden relative">
+                        <div id="accuracyBar" class="h-full bg-emerald-500 rounded-full progress-fill relative overflow-hidden" style="width: 0%;">
+                            <div class="absolute inset-0 bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzhhYWGMYAEYB8RmROaABADeOQ8CXl/xfgAAAABJRU5ErkJggg==')] opacity-30"></div>
+                        </div>
+                    </div>
+                    <p class="text-[9px] md:text-[10px] text-slate-400 mt-3 font-bold uppercase tracking-wider">The remaining 0.8% accounts for unprecedented zero-day mutations.</p>
+                </div>
+            </div>
+
+            <div class="w-full lg:w-1/2 fade-up bg-slate-50 border border-slate-200 p-6 md:p-10 rounded-3xl md:rounded-[2.5rem] shadow-sm" style="transition-delay: 200ms;">
+                <h3 class="text-xl md:text-2xl font-black text-slate-900 mb-6 border-b border-slate-200 pb-4">The Final Vulnerability</h3>
+                <p class="text-slate-600 font-medium leading-relaxed mb-4 text-sm md:text-base">
+                    No line of code can stop a user from willingly transferring money out of panic. Social engineering targets human psychology directly.
+                </p>
+                <p class="text-slate-600 font-medium leading-relaxed mb-8 text-sm md:text-base">
+                    Our mission is not just to build software, but to educate Bharat. When you install CyberKavach, you aren't just buying code; you are joining a collective effort to secure India's digital future.
+                </p>
+                <button onclick="window.location.href='index.html#pricing'" class="w-full py-4 bg-slate-900 hover:bg-indigo-600 text-white font-bold text-xs md:text-sm uppercase tracking-widest rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                    <i data-lucide="shield-check" class="w-4 h-4 md:w-5 md:h-5"></i>Get Elite License
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="bg-[#0f172a] pt-16 md:pt-20 pb-10 px-4 md:px-6 border-t border-slate-800 w-full">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12 mb-12 md:mb-16 w-full">
+            <div class="sm:col-span-2">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="bg-indigo-600 p-2 rounded-xl"><i data-lucide="shield" class="w-5 h-5 md:w-6 md:h-6 text-white"></i></div>
+                    <span class="font-black text-xl md:text-2xl text-white tracking-wide">CyberKavach<span class="text-indigo-400">.AI</span></span>
+                </div>
+                <p class="text-slate-400 text-xs md:text-sm leading-relaxed max-w-sm font-medium mb-6">
+                    A sovereign cyber initiative dedicated to making the Indian internet safe. We process heuristics, not human identities.
+                </p>
+            </div>
+            
+            <div>
+                <h4 class="text-white font-bold mb-5 md:mb-6 uppercase text-[10px] md:text-xs tracking-widest">Titan Modules</h4>
+                <ul class="space-y-3 md:space-y-4 text-xs md:text-sm text-slate-400 font-medium">
+                    <li><a href="index.html" class="hover:text-indigo-400 transition">Browser Extension</a></li>
+                    <li><a href="index.html" class="hover:text-indigo-400 transition">APK Raksha Kavach</a></li>
+                    <li><a href="index.html" class="hover:text-indigo-400 transition">Satark AI Forensics</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="text-white font-bold mb-5 md:mb-6 uppercase text-[10px] md:text-xs tracking-widest">Legal & Security</h4>
+                <ul class="space-y-3 md:space-y-4 text-xs md:text-sm text-slate-400 font-medium">
+                    <li><a href="#" class="text-white">The Manifesto</a></li>
+                    <li><a href="blog.html" class="hover:text-white transition">Threat Intel Hub</a></li>
+                    <li><a href="privacy.html" class="hover:text-white transition">Privacy Architecture</a></li>
+                    <li><a href="terms.html" class="hover:text-white transition">Terms of Protocol</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto border-t border-slate-800 pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left w-full">
+            <p class="text-[9px] md:text-[10px] text-slate-500 font-bold uppercase tracking-widest">© 2026 CyberKavach AI. Designed for Bharat.</p>
+            <div class="flex items-center gap-2 md:gap-3 bg-emerald-500/10 px-3 md:px-4 py-1.5 md:py-2 rounded-xl border border-emerald-500/20 text-emerald-400">
+                <span class="w-1.5 h-1.5 md:w-2 md:h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]"></span>
+                <span class="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em]">Systems Nominal</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // 1. Initialize Icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // 2. Scroll Animations (Fade Up)
+            const fadeObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => { 
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible'); 
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
+
+            // 3. Live Number Counters (For Top Stats)
+            const counters = document.querySelectorAll('.counter');
+            const speed = 200; // Lower is slower
+
+            const counterObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const counter = entry.target;
+                        const updateCount = () => {
+                            const target = +counter.getAttribute('data-target');
+                            const count = +counter.innerText;
+                            const inc = target / speed;
+
+                            if (count < target) {
+                                if (target % 1 !== 0) {
+                                    counter.innerText = (count + inc).toFixed(1);
+                                } else {
+                                    counter.innerText = Math.ceil(count + inc);
+                                }
+                                setTimeout(updateCount, 15);
+                            } else {
+                                counter.innerText = target;
+                            }
+                        };
+                        updateCount();
+                        observer.unobserve(counter);
+                    }
+                });
+            }, { threshold: 0.5 });
+            counters.forEach(counter => counterObserver.observe(counter));
+
+            // 4. Honesty Protocol Progress Bar Animation
+            const honestySection = document.getElementById('honesty-section');
+            const accuracyBar = document.getElementById('accuracyBar');
+            const accuracyNumber = document.getElementById('accuracyNumber');
+            let hasAnimatedAccuracy = false;
+
+            if (honestySection && accuracyBar && accuracyNumber) {
+                const honestyObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting && !hasAnimatedAccuracy) {
+                            hasAnimatedAccuracy = true;
+                            
+                            // Fill the bar CSS width
+                            accuracyBar.style.width = '99.2%';
+
+                            // Animate the number counting up
+                            const target = 99.2;
+                            let count = 0;
+                            const duration = 1500; // 1.5s
+                            const frameRate = 1000 / 60;
+                            const totalFrames = Math.round(duration / frameRate);
+                            const increment = target / totalFrames;
+
+                            const counterInterval = setInterval(() => {
+                                count += increment;
+                                if (count >= target) {
+                                    accuracyNumber.innerText = target;
+                                    clearInterval(counterInterval);
+                                } else {
+                                    accuracyNumber.innerText = count.toFixed(1);
+                                }
+                            }, frameRate);
+                        }
+                    });
+                }, { threshold: 0.3 }); // Trigger when 30% of the section is visible
+
+                honestyObserver.observe(honestySection);
+            }
+        });
+    </script>
+</body>
+</html>

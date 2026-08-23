@@ -1,0 +1,342 @@
+import asyncio
+import os
+import sys
+import tempfile
+import threading
+import unittest
+import json
+import io
+from pathlib import Path
+from unittest.mock import AsyncMock, patch
+
+
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(BACKEND_DIR))
+TEST_DB = tempfile.NamedTemporaryFile(prefix="cyberkavach-test-", suffix=".db", delete=False)
+TEST_DB.close()
+os.environ["CYBERKAVACH_DB_FILE"] = TEST_DB.name
+# ASGI tests use Starlette's conventional internal host. Keep this test-only
+# setting independent from the developer's production/local .env host allowlist.
+os.environ["CYBERKAVACH_ALLOWED_HOSTS"] = "127.0.0.1,localhost,testserver"
+os.environ["CYBERKAVACH_ALLOWED_ORIGIN_REGEX"] = r"^http://(localhost|127\.0\.0\.1|\[::1\]):[0-9]{1,5}$"
+
+import main  # noqa: E402
+from fastapi import HTTPException, UploadFile  # noqa: E402
+from scanner import TitanScanner, scan_website_logic  # noqa: E402
+from security import normalize_api_key, safe_get, validate_public_url, validate_upload  # noqa: E402
+from shadow_scout import analyze_shadow_query  # noqa: E402
+from ml_url_model import FEATURE_NAMES, extract_url_features  # noqa: E402
+from satark_engine import SatarkForensicsEngine  # noqa: E402
+from PIL import Image  # noqa: E402
+
+
+class SecurityValidationTests(unittest.TestCase):
+    def test_url_model_features_are_stable_and_complete(self):
+        features = extract_url_features("https://sbi-kyc-update.example/login?a=1")
+        self.assertEqual(len(features), len(FEATURE_NAMES))
+        self.assertEqual(features[7], 0.0)
+        self.assertGreater(features[-1], 0)
+    @staticmethod
+    def upload(name, data, content_type):
+        file_object = tempfile.SpooledTemporaryFile()
+        file_object.write(data)
+        file_object.seek(0)
+        return UploadFile(filename=name, file=file_object, headers={"content-type": content_type})
+
+    def test_api_key_format_rejects_injection_and_accepts_secure_free_key(self):
+        self.assertEqual(normalize_api_key("FREE-" + "A" * 32), "FREE-" + "A" * 32)
+        with self.assertRaises(HTTPException):
+            normalize_api_key("' OR 1=1 --")
+
+    @patch("security.socket.getaddrinfo")
+    def test_ssrf_blocks_private_ipv4(self, resolver):
+        resolver.return_value = [(2, 1, 6, "", ("127.0.0.1", 80))]
+        with self.assertRaisesRegex(ValueError, "blocked"):
+            validate_public_url("http://attacker.example")
+
+    @patch("security.socket.getaddrinfo")
+    def test_ssrf_blocks_cloud_metadata(self, resolver):
+        resolver.return_value = [(2, 1, 6, "", ("169.254.169.254", 80))]
+        with self.assertRaisesRegex(ValueError, "blocked"):
+            validate_public_url("http://metadata.example/latest/meta-data")
+
+    @patch("security.socket.getaddrinfo")
+    def test_public_https_url_is_normalized(self, resolver):
+        resolver.return_value = [(2, 1, 6, "", ("93.184.216.34", 443))]
+        self.assertEqual(validate_public_url("https://Example.com/a#fragment"), "https://example.com/a")
+
+    @patch("security.validate_public_url", return_value="https://example.com/")
+    @patch("security.requests.Session")
+    def test_dns_rebinding_private_peer_is_blocked(self, session_class, _validator):
+        class Socket:
+            @staticmethod
+            def getpeername():
+                return ("10.0.0.8", 443)
+
+        class Response:
+            status_code = 200
+            raw = type("Raw", (), {"_connection": type("Connection", (), {"sock": Socket()})()})()
+
+            @staticmethod
+            def close():
+                return None
+
+        session_class.return_value.get.return_value = Response()
+        with self.assertRaisesRegex(ValueError, "blocked"):
+            safe_get("https://example.com", headers={}, timeout=1, max_bytes=100)
+
+    def test_upload_size_and_extension_are_enforced(self):
+        upload = self.upload("payload.exe", b"x", "application/octet-stream")
+        with self.assertRaises(HTTPException) as context:
+            asyncio.run(validate_upload(upload, max_bytes=10, allowed_extensions={".apk"}, allowed_content_types={"application/octet-stream"}))
+        self.assertEqual(context.exception.status_code, 415)
+        upload.file.close()
+
+        oversized = self.upload("test.apk", b"x" * 11, "application/octet-stream")
+        with self.assertRaises(HTTPException) as context:
+            asyncio.run(validate_upload(oversized, max_bytes=10, allowed_extensions={".apk"}, allowed_content_types={"application/octet-stream"}))
+        self.assertEqual(context.exception.status_code, 413)
+        oversized.file.close()
+
+
+class BackendBehaviorTests(unittest.TestCase):
+    def setUp(self):
+        conn = main.get_db_connection()
+        conn.execute("DELETE FROM scan_logs")
+        conn.execute("DELETE FROM payments")
+        conn.execute("DELETE FROM users")
+        conn.commit()
+        conn.close()
+
+    def test_database_stores_only_key_hash(self):
+        raw_key = "FREE-" + "B" * 32
+        user = main.verify_and_sync_user(raw_key)
+        self.assertTrue(user["api_key"].startswith("sha256$"))
+        conn = main.get_db_connection()
+        stored = conn.execute("SELECT api_key FROM users").fetchone()["api_key"]
+        conn.close()
+        self.assertNotEqual(stored, raw_key)
+
+    def test_fake_pro_key_is_rejected(self):
+        with self.assertRaises(HTTPException) as context:
+            main.verify_and_sync_user("CK-PRO-" + "A" * 24)
+        self.assertEqual(context.exception.status_code, 401)
+
+    def test_configured_demo_pro_key_unlocks_pro_plan(self):
+        if not main.DEMO_PRO_KEY:
+            self.skipTest("No local demo key configured")
+        user = main.verify_and_sync_user(main.DEMO_PRO_KEY)
+        self.assertEqual(user["plan"], "PRO")
+
+    def test_unconfigured_payment_endpoint_fails_closed(self):
+        if main.razorpay_client is not None:
+            self.skipTest("Payment credentials are configured in this environment")
+        with self.assertRaises(HTTPException) as context:
+            asyncio.run(main.create_order())
+        self.assertEqual(context.exception.status_code, 503)
+
+    def test_spoofed_apk_is_rejected_before_quota_charge(self):
+        file_object = tempfile.SpooledTemporaryFile()
+        file_object.write(b"this is not a zip archive")
+        file_object.seek(0)
+        upload = UploadFile(filename="fake.apk", file=file_object, headers={"content-type": "application/octet-stream"})
+        key = "FREE-" + "F" * 32
+        with self.assertRaises(HTTPException) as context:
+            asyncio.run(main.scan_apk_endpoint(upload, key))
+        file_object.close()
+        self.assertEqual(context.exception.status_code, 415)
+        user = main.verify_and_sync_user(key)
+        self.assertEqual(user["ai_used"], 0)
+
+    def test_quota_reservation_is_atomic(self):
+        raw_key = "FREE-" + "C" * 32
+        user = main.verify_and_sync_user(raw_key)
+        outcomes = []
+        lock = threading.Lock()
+
+        def reserve():
+            try:
+                main.reserve_quota(user, "url")
+                result = "ok"
+            except HTTPException:
+                result = "limited"
+            with lock:
+                outcomes.append(result)
+
+        threads = [threading.Thread(target=reserve) for _ in range(20)]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+        self.assertEqual(outcomes.count("ok"), main.LIMITS["FREE"]["url"])
+        self.assertEqual(outcomes.count("limited"), 10)
+
+    @patch("main.run_engine", new_callable=AsyncMock, return_value={"status": "SAFE", "risk_score": 0, "ai_analysis": []})
+    def test_extension_background_scan_does_not_consume_manual_quota(self, _engine):
+        raw_key = "FREE-" + "H" * 32
+        asyncio.run(main.scan_url_endpoint(
+            main.UrlRequest(url="https://example.com"), raw_key, "extension-background"
+        ))
+        user = main.verify_and_sync_user(raw_key)
+        self.assertEqual(user["url_used"], 0)
+
+    def test_clear_history_uses_normalized_owner(self):
+        raw_key = "FREE-" + "D" * 32
+        user = main.verify_and_sync_user(raw_key)
+        main.log_scan(user["api_key"], "https://example.com", "SAFE", 0, "test", [])
+        asyncio.run(main.clear_history(raw_key))
+        conn = main.get_db_connection()
+        count = conn.execute("SELECT COUNT(*) AS count FROM scan_logs").fetchone()["count"]
+        conn.close()
+        self.assertEqual(count, 0)
+
+    def test_shadow_scout_upi_is_deterministic(self):
+        first = analyze_shadow_query("normaluser@oksbi", "upi")
+        second = analyze_shadow_query("normaluser@oksbi", "upi")
+        self.assertEqual(first["status"], second["status"])
+        self.assertEqual(first["risk_score"], second["risk_score"])
+
+    def test_normal_jpeg_without_exif_is_not_marked_suspicious(self):
+        image = Image.new("RGB", (80, 80), color=(120, 160, 200))
+        payload = io.BytesIO()
+        image.save(payload, "JPEG", quality=85)
+        report = SatarkForensicsEngine(payload.getvalue(), "shared-photo.jpg").scan()
+        self.assertEqual(report["verdict"], "AUTHENTIC")
+        self.assertLess(report["risk_score"], 40)
+
+    @patch("shadow_scout.ShadowScoutEngine.check_password_kanonymity")
+    def test_password_target_never_leaks_characters_in_mask(self, _lookup):
+        result = analyze_shadow_query("VerySecretPassword!", "password")
+        self.assertEqual(result["masked_target"], "***")
+
+    def test_scanner_executor_path_no_longer_crashes(self):
+        scanner = TitanScanner("https://example.com/")
+        with patch.object(scanner, "analyze_whois"), patch.object(scanner, "analyze_dom"), patch.object(scanner, "analyze_reputation"):
+            result = scanner.generate_report()
+        self.assertIn(result["status"], {"SAFE", "SUSPICIOUS", "MALWARE DETECTED"})
+        self.assertIn(result["confidence_level"], {"LOW", "MEDIUM", "HIGH"})
+        self.assertIn("disclaimer", result)
+
+    def test_official_bank_login_is_not_a_brand_spoof(self):
+        scanner = TitanScanner("https://www.sbi.co.in/login")
+        scanner.analyze_lexical_features()
+        self.assertLess(scanner.risk_score, 30)
+        self.assertFalse(any("not on the official domain" in item for item in scanner.ai_analysis))
+
+    def test_brand_lookalike_with_login_is_flagged(self):
+        scanner = TitanScanner("https://sbi-kyc-login.example/verify")
+        scanner.analyze_lexical_features()
+        self.assertGreaterEqual(scanner.risk_score, 30)
+
+    @patch("scanner.lookup_url_reputation", return_value={
+        "checked": True, "hit": True, "provider": "test", "categories": ["SOCIAL_ENGINEERING"]
+    })
+    def test_reputation_hit_is_high_risk_evidence(self, _reputation):
+        scanner = TitanScanner("https://example.com/")
+        scanner.analyze_reputation()
+        self.assertGreaterEqual(scanner.risk_score, 100)
+
+    @patch("scanner.validate_public_url", side_effect=ValueError("blocked"))
+    def test_scanner_returns_rejected_for_blocked_target(self, _validator):
+        result = scan_website_logic("http://127.0.0.1")
+        self.assertEqual(result["status"], "REJECTED")
+
+
+class AsgiIntegrationTests(unittest.TestCase):
+    @staticmethod
+    def request(method, path, *, headers=None, body=b""):
+        sent = []
+        delivered = False
+
+        async def receive():
+            nonlocal delivered
+            if not delivered:
+                delivered = True
+                return {"type": "http.request", "body": body, "more_body": False}
+            return {"type": "http.disconnect"}
+
+        async def send(message):
+            sent.append(message)
+
+        request_headers = {"host": "testserver", **(headers or {})}
+        encoded_headers = [(key.lower().encode(), value.encode()) for key, value in request_headers.items()]
+        scope = {
+            "type": "http", "asgi": {"version": "3.0"}, "http_version": "1.1",
+            "method": method, "scheme": "http", "path": path, "raw_path": path.encode(),
+            "query_string": b"", "headers": encoded_headers,
+            "client": ("203.0.113.10", 12345), "server": ("testserver", 80), "root_path": "",
+        }
+        asyncio.run(main.app(scope, receive, send))
+        start = next(item for item in sent if item["type"] == "http.response.start")
+        response_body = b"".join(item.get("body", b"") for item in sent if item["type"] == "http.response.body")
+        return start["status"], dict(start["headers"]), response_body
+
+    def test_health_has_security_headers(self):
+        status, headers, body = self.request("GET", "/health")
+        self.assertEqual(status, 200)
+        self.assertEqual(headers[b"x-content-type-options"], b"nosniff")
+        self.assertEqual(json.loads(body), {"status": "ok"})
+
+    def test_disallowed_cors_origin_gets_no_allow_origin_header(self):
+        status, headers, _ = self.request("GET", "/health", headers={"origin": "https://evil.example"})
+        self.assertEqual(status, 200)
+        self.assertNotIn(b"access-control-allow-origin", headers)
+
+    def test_loopback_cors_origin_is_allowed_on_a_nonstandard_dev_port(self):
+        status, headers, _ = self.request("OPTIONS", "/user-status", headers={
+            "origin": "http://[::1]:5173", "access-control-request-method": "GET"
+        })
+        self.assertEqual(status, 200)
+        self.assertEqual(headers[b"access-control-allow-origin"], b"http://[::1]:5173")
+
+    def test_untrusted_host_is_rejected(self):
+        status, _, _ = self.request("GET", "/health", headers={"host": "evil.example"})
+        self.assertEqual(status, 400)
+
+    def test_invalid_key_rejected_through_http_stack(self):
+        status, _, _ = self.request("GET", "/user-status", headers={"x-api-key": "bad key"})
+        self.assertEqual(status, 401)
+
+    def test_private_target_rejected_through_http_stack(self):
+        payload = json.dumps({"url": "http://127.0.0.1/admin"}).encode()
+        status, _, body = self.request(
+            "POST", "/scan",
+            headers={"content-type": "application/json", "x-api-key": "FREE-" + "E" * 32},
+            body=payload,
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(body)["status"], "REJECTED")
+
+    def test_overlong_scan_url_is_rejected_with_validation_error(self):
+        payload = json.dumps({"url": "https://example.com/" + ("a" * 2100)}).encode()
+        status, _, _ = self.request(
+            "POST", "/scan", headers={"content-type": "application/json", "x-api-key": "FREE-" + "J" * 32}, body=payload
+        )
+        self.assertEqual(status, 422)
+
+    def test_scan_feedback_is_stored(self):
+        payload = json.dumps({
+            "target": "https://example.com/", "feedback_type": "false_positive", "comment": "Known-safe test site"
+        }).encode()
+        key = "FREE-" + "G" * 32
+        status, _, body = self.request(
+            "POST", "/scan-feedback", headers={"content-type": "application/json", "x-api-key": key}, body=payload
+        )
+        self.assertEqual(status, 200)
+        self.assertIn("recorded", json.loads(body)["message"])
+        user = main.verify_and_sync_user(key)
+        conn = main.get_db_connection()
+        count = conn.execute("SELECT COUNT(*) AS count FROM scan_feedback WHERE api_key=?", (user["api_key"],)).fetchone()["count"]
+        conn.close()
+        self.assertEqual(count, 1)
+
+    @patch.object(main.rate_limiter, "allow", return_value=False)
+    def test_rate_limit_returns_json_429(self, _allow):
+        status, headers, body = self.request("GET", "/health")
+        self.assertEqual(status, 429)
+        self.assertEqual(json.loads(body)["detail"], "Too many requests. Try again shortly.")
+        self.assertEqual(headers[b"content-type"], b"application/json")
+
+
+if __name__ == "__main__":
+    unittest.main()

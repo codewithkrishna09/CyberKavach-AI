@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="CyberKavach Chrome Extension & OpsCenter. The ultimate Pre-DOM web interceptor and threat telemetry dashboard.">
+    <title>Extension & Dashboard | CyberKavach AI</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'], 
+                        mono: ['JetBrains Mono', 'monospace'] 
+                    },
+                    colors: { 
+                        primary: '#4f46e5', 
+                        secondary: '#0ea5e9', 
+                        dark: '#0f172a',
+                        light: '#f8fafc' 
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ========================================== */
+        /* GLOBAL STYLES & RESPONSIVE FIXES           */
+        /* ========================================== */
+        body, html { 
+            background-color: #fdfdfd; 
+            color: #0f172a; 
+            overflow-x: hidden; 
+            width: 100%;
+        }
+        
+        /* Premium Background Grids */
+        .bg-grid {
+            position: fixed; inset: 0; z-index: -1;
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+        }
+
+        /* Ambient Glowing Orbs */
+        .glow-orb-1 { position: absolute; top: -10%; left: -5%; width: 70vw; height: 70vw; max-width: 600px; max-height: 600px; background: radial-gradient(circle, rgba(79, 70, 229, 0.08) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;}
+        .glow-orb-2 { position: absolute; top: 20%; right: -10%; width: 60vw; height: 60vw; max-width: 500px; max-height: 500px; background: radial-gradient(circle, rgba(14, 165, 233, 0.08) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: -1;}
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Animations */
+        .fade-up { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+        
+        /* Chrome Button Glow */
+        .chrome-btn-glow {
+            box-shadow: 0 0 40px -10px rgba(59, 130, 246, 0.5);
+            transition: all 0.3s ease;
+        }
+        .chrome-btn-glow:hover {
+            box-shadow: 0 0 60px -10px rgba(59, 130, 246, 0.7);
+            transform: translateY(-2px);
+        }
+
+        /* Deep Prose Typography */
+        .deep-text p { 
+            margin-bottom: 1.5rem; 
+            line-height: 1.8; 
+            color: #475569; 
+            font-size: 1.05rem; 
+            font-weight: 500; 
+            word-wrap: break-word;
+        }
+        @media (min-width: 768px) { .deep-text p { font-size: 1.15rem; } }
+        .deep-text strong { color: #0f172a; font-weight: 800; }
+        .deep-text code {
+            background-color: #f1f5f9; color: #0f172a; padding: 0.15rem 0.4rem;
+            border-radius: 0.375rem; font-size: 0.85em; font-family: 'JetBrains Mono', monospace;
+            border: 1px solid #e2e8f0; word-break: break-all;
+        }
+
+        /* Feature Card Interactions */
+        .feature-card { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease; }
+        .feature-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1); }
+
+        /* Terminal Code Blocks (Responsive Fix) */
+        .terminal-block {
+            background-color: #0f172a; border-radius: 1rem; margin: 2rem 0;
+            border: 1px solid #1e293b; box-shadow: 0 20px 30px -10px rgba(0,0,0,0.4);
+            width: 100%; max-width: 100%; display: flex; flex-direction: column;
+        }
+        .terminal-header {
+            display: flex; align-items: center; padding: 0.75rem 1rem;
+            background-color: rgba(30, 41, 59, 0.8); border-bottom: 1px solid #1e293b; width: 100%;
+        }
+        .terminal-body {
+            padding: 1.5rem 1rem; overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%;
+        }
+        .terminal-body pre {
+            margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+            line-height: 1.6; color: #cbd5e1; min-width: max-content;
+        }
+        @media (min-width: 768px) { .terminal-body pre { font-size: 0.9rem; } }
+        .terminal-body::-webkit-scrollbar { height: 6px; }
+        .terminal-body::-webkit-scrollbar-track { background: transparent; }
+        .terminal-body::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+    </style>
+</head>
+<body class="selection:bg-indigo-100 selection:text-indigo-900">
+
+    <div class="bg-grid"></div>
+    <div class="glow-orb-1"></div>
+    <div class="glow-orb-2"></div>
+
+    <header id="navbar" class="fixed w-full z-50 top-0 bg-white/90 backdrop-blur-xl border-b border-slate-200/60 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex justify-between items-center w-full">
+            
+            <div class="flex items-center gap-3 shrink-0">
+                <a href="index.html" class="flex items-center gap-2 group">
+                   <div class="bg-indigo-600 p-2 md:p-2.5 rounded-xl shadow-lg group-hover:rotate-12 group-hover:shadow-indigo-500/50 transition-all duration-300">
+                    <i data-lucide="shield" class="w-4 h-4 md:w-5 md:h-5 text-white"></i>
+                </div>
+                    <span class="font-black text-lg md:text-xl tracking-tight text-slate-900">CyberKavach<span class="text-indigo-600">.AI</span></span>
+                </a>
+            </div>
+            
+            <nav class="hidden md:flex items-center gap-8 bg-slate-50/80 px-6 py-2 rounded-full border border-slate-200 shadow-sm">
+                <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Scanner</a>
+                <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Pricing</a>
+            </nav>
+
+            <div class="flex items-center shrink-0">
+                <a href="/index.html#blog" class="px-4 py-2.5 md:px-6 bg-white border border-slate-200 text-slate-700 font-bold text-[10px] md:text-xs uppercase tracking-widest rounded-lg md:rounded-xl hover:bg-slate-50 hover:text-indigo-600 transition-all shadow-sm flex items-center gap-2 whitespace-nowrap">
+                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Back to Home</span>
+                    <span class="sm:hidden">Back</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section class="pt-32 md:pt-48 pb-16 md:pb-24 px-4 md:px-6 relative z-10 w-full overflow-hidden">
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8 w-full">
+            
+            <div class="w-full lg:w-1/2 text-center lg:text-left z-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-indigo-200 bg-indigo-50 text-indigo-700 text-[10px] md:text-xs font-bold mb-6 uppercase tracking-widest shadow-sm fade-up">
+                    <i data-lucide="chrome" class="w-3.5 h-3.5"></i> Chrome Web Store Approved
+                </div>
+                
+                <h1 class="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-slate-900 mb-6 leading-[1.1] fade-up delay-100 break-words">
+                    Your Browser.<br/>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Fortified by Titan.</span>
+                </h1>
+                
+                <p class="text-base sm:text-xl text-slate-600 max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed font-medium fade-up delay-200 px-2 lg:px-0">
+                    Don't wait for a page to load to realize it's a scam. Our Zero-Latency Interceptor analyzes the Document Object Model (DOM) in 0.2ms and cuts the connection before pixels even render.
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 fade-up delay-300">
+                    <a href="#" class="chrome-btn-glow w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-black text-xs md:text-sm uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-3">
+                        <i data-lucide="downloadCloud" class="w-5 h-5"></i> Add to Chrome — It's Free
+                    </a>
+                    <a href="#dashboard" class="w-full sm:w-auto px-8 py-4 bg-white border border-slate-200 hover:border-slate-300 text-slate-700 hover:text-slate-900 font-bold text-xs md:text-sm uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">
+                        Explore OpsCenter <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                    </a>
+                </div>
+                
+                <div class="mt-8 flex items-center justify-center lg:justify-start gap-2 text-slate-500 text-xs font-bold uppercase tracking-widest fade-up delay-300">
+                    <div class="flex text-yellow-400">
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                    </div>
+                    <span>Trusted by 10,000+ Indian Users</span>
+                </div>
+            </div>
+
+            <div class="w-full lg:w-1/2 relative fade-up delay-200 flex justify-center lg:justify-end">
+                <div class="w-full max-w-lg bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden relative z-10">
+                    <div class="h-10 bg-slate-100 border-b border-slate-200 flex items-center px-4 gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                        <div class="w-3 h-3 rounded-full bg-amber-400"></div>
+                        <div class="w-3 h-3 rounded-full bg-emerald-400"></div>
+                        <div class="mx-auto w-2/3 h-6 bg-white rounded border border-slate-200 flex items-center px-2 text-[10px] text-slate-400 font-mono">
+                            <i data-lucide="lock" class="w-3 h-3 mr-1 text-slate-300"></i> https://sbi-kyc-update-now.vercel.app
+                        </div>
+                    </div>
+                    <div class="p-8 sm:p-12 text-center bg-red-50 relative overflow-hidden h-64 sm:h-80 flex flex-col justify-center items-center">
+                        <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 0h20v20H0V0zm10 17L3 7h14l-7 10z\' fill=\'%23ef4444\' fill-opacity=\'0.05\' fill-rule=\'evenodd\'/%3E%3C/svg%3E')]"></div>
+                        <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-4 relative z-10 shadow-sm">
+                            <i data-lucide="shield-alert" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-red-600 mb-2 relative z-10 uppercase tracking-tight">Phishing Intercepted</h3>
+                        <p class="text-red-800/80 text-sm font-medium relative z-10 max-w-xs mx-auto">Titan Engine blocked a malicious DOM rendering attempt disguised as an SBI portal.</p>
+                        
+                        <div class="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 w-48 sm:w-56 bg-white border border-slate-200 rounded-xl shadow-2xl p-4 text-left z-20 transform translate-y-2 hover:translate-y-0 transition-transform">
+                            <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+                                <span class="text-[10px] font-black text-slate-900 uppercase flex items-center gap-1"><i data-lucide="shield" class="w-3 h-3 text-indigo-600"></i> CyberKavach</span>
+                                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                            </div>
+                            <div class="text-[10px] text-slate-500 font-bold mb-1">Status: <span class="text-red-600">Threat Isolated</span></div>
+                            <div class="text-[10px] text-slate-500 font-bold">Latency: <span class="text-slate-900 font-mono">0.18ms</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-blue-100 to-indigo-50 rounded-full blur-3xl -z-10 opacity-70"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 md:py-24 px-4 md:px-6 w-full border-t border-slate-200">
+        <div class="max-w-7xl mx-auto w-full">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16 md:mb-20 fade-up">
+                <h2 class="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">How the Interceptor Works</h2>
+                <p class="text-slate-600 text-lg leading-relaxed font-medium">
+                    Traditional antiviruses scan URLs against slow cloud blacklists. The CyberKavach Chrome Extension lives natively inside your browser, dissecting HTML structures as they download.
+                </p>
+            </div>
+            
+            
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 w-full">
+                <div class="feature-card bg-white border border-slate-200 p-6 md:p-8 rounded-[2rem] fade-up">
+                    <div class="w-12 h-12 bg-indigo-50 text-indigo-600 flex items-center justify-center rounded-2xl mb-6"><i data-lucide="zap" class="w-6 h-6"></i></div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Pre-DOM Isolation</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium">We hook into the browser's <code>webRequest</code> API. Before the browser even paints the pixels on your screen, our extension parses the HTML input fields looking for credential harvesters.</p>
+                </div>
+                <div class="feature-card bg-white border border-slate-200 p-6 md:p-8 rounded-[2rem] fade-up delay-100">
+                    <div class="w-12 h-12 bg-cyan-50 text-cyan-600 flex items-center justify-center rounded-2xl mb-6"><i data-lucide="eye-off" class="w-6 h-6"></i></div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Captcha Evasion Defeat</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium">Scammers hide behind Cloudflare Turnstiles so Google bots can't scan their phishing page. Since our extension sits <em>behind</em> the captcha wall with you, it catches the threat perfectly.</p>
+                </div>
+                <div class="feature-card bg-white border border-slate-200 p-6 md:p-8 rounded-[2rem] fade-up delay-200">
+                    <div class="w-12 h-12 bg-emerald-50 text-emerald-600 flex items-center justify-center rounded-2xl mb-6"><i data-lucide="shield-check" class="w-6 h-6"></i></div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Zero-Log Encryption</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed font-medium">When checking a URL against our master database, the extension creates a mathematical hash of the link. We never transmit or log your actual browsing history to our servers.</p>
+                </div>
+            </div>
+
+            <div class="mt-16 fade-up">
+                <h4 class="text-sm font-black uppercase tracking-widest text-slate-400 mb-4 text-center">Inside the Extension Engine (background.js)</h4>
+                <div class="terminal-block max-w-4xl mx-auto">
+                    <div class="terminal-header">
+                        <div class="flex gap-1.5 items-center shrink-0">
+                            <div class="w-2.5 h-2.5 rounded-full bg-red-400"></div><div class="w-2.5 h-2.5 rounded-full bg-amber-400"></div><div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
+                        </div>
+                        <span class="text-slate-400 text-[10px] sm:text-xs font-mono ml-3 truncate">background.js</span>
+                    </div>
+                    <div class="terminal-body">
+<pre><code><span class="text-slate-500">// Intercept all main-frame requests before they render</span>
+chrome.webRequest.onBeforeRequest.addListener(
+  <span class="text-indigo-400">async</span> <span class="text-indigo-300">function</span>(details) {
+    <span class="text-indigo-400">const</span> targetUrl = details.url;
+    
+    <span class="text-slate-500">// Send to local heuristic engine & Titan Backend</span>
+    <span class="text-indigo-400">const</span> verdict = <span class="text-indigo-400">await</span> CyberKavachAPI.scan(targetUrl);
+    
+    <span class="text-indigo-400">if</span> (verdict.isThreat) {
+      <span class="text-slate-500">// Instantly freeze page & inject Warning DOM</span>
+      <span class="text-red-400 font-bold">return { cancel: true };</span> 
+      chrome.tabs.update(details.tabId, { url: <span class="text-amber-300">"warning.html?ref="</span> + targetUrl });
+    }
+  },
+  { urls: [<span class="text-amber-300">"&lt;all_urls&gt;"</span>], types: [<span class="text-amber-300">"main_frame"</span>] },
+  [<span class="text-amber-300">"blocking"</span>]
+);</code></pre>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <section id="dashboard" class="py-20 md:py-32 px-4 md:px-6 bg-[#0f172a] text-white relative w-full overflow-hidden border-t border-slate-800">
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'#ffffff\' fill-opacity=\'0.03\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
+        
+        <div class="max-w-7xl mx-auto relative z-10 w-full">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16 md:mb-24 fade-up">
+                <div class="text-cyan-400 font-bold uppercase tracking-widest text-[10px] md:text-xs mb-3 md:mb-4 flex items-center gap-2 justify-center"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> The Command Center</div>
+                <h2 class="text-3xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tight">The OpsCenter Dashboard</h2>
+                <p class="text-slate-400 font-medium text-base md:text-lg">Gain absolute visibility over your digital perimeter. Manage your Elite License, track intercepted threats, and monitor your AI quotas in real-time.</p>
+            </div>
+
+            
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 w-full fade-up delay-100">
+                
+                <div class="md:col-span-8 bg-[#1e293b] border border-slate-700 p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-red-500/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-red-500/20 transition-colors"></div>
+                    <div class="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center text-white mb-6 border border-slate-600"><i data-lucide="activity" class="w-6 h-6"></i></div>
+                    <h3 class="text-2xl md:text-3xl font-black mb-3 text-white">Threat Telemetry & Logs</h3>
+                    <p class="text-slate-400 text-sm md:text-base leading-relaxed font-medium max-w-xl">Every phishing link blocked, every APK scanned, and every deepfake analyzed is securely logged in your dashboard. View exact risk scores, heuristic triggers, and timestamped forensic data to understand exactly what targeted you.</p>
+                </div>
+
+                <div class="md:col-span-4 bg-[#1e293b] border border-slate-700 p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-[40px] pointer-events-none group-hover:bg-cyan-500/20 transition-colors"></div>
+                    <div class="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center text-white mb-6 border border-slate-600"><i data-lucide="pie-chart" class="w-6 h-6"></i></div>
+                    <h3 class="text-xl md:text-2xl font-black mb-3 text-white">AI Quota Monitor</h3>
+                    <p class="text-slate-400 text-sm md:text-base leading-relaxed font-medium">Keep track of your daily limits. Monitor your 2,000 extension URL scans and 200 Deep AI forensic scans with visual, real-time progress bars synced directly to the master node.</p>
+                </div>
+
+                <div class="md:col-span-5 bg-[#1e293b] border border-slate-700 p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] relative overflow-hidden group">
+                    <div class="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center text-white mb-6 border border-slate-600"><i data-lucide="key" class="w-6 h-6"></i></div>
+                    <h3 class="text-xl md:text-2xl font-black mb-3 text-white">Cryptographic Keys</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed font-medium">Manage your <code>CK-PRO-XXXXX</code> Elite License. Sync your extension instantly by pasting your key, or revoke it if your credentials get compromised.</p>
+                </div>
+
+                <div class="md:col-span-7 bg-[#1e293b] border border-slate-700 p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] relative overflow-hidden group">
+                    <div class="absolute bottom-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-emerald-500/20 transition-colors"></div>
+                    <div class="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center text-white mb-6 border border-slate-600"><i data-lucide="trash-2" class="w-6 h-6"></i></div>
+                    <h3 class="text-2xl md:text-3xl font-black mb-3 text-white">One-Click Data Purge</h3>
+                    <p class="text-slate-400 text-sm md:text-base leading-relaxed font-medium max-w-lg">In compliance with the DPDP Act 2023, you have absolute sovereignty over your telemetry. A single click permanently drops your log tables from our SQLite architecture. No backups, no ghosts.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 md:py-24 px-4 md:px-6 w-full bg-white">
+        <div class="max-w-5xl mx-auto bg-slate-900 rounded-3xl md:rounded-[2.5rem] p-8 md:p-16 border border-slate-800 relative overflow-hidden fade-up shadow-2xl text-center w-full">
+            <div class="absolute top-0 right-0 w-40 md:w-64 h-40 md:h-64 bg-blue-500/20 rounded-full blur-[60px] pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 w-40 md:w-64 h-40 md:h-64 bg-indigo-500/20 rounded-full blur-[60px] pointer-events-none"></div>
+            
+            <div class="relative z-10">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 md:mb-6 tracking-tight leading-tight">Fortify Your Browser Today.</h2>
+                <p class="text-slate-400 font-medium mb-8 md:mb-10 max-w-2xl mx-auto text-sm md:text-lg px-2">
+                    Install the CyberKavach extension in 5 seconds and instantly upgrade your digital perimeter. Connect your OpsCenter to track every neutralized threat.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="index.html#pricing" class="flex justify-center px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs sm:text-sm uppercase tracking-widest rounded-xl transition-all shadow-[0_0_30px_rgba(79,70,229,0.4)] items-center gap-2 w-full sm:w-auto">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i> Get Elite License
+                    </a>
+                    <a href="#" class="flex justify-center px-8 py-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-white font-black text-xs sm:text-sm uppercase tracking-widest rounded-xl transition-all items-center gap-2 w-full sm:w-auto">
+                        <i data-lucide="chrome" class="w-5 h-5"></i> Add to Chrome
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+      <footer class="bg-slate-900 pt-16 pb-10 px-4 md:px-6 border-t border-slate-800 w-full mt-12">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 p-2 rounded-xl"><i data-lucide="shield" class="w-5 h-5 text-white"></i></div>
+                <span class="font-black text-xl text-white tracking-wide">CyberKavach<span class="text-indigo-400">.AI</span></span>
+            </div>
+            <div class="flex flex-wrap justify-center gap-6 text-sm font-medium text-slate-400">
+                <a href="index.html" class="hover:text-white transition">Home</a>
+                <a href="#" class="text-white font-bold">Terms of Service</a>
+                <a href="privacy.html" class="hover:text-white transition">Privacy Architecture</a>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto border-t border-slate-800 pt-6 mt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+            <p class="text-[10px] sm:text-xs text-slate-500 font-bold uppercase tracking-widest">© 2026 CyberKavach AI. Designed for Bharat.</p>
+            
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Initialize Icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // Scroll Animations (Fade Up)
+            const fadeObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => { 
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible'); 
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
+        });
+    </script>
+</body>
+</html>

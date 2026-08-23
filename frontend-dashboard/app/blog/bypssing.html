@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Learn how modern phishing attacks use legitimate CAPTCHA walls and AES-256 DOM obfuscation to bypass Google Safe Browsing and traditional antivirus bots.">
+    <meta name="author" content="CyberKavach Threat Labs">
+    
+    <meta property="og:title" content="Bypassing the Bots: Captcha Walls & Obfuscation">
+    <meta property="og:description" content="How cyber-syndicates turn security tools into weapons to hide zero-day phishing pages.">
+    <meta property="og:type" content="article">
+    
+    <title>Bypassing the Bots: Captcha Walls & Obfuscation | CyberKavach</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="blog-style.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="antialiased bg-[#fdfdfd] text-slate-900 relative overflow-x-hidden selection:bg-purple-100 selection:text-purple-900">
+
+    <div class="fixed top-0 left-0 w-full h-1 bg-slate-100 z-[100]">
+        <div id="progressBar" class="h-full bg-purple-600 w-0 transition-all duration-150"></div>
+    </div>
+
+    <header id="navbar" class="fixed w-full z-50 top-0 bg-white/90 backdrop-blur-xl border-b border-slate-200/60 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex justify-between items-center w-full">
+            
+            <div class="flex items-center gap-3 shrink-0">
+                <a href="index.html" class="flex items-center gap-2 group">
+                   <div class="bg-indigo-600 p-2 md:p-2.5 rounded-xl shadow-lg group-hover:rotate-12 group-hover:shadow-indigo-500/50 transition-all duration-300">
+                    <i data-lucide="shield" class="w-4 h-4 md:w-5 md:h-5 text-white"></i>
+                </div>
+                    <span class="font-black text-lg md:text-xl tracking-tight text-slate-900">CyberKavach<span class="text-indigo-600">.AI</span></span>
+                </a>
+            </div>
+            
+            <nav class="hidden md:flex items-center gap-8 bg-slate-50/80 px-6 py-2 rounded-full border border-slate-200 shadow-sm">
+                <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Scanner</a>
+                <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Pricing</a>
+            </nav>
+
+            <div class="flex items-center shrink-0">
+                <a href="/index.html#blog" class="px-4 py-2.5 md:px-6 bg-white border border-slate-200 text-slate-700 font-bold text-[10px] md:text-xs uppercase tracking-widest rounded-lg md:rounded-xl hover:bg-slate-50 hover:text-indigo-600 transition-all shadow-sm flex items-center gap-2 whitespace-nowrap">
+                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Back to Home</span>
+                    <span class="sm:hidden">Back</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-24 sm:pt-32 pb-24">
+        
+        <article class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+            
+            <div class="lg:col-span-8 w-full max-w-3xl mx-auto lg:mx-0 overflow-hidden">
+                
+                <header class="mb-10 sm:mb-14">
+                    <div class="flex flex-wrap items-center gap-3 sm:gap-4 mb-6">
+                        <span class="px-2.5 py-1 bg-purple-50 border border-purple-200 text-purple-700 text-[10px] font-black uppercase tracking-widest rounded-md shadow-sm">Zero-Day Exploit</span>
+                        <time datetime="2026-09-28" class="text-slate-400 font-mono text-xs font-bold uppercase tracking-wider">Sep 28, 2026</time>
+                        <span class="text-slate-300 hidden sm:inline">•</span>
+                        <span class="text-slate-400 font-mono text-xs font-bold flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 16 Min Read</span>
+                    </div>
+                    
+                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.15] mb-6 tracking-tight break-words">
+                        Bypassing the Bots: Captcha Walls & Obfuscation
+                    </h1>
+                    
+                    <p class="text-lg sm:text-xl text-slate-500 font-medium leading-relaxed mb-8">
+                        Phishers are weaponizing legitimate security tools to hide their tracks. By placing CAPTCHAs before fake login pages, they successfully block Google Safe Browsing bots from indexing their scams.
+                    </p>
+
+                    <div class="flex items-center gap-4 border-y border-slate-100 py-6 mt-8">
+                        <div class="w-12 h-12 rounded-full bg-slate-100 overflow-hidden border border-slate-200 shrink-0">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="CyberKavach Threat Labs" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <div class="font-bold text-slate-900 text-sm sm:text-base">CyberKavach Threat Labs</div>
+                            <div class="text-xs font-mono text-slate-500 mt-0.5">Zero-Day Intelligence Team</div>
+                        </div>
+                    </div>
+                </header>
+
+                <figure class="mb-12 sm:mb-16">
+                    <div class="w-full h-[250px] sm:h-[400px] bg-slate-900 rounded-2xl sm:rounded-[2rem] overflow-hidden border border-slate-200 shadow-xl relative">
+                        <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80" alt="Encrypted Code Matrix" class="w-full h-full object-cover opacity-60 mix-blend-screen">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent"></div>
+                    </div>
+                    <figcaption class="text-center text-[10px] sm:text-xs font-mono text-slate-400 mt-4 uppercase tracking-widest">Fig 1: Base64 Obfuscated payload hiding within a benign HTML structure.</figcaption>
+                </figure>
+
+                <div class="blog-content">
+                    
+                    <h2 id="section-the-flaw">1. The Death of the Blacklist</h2>
+                    <p>For the last decade, internet security relied on a simple concept: The Blacklist. When a scammer creates a fake banking website, global web crawlers (like Google Safe Browsing) scan it, detect the fake login form, and flag the domain. The next time a user opens it, Chrome blocks it with a giant red warning screen.</p>
+                    
+                    <p>But what if the crawler bot can't see the login form? Hackers realized that if they can block the automated bots from reading the HTML, their domains will never get blacklisted. And ironically, they found the perfect tool to block bots: <strong>The CAPTCHA</strong>.</p>
+
+                    <h2 id="section-captcha-shield">2. The CAPTCHA Shield</h2>
+                    <p>In modern zero-day phishing attacks, clicking a scam link no longer takes you directly to a fake SBI or HDFC page. Instead, it takes you to a completely legitimate-looking Cloudflare or reCAPTCHA verification page.</p>
+                    
+                    <blockquote class="bg-purple-50/50 border-l-[3px] border-purple-500 p-5 sm:p-8 rounded-r-2xl my-8 text-purple-900 font-medium shadow-sm text-sm sm:text-base">
+                        When Google's security bots visit the phishing URL, they hit a wall. Bots cannot click "I am human" or identify pictures of traffic lights. Because the bot sees nothing malicious on the CAPTCHA page, it marks the domain as "SAFE".
+                    </blockquote>
+
+                    <p>Only when a real human victim manually solves the puzzle does the actual attack begin.</p>
+
+                    <h2 id="section-dom-obfuscation">3. AES-256 DOM Obfuscation</h2>
+                    <p>But the hackers don't stop there. Once the CAPTCHA is solved, the server doesn't send standard HTML code. If it did, network-level firewalls might still catch the words "Enter NetBanking Password."</p>
+
+                    <p>Instead, the server sends a massively encrypted, obfuscated JavaScript payload. To any network scanner, it looks like harmless gibberish.</p>
+
+                    <div class="code-block my-8">
+                        <div class="code-header">
+                            <span class="flex items-center gap-2 truncate"><i data-lucide="file-code-2" class="w-3.5 h-3.5 shrink-0"></i> <span class="truncate">Initial Source Code (Firewall View)</span></span>
+                            <span class="bg-slate-500/20 text-slate-300 px-2 py-0.5 rounded text-[9px] uppercase tracking-widest flex items-center gap-1 shrink-0 ml-2">Encrypted</span>
+                        </div>
+                        <div class="code-body">
+<pre><code><span class="text-emerald-400">&lt;html&gt;</span>
+  <span class="text-emerald-400">&lt;body&gt;</span>
+    <span class="text-emerald-400">&lt;script&gt;</span>
+      <span class="text-indigo-400">var</span> _0x4b2a = <span class="text-amber-300">"U2FsdGVkX1+QJk...[10k chars of Base64]...aZ9b="</span>;
+      <span class="text-indigo-400">var</span> k = prompt(<span class="text-amber-300">"Verify Access"</span>); <span class="text-slate-500">// Secret from CAPTCHA</span>
+      
+      <span class="text-slate-500">// Decrypts payload only in the victim's browser</span>
+      document.write( CryptoJS.AES.decrypt(_0x4b2a, k).toString(CryptoJS.enc.Utf8) );
+    <span class="text-emerald-400">&lt;/script&gt;</span>
+  <span class="text-emerald-400">&lt;/body&gt;</span>
+<span class="text-emerald-400">&lt;/html&gt;</span></code></pre>
+                        </div>
+                    </div>
+
+                    <h2 id="section-invisible-execution">4. The Invisible Execution</h2>
+                    <p>The magic happens <em>Client-Side</em>. The victim's own browser takes the secret key provided by the CAPTCHA step, decrypts the massive Base64 string in real-time, and instantly writes the fake banking UI directly into the Document Object Model (DOM).</p>
+                    
+                    <p>The phishing page renders perfectly on the screen, but if you "View Page Source," you will only see the encrypted script. Traditional antiviruses are entirely blind to this because they scan files and URLs, not the dynamically rendered memory of a web browser.</p>
+
+                    <h2 id="section-interception">5. Zero-Latency Interception (The Fix)</h2>
+                    <p>To fight modern obfuscation, your defense cannot live on a distant cloud server. It must live inside the browser where the code is finally unpacked.</p>
+                    
+                    <p>This is the core philosophy behind the <strong>CyberKavach Browser Extension</strong>. We don't care about the initial URL or the CAPTCHA. Our Titan Engine monitors the live DOM tree. The microsecond the malicious JavaScript decrypts itself and attempts to render an unauthorized "PIN Entry Form", our engine detects the heuristic pattern and severs the connection before the visual pixels even hit the monitor.</p>
+                    
+                    <hr class="my-12 sm:my-16 border-slate-100">
+                    
+                    <div class="bg-gradient-to-br from-purple-50 to-white border border-purple-100/50 rounded-2xl sm:rounded-3xl p-6 sm:p-10 text-center shadow-lg">
+                        <div class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center text-white mx-auto mb-4 shadow-md">
+                            <i data-lucide="zap" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-black text-slate-900 mb-3 mt-0">Don't rely on outdated blacklists.</h3>
+                        <p class="text-slate-500 mb-8 text-sm font-medium max-w-md mx-auto">Get absolute, in-browser protection against dynamically rendered zero-day threats. Deploy the Titan Engine today.</p>
+                        <a href="/explore.html" class="inline-flex items-center justify-center w-full sm:w-auto gap-2 px-8 py-4 bg-slate-900 text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-purple-600 transition-colors shadow-md">
+                            Install Browser Extension
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            <aside class="hidden lg:block lg:col-span-4 relative">
+                <div class="sticky top-32 space-y-8">
+                    
+                    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                        <h4 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-2">
+                            <i data-lucide="align-left" class="w-3.5 h-3.5 text-purple-500"></i> Chapter Index
+                        </h4>
+                        <nav id="toc" class="space-y-3 text-sm font-medium text-slate-500 border-l-2 border-slate-100 pl-4">
+                            <a href="#section-the-flaw" class="block hover:text-slate-900 transition-colors toc-link line-clamp-1">1. The Death of the Blacklist</a>
+                            <a href="#section-captcha-shield" class="block hover:text-slate-900 transition-colors toc-link line-clamp-1">2. The CAPTCHA Shield</a>
+                            <a href="#section-dom-obfuscation" class="block hover:text-slate-900 transition-colors toc-link line-clamp-1">3. AES-256 DOM Obfuscation</a>
+                            <a href="#section-invisible-execution" class="block hover:text-slate-900 transition-colors toc-link line-clamp-1">4. The Invisible Execution</a>
+                            <a href="#section-interception" class="block hover:text-slate-900 transition-colors toc-link line-clamp-1">5. Zero-Latency Interception</a>
+                        </nav>
+                    </div>
+
+                    <div class="bg-[#0f172a] rounded-2xl p-6 shadow-xl relative overflow-hidden border border-slate-800">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl"></div>
+                        <h4 class="text-white font-black mb-2 relative z-10">Zero-Day Alerts</h4>
+                        <p class="text-slate-400 text-xs font-medium mb-5 relative z-10 leading-relaxed">Get notified the exact moment a new financial scam hits the Indian internet.</p>
+                        <form class="relative z-10">
+                            <input type="email" placeholder="Email address..." class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-3.5 text-sm outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 mb-3 transition-all placeholder:text-slate-500 font-medium">
+                            <button type="submit" class="w-full bg-white text-slate-900 font-black text-xs uppercase tracking-widest py-3.5 rounded-xl hover:bg-purple-50 transition-colors">Subscribe</button>
+                        </form>
+                    </div>
+
+                </div>
+            </aside>
+
+        </article>
+    </main>
+
+    <footer class="bg-white border-t border-slate-100 pt-12 pb-8 w-full">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6 text-center md:text-left">
+            <div class="flex items-center gap-2">
+                <i data-lucide="shield" class="w-4 h-4 text-purple-600"></i>
+                <span class="font-black text-lg text-slate-900">CyberKavach.AI</span>
+            </div>
+            <p class="text-slate-400 text-xs font-medium">© 2026 CyberKavach AI. Threat Intelligence Division.</p>
+        </div>
+    </footer>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Bypassing the Bots: Captcha Walls & Obfuscation",
+      "image": [
+        "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80"
+       ],
+      "datePublished": "2026-09-28T08:00:00+08:00",
+      "dateModified": "2026-09-28T09:20:00+08:00",
+      "author": [{
+          "@type": "Organization",
+          "name": "CyberKavach Threat Labs",
+          "url": "https://cyberkavach.ai"
+        }]
+    }
+    </script>
+
+    <script src="blog-script.js">
+        // ==========================================
+// BLOG POST UX & INTERACTIONS (MOBILE READY)
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    
+    // Initialize standard icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    // 1. Reading Progress Bar Logic
+    const progressBar = document.getElementById('progressBar');
+    
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        
+        let scrolledPercentage = (scrollTop / scrollHeight) * 100;
+        if(scrolledPercentage > 100) scrolledPercentage = 100;
+        if(scrolledPercentage < 0) scrolledPercentage = 0;
+        
+        if(progressBar) {
+            progressBar.style.width = scrolledPercentage + "%";
+        }
+    });
+
+    // 2. Dynamic Table of Contents (Intersection Observer)
+    const headings = document.querySelectorAll('.blog-content h2');
+    const tocLinks = document.querySelectorAll('.toc-link');
+
+    const observerOptions = {
+        root: null,
+        // Triggers when heading is in the top 30% of the screen
+        rootMargin: '-100px 0px -70% 0px', 
+        threshold: 0
+    };
+
+    const headingObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.getAttribute('id');
+                
+                // Remove active styling from all
+                tocLinks.forEach(link => link.classList.remove('active-toc', 'text-purple-600', 'border-purple-600'));
+                
+                // Add active styling to current
+                const activeLink = document.querySelector(`.toc-link[href="#${id}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active-toc', 'text-purple-600', 'border-purple-600');
+                }
+            }
+        });
+    }, observerOptions);
+
+    headings.forEach(heading => headingObserver.observe(heading));
+
+    // 3. Smooth Scroll Offset for TOC Links (Prevents Navbar Overlap)
+    tocLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetSection = document.getElementById(targetId);
+            
+            if (targetSection) {
+                const navHeight = document.getElementById('navbar').offsetHeight;
+                // Add 20px extra breathing room below navbar
+                const targetOffset = targetSection.offsetTop - navHeight - 20; 
+                
+                window.scrollTo({
+                    top: targetOffset,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+});
+    </script>
+</body>
+</html>

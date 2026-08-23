@@ -1,0 +1,652 @@
+/* ========================================== */
+/* CYBERKAVACH - PREMIUM RESPONSIVE CSS       */
+/* ========================================== */
+
+/* Prevent any horizontal scrolling on mobile */
+body, html { 
+    overflow-x: hidden; 
+    width: 100%; 
+    position: relative;
+}
+
+/* ========================================== */
+/* NAVBAR & HERO STYLES                       */
+/* ========================================== */
+
+/* Floating Glass Navbar logic */
+.nav-scrolled {
+    padding-top: 1rem !important; 
+    padding-bottom: 1rem !important;
+}
+.nav-scrolled-inner {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(15, 23, 42, 0.05) !important;
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08) !important;
+    padding: 0.5rem 1rem !important; /* Makes it look like a pill */
+}
+
+/* ========================================== */
+/* NEW MOBILE DRAWER ANIMATIONS               */
+/* ========================================== */
+
+/* Initial state of the links inside the drawer (Hidden & pushed down slightly) */
+.menu-item-anim {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Active state triggered by Javascript (Visible & in place) */
+.drawer-is-open .menu-item-anim {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Perfect Staggered Delays for 1-by-1 appearance */
+.menu-item-anim:nth-child(1) { transition-delay: 100ms; }
+.menu-item-anim:nth-child(2) { transition-delay: 150ms; }
+.menu-item-anim:nth-child(3) { transition-delay: 200ms; }
+.menu-item-anim:nth-child(4) { transition-delay: 250ms; }
+.menu-item-anim:nth-child(5) { transition-delay: 300ms; }
+.menu-item-anim:nth-child(6) { transition-delay: 350ms; }
+.menu-item-anim:nth-child(7) { transition-delay: 400ms; } /* The Button */
+.hero-fade-up {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: heroFadeUpAnim 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes heroFadeUpAnim {
+    to { opacity: 1; transform: translateY(0); }
+}
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+
+/* Scanner Focus State (Controlled by JS) */
+.scanner-focused {
+    border-color: #4f46e5 !important;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1) !important;
+}
+/* ========================================== */
+/* ABOUT & MISSION SECTION STYLES             */
+/* ========================================== */
+
+/* Scroll Fade Up Animations */
+.about-fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.about-fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.about-delay-200 { 
+    transition-delay: 200ms; 
+}
+
+/* Floating Animation for the Status Card */
+.about-float-anim {
+    animation: about-float 6s ease-in-out infinite;
+}
+
+@keyframes about-float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-12px);
+    }
+}
+/* ========================================== */
+/* EXTENSION & DASHBOARD SECTION STYLES       */
+/* ========================================== */
+
+/* Ambient Glow specific to this section */
+.ext-ambient-glow {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 50vw;
+    max-width: 600px;
+    height: 50vw;
+    max-height: 600px;
+    background: rgba(79, 70, 229, 0.04);
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Feature List Styling */
+.ext-feature-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+.ext-feature-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.75rem;
+    border-width: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+.ext-code-tag {
+    background-color: #f1f5f9;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Custom CTA Button */
+.ext-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    background-color: #0f172a;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.ext-btn-primary:hover {
+    background-color: #4f46e5;
+    box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
+}
+
+/* Browser Mockup Styling */
+.ext-browser-mockup {
+    border-radius: 1rem;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    position: relative;
+}
+.ext-browser-header {
+    background-color: #f1f5f9;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+.ext-address-bar {
+    background-color: #ffffff;
+    border-radius: 0.375rem;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.625rem;
+    color: #64748b;
+    font-family: 'JetBrains Mono', monospace;
+    flex: 1;
+    margin: 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+}
+.ext-icon-active {
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: #fee2e2;
+    border-radius: 0.25rem;
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse-red 2s infinite;
+}
+
+/* Webpage Inside Mockup */
+.ext-blurred-site {
+    opacity: 0.4;
+    filter: blur(3px);
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Extension Dashboard Popup (The Floating Card) */
+.ext-dashboard-popup {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    width: 260px;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.2);
+    border: 1px solid #e2e8f0;
+    border-top: 4px solid #ef4444;
+    transform: translateY(10px);
+    opacity: 0.9;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ext-browser-mockup:hover .ext-dashboard-popup {
+    transform: translateY(0) scale(1.02);
+    opacity: 1;
+    box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.3);
+}
+
+/* Animations */
+.ext-fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ext-fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.ext-delay-200 { transition-delay: 200ms; }
+
+@keyframes pulse-red {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    50% { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0); }
+}
+
+/* ========================================== */
+/* NEURAL ECOSYSTEM (FEATURES) SECTION STYLES */
+/* ========================================== */
+
+/* The Card Container */
+.module-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Hover Lift Effect */
+.module-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.1), 0 10px 15px -5px rgba(0, 0, 0, 0.04);
+    border-color: transparent;
+}
+
+/* Background Color Expansion on Hover */
+.module-hover-bg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 8rem;
+    height: 8rem;
+    border-radius: 9999px;
+    filter: blur(40px);
+    opacity: 0;
+    transition: all 0.6s ease;
+    transform: translate(20%, -20%);
+    z-index: 0;
+}
+.module-card:hover .module-hover-bg {
+    opacity: 1;
+    transform: translate(0, 0) scale(1.5);
+}
+
+/* Icon Box Animation */
+.module-icon-box {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 1rem;
+    border-width: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Technical Code Highlights inline */
+.module-code-tag {
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Interactive Action Buttons */
+.module-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+    width: max-content;
+}
+
+/* Fade Up Scroll Animations specific to this section */
+.module-fade-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.module-fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.module-delay-100 { transition-delay: 100ms; }
+.module-delay-200 { transition-delay: 200ms; }
+
+
+/* ========================================== */
+/* PRICING SECTION - MINIMALIST SAAS STYLES   */
+/* ========================================== */
+
+/* Clean Card Container */
+.pricing-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Very subtle lift, no heavy shadows */
+.pricing-card:hover {
+    transform: translateY(-4px);
+}
+
+/* Animations */
+.pricing-fade-up {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.pricing-fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.pricing-delay-100 { 
+    transition-delay: 100ms; 
+}
+
+/* Form Input Auto-Fill Overrides for Dark Mode */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active{
+    -webkit-box-shadow: 0 0 0 30px #1e293b inset !important;
+    -webkit-text-fill-color: white !important;
+}
+
+.hidden-state {
+    display: none !important;
+}
+
+
+/* ========================================== */
+/* THREAT INTEL (BLOG) SECTION STYLES         */
+/* ========================================== */
+
+/* Base card transition */
+.blog-card {
+    position: relative;
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, border-color 0.3s ease-out;
+}
+
+/* Hover Lift & Shadow Effect */
+.blog-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.08);
+    border-color: #cbd5e1; /* Subtle border change */
+}
+
+/* Image Zoom Logic */
+.blog-img-wrapper img {
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.blog-card:hover .blog-img-wrapper img {
+    transform: scale(1.06);
+}
+
+/* Make entire card clickable natively (Stripe style) */
+.blog-card a[href] span.absolute {
+    z-index: 10; /* Ensures the link covers the whole card */
+}
+
+/* Scroll Animation Classes */
+.blog-fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.blog-fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.blog-delay-100 { transition-delay: 100ms; }
+.blog-delay-200 { transition-delay: 200ms; }
+
+
+/* ========================================== */
+/* HONESTY PROTOCOL SECTION STYLES            */
+/* ========================================== */
+
+/* Clean Risk Cards */
+.honesty-risk-card {
+    transition: all 0.3s ease;
+}
+
+.honesty-risk-card:hover {
+    transform: translateX(5px);
+    border-color: #94a3b8; /* Slate 400 */
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05);
+}
+
+/* Icon Box internal transition */
+.honesty-icon-box {
+    transition: all 0.3s ease;
+}
+
+.honesty-risk-card:hover .honesty-icon-box {
+    background-color: #0f172a; /* Slate 900 */
+    color: #ffffff;
+    border-color: #0f172a;
+}
+
+/* Progress Bar Fill Animation (Controlled by JS) */
+#accuracy-bar-fill {
+    transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Scroll Fade Animations */
+.honesty-fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.honesty-fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.honesty-delay-100 { transition-delay: 100ms; }
+.honesty-delay-200 { transition-delay: 200ms; }
+
+
+/* ========================================== */
+/* FAQ SECTION STYLES (Seamless Accordion)    */
+/* ========================================== */
+
+/* The card container */
+.faq-card {
+    transition: all 0.3s ease;
+}
+.faq-card.active {
+    border-color: #cbd5e1; /* Slate-300 */
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05);
+}
+
+/* The expanding content container */
+.faq-content {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease-in-out;
+}
+.faq-card.active .faq-content {
+    opacity: 1;
+    /* max-height is handled dynamically via JS for smooth sliding */
+}
+
+/* Icon rotation for Plus to Cross */
+.faq-icon {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.faq-card.active .faq-icon {
+    transform: rotate(45deg); /* Turns the Plus into an X */
+    color: #4f46e5; /* Indigo-600 */
+}
+.faq-card.active .faq-btn > div {
+    background-color: #e0e7ff; /* Indigo-100 */
+    border-color: #c7d2fe; /* Indigo-200 */
+}
+
+/* Scroll Fade Up Animations */
+.faq-fade-up {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.faq-fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Delays for staggered loading */
+.faq-delay-100 { transition-delay: 100ms; }
+.faq-delay-200 { transition-delay: 150ms; }
+.faq-delay-300 { transition-delay: 200ms; }
+.faq-delay-400 { transition-delay: 250ms; }
+
+/* ========================================== */
+/* FINAL CTA SECTION STYLES                   */
+/* ========================================== */
+
+/* Main Card Border & Box Shadow */
+.cta-card {
+    border: 1px solid #1e293b; /* Dark slate border */
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+}
+
+/* Subtle Left Purple Glow */
+.cta-glow-left {
+    position: absolute;
+    top: -20%;
+    left: -10%;
+    width: 300px;
+    height: 300px;
+    background: rgba(79, 70, 229, 0.15); 
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Subtle Right Cyan Glow */
+.cta-glow-right {
+    position: absolute;
+    bottom: -20%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: rgba(14, 165, 233, 0.1); 
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Premium Developer Grid Pattern Overlay */
+.cta-grid-pattern {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 24px 24px; /* Space between dots */
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Enter Animation: Zoom In & Fade Up */
+.cta-fade-up {
+    opacity: 0;
+    transform: translateY(40px) scale(0.96);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cta-fade-up.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* ========================================== */
+/* ENTERPRISE FOOTER STYLES                   */
+/* ========================================== */
+
+/* Footer Navigation Links */
+.footer-link {
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 500;
+    color: #94a3b8; /* text-slate-400 */
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Hover Effect: Text turns white and slides right slightly */
+.footer-link:hover {
+    color: #ffffff;
+    transform: translateX(4px);
+}
+
+/* Social Media Button Styling */
+.footer-social-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.75rem;
+    background-color: #1e293b; /* bg-slate-800 */
+    border: 1px solid #334155; /* bg-slate-700 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8; /* text-slate-400 */
+    transition: all 0.3s ease;
+}
+
+/* Hover Effect: Indigo glow and color fill */
+.footer-social-btn:hover {
+    background-color: #4f46e5; /* bg-indigo-600 */
+    border-color: #4f46e5;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+}
+
+/* Pulse Animation for the Live Status Indicator */
+.status-badge {
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+}

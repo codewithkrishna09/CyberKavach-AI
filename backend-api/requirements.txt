@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+razorpay
+beautifulsoup4
+pillow
+python-multipart
+python-whois
+python-dotenv
+requests
+scikit-learn
+joblib
+opencv-python-headless
