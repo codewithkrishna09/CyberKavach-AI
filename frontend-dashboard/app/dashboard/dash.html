@@ -343,8 +343,12 @@
 
             logsData.forEach(log => {
                 const isSafe = log.verdict === 'SAFE' || log.verdict === 'CLEAN' || log.verdict === 'NO STRONG WARNING';
-                const color = isSafe ? 'emerald' : (log.verdict === 'SUSPICIOUS' ? 'amber' : 'red');
-                const icon = isSafe ? 'shield-check' : 'alert-triangle';
+                // A stopped scan is not a malicious-site result, so do not
+                // show it as a red threat warning.
+                const notScanned = ['REJECTED', 'SKIPPED', 'ERROR'].includes(log.verdict);
+                const color = isSafe ? 'emerald' : (notScanned ? 'slate' : (log.verdict === 'SUSPICIOUS' ? 'amber' : 'red'));
+                const icon = isSafe ? 'shield-check' : (notScanned ? 'circle-help' : 'alert-triangle');
+                const verdictLabel = notScanned ? 'NOT SCANNED' : log.verdict;
 
                 const tr = document.createElement('tr');
                 tr.className = "cursor-pointer hover:bg-slate-50 transition-colors group";
@@ -360,7 +364,7 @@
                     </td>
                     <td class="p-4 text-center text-slate-500 uppercase font-bold text-[10px] tracking-wider">${escapeHtml(log.method)}</td>
                     <td class="p-4 text-center">
-                        <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest bg-${color}-50 text-${color}-600 border border-${color}-200">${escapeHtml(log.verdict)}</span>
+                        <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest bg-${color}-50 text-${color}-600 border border-${color}-200">${escapeHtml(verdictLabel)}</span>
                     </td>
                     <td class="p-4 pr-6 text-right font-black text-${color}-600">${log.score}%</td>
                 `;
@@ -402,9 +406,11 @@
             currentModalData = log; // Save for PDF
 
             const isSafe = log.verdict === 'SAFE' || log.verdict === 'CLEAN' || log.verdict === 'NO STRONG WARNING';
-            const color = isSafe ? 'emerald' : (log.verdict === 'SUSPICIOUS' ? 'amber' : 'red');
+            const notScanned = ['REJECTED', 'SKIPPED', 'ERROR'].includes(log.verdict);
+            const color = isSafe ? 'emerald' : (notScanned ? 'slate' : (log.verdict === 'SUSPICIOUS' ? 'amber' : 'red'));
+            const verdictLabel = notScanned ? 'NOT SCANNED' : log.verdict;
 
-            document.getElementById('mVerdict').innerText = log.verdict;
+            document.getElementById('mVerdict').innerText = verdictLabel;
             document.getElementById('mVerdict').className = `text-2xl font-black mb-1 uppercase tracking-tight text-${color}-600`;
             document.getElementById('mUrl').innerText = log.url;
             
@@ -415,7 +421,7 @@
 
             const iconBox = document.getElementById('mIconBox');
             iconBox.className = `p-4 rounded-full shrink-0 flex items-center justify-center border-4 bg-${color}-50 text-${color}-500 border-${color}-100`;
-            document.getElementById('mIcon').setAttribute('data-lucide', isSafe ? 'shield-check' : 'alert-triangle');
+            document.getElementById('mIcon').setAttribute('data-lucide', isSafe ? 'shield-check' : (notScanned ? 'circle-help' : 'alert-triangle'));
 
             const ul = document.getElementById('mAnalysis');
             let analysisHtml = "";

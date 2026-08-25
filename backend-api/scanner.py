@@ -457,10 +457,15 @@ def scan_website_logic(url: str) -> dict:
             _scan_cache[cache_key] = (now + SCAN_RESULT_CACHE_SECONDS, report)
         return report
     except ValueError as e:
+        # A policy/DNS stop is not a malicious-site verdict. Keep the technical
+        # reason for the report but return plain wording for people.
         return {
             "status": "REJECTED",
             "risk_score": 0,
             "ai_analysis": [f"URL rejected by outbound security policy: {str(e)}"],
+            "display_verdict": "Could not scan link",
+            "user_message": "This link could not be checked right now. It has not been marked safe or dangerous.",
+            "disclaimer": "The scan stopped before the website was reviewed.",
         }
     except Exception as e:
         # Fallback if severe architecture error occurs
@@ -468,7 +473,10 @@ def scan_website_logic(url: str) -> dict:
         return {
             "status": "ERROR",
             "risk_score": 0,
-            "ai_analysis": [f"Critical engine failure: {str(e)}", "Scan aborted safely."]
+            "ai_analysis": [f"Critical engine failure: {str(e)}", "Scan aborted safely."],
+            "display_verdict": "Scan unavailable",
+            "user_message": "The scanner could not finish this check. Please try again later.",
+            "disclaimer": "The scan stopped before a safety result could be produced.",
         }
 
 # For local testing
