@@ -72,6 +72,13 @@ class TitanScanner:
         self.domain_age_days = -1
         self.ssl_valid = False
         self.ssl_issuer = ""
+        self.final_url = url
+        self.redirect_count = 0
+        self.whois_available = False
+        self.domain_created = None
+        self.domain_expires = None
+        self.domain_registrar = None
+        self.page_summary = {"reviewed": False}
         self.ml_probability = None
         self.reputation = {"checked": False, "hit": False, "provider": None, "categories": []}
 
@@ -83,6 +90,58 @@ class TitanScanner:
     def is_official_brand_domain(self, brand: str) -> bool:
         """Avoid flagging legitimate brand login pages solely for saying 'login'."""
         return any(self.domain == domain or self.domain.endswith(f".{domain}") for domain in self.BRAND_DOMAINS.get(brand, set()))
+
+    @staticmethod
+    def _format_date(value) -> str | None:
+        """Return a short readable WHOIS date without exposing raw provider data."""
+        if isinstance(value, list):
+            value = value[0] if value else None
+        if isinstance(value, datetime.datetime):
+            return value.date().isoformat()
+        if isinstance(value, datetime.date):
+            return value.isoformat()
+        return None
+
+    def build_details(self) -> list[dict]:
+        """Create short, user-facing evidence cards for the site and dashboard."""
+        original = urllib.parse.urlsplit(self.raw_url)
+        final = urllib.parse.urlsplit(self.final_url or self.raw_url)
+        host_labels = [part for part in (original.hostname or "").split(".") if part]
+        tld = f".{host_labels[-1]}" if host_labels else "Not available"
+        page = self.page_summary
+        reputation = self.reputation
+        return [
+            {"title": "URL details", "items": [
+                {"label": "Original URL", "value": self.raw_url},
+                {"label": "Final destination", "value": self.final_url or self.raw_url},
+                {"label": "Redirects followed", "value": str(self.redirect_count)},
+                {"label": "Host", "value": original.hostname or "Not available"},
+                {"label": "Top-level domain", "value": tld},
+                {"label": "Connection", "value": final.scheme.upper() if final.scheme else "Not available"},
+            ]},
+            {"title": "Domain details", "items": [
+                {"label": "Domain age", "value": f"{self.domain_age_days} days" if self.domain_age_days >= 0 else "Not available"},
+                {"label": "Created", "value": self._format_date(self.domain_created) or "Not available"},
+                {"label": "Expires", "value": self._format_date(self.domain_expires) or "Not available"},
+                {"label": "Registrar", "value": str(self.domain_registrar)[:120] if self.domain_registrar else "Not available"},
+                {"label": "WHOIS lookup", "value": "Available" if self.whois_available else "Unavailable or privacy protected"},
+            ]},
+            {"title": "Page checks", "items": [
+                {"label": "Page review", "value": page.get("status", "Not reviewed")},
+                {"label": "Page title", "value": page.get("title", "Not available")},
+                {"label": "Password fields", "value": str(page.get("password_fields", 0))},
+                {"label": "Forms", "value": str(page.get("forms", 0))},
+                {"label": "Cross-domain forms", "value": str(page.get("cross_domain_forms", 0))},
+                {"label": "Hidden iframes", "value": str(page.get("hidden_iframes", 0))},
+                {"label": "Scripts", "value": str(page.get("scripts", 0))},
+            ]},
+            {"title": "Threat intelligence", "items": [
+                {"label": "Reputation check", "value": reputation.get("provider") or "Not configured"},
+                {"label": "Known threat hit", "value": "Yes" if reputation.get("hit") else "No known hit" if reputation.get("checked") else "Not checked"},
+                {"label": "Categories", "value": ", ".join(reputation.get("categories") or []) or "Not available"},
+                {"label": "Local ML probability", "value": f"{self.ml_probability:.0f}%" if self.ml_probability is not None else "Model not installed"},
+            ]},
+        ]
 
     # ---------------------------------------------------------
     # 1. MATHEMATICAL URL ANALYSIS (Lexical Engine)
@@ -164,12 +223,19 @@ class TitanScanner:
         try:
             domain_info = whois.whois(self.domain)
             creation_date = domain_info.creation_date
+            self.whois_available = True
+            self.domain_created = creation_date
+            self.domain_expires = getattr(domain_info, "expiration_date", None)
+            self.domain_registrar = getattr(domain_info, "registrar", None)
             
             if isinstance(creation_date, list):
                 creation_date = creation_date[0]
                 
             if creation_date:
-                age = (datetime.datetime.now() - creation_date).days
+                if isinstance(creation_date, list):
+                    creation_date = creation_date[0]
+                created_at = creation_date if isinstance(creation_date, datetime.datetime) else datetime.datetime.combine(creation_date, datetime.time.min)
+                age = (datetime.datetime.now() - created_at).days
                 self.domain_age_days = age
                 
                 if age < 30:
@@ -213,6 +279,8 @@ class TitanScanner:
                 max_bytes=2 * 1024 * 1024,
             )
             self.ssl_valid = response.url.lower().startswith("https://")
+            self.final_url = response.url
+            self.redirect_count = int(getattr(response, "_cyberkavach_redirect_count", 0))
             encoding = response.encoding or "utf-8"
             self.html_content = response_bytes.decode(encoding, errors="replace")
             
@@ -233,10 +301,12 @@ class TitanScanner:
 
             # 3.2 Suspicious Form Actions
             forms = soup.find_all('form')
+            cross_domain_forms = 0
             for form in forms:
                 action = form.get('action', '').lower()
                 action_host = urllib.parse.urlsplit(urllib.parse.urljoin(self.raw_url, action)).hostname
                 if action_host and action_host.lower() != self.domain.lower():
+                    cross_domain_forms += 1
                     score = 30 if password_inputs else 15
                     self.add_risk(score)
                     self.ai_analysis.append("[Threat] This form sends information to a different domain.")
@@ -248,20 +318,33 @@ class TitanScanner:
                 self.ai_analysis.append("[Warning] Hidden embedded page elements were found.")
 
             # 3.4 Page Title Brand Spoofing Check
-            title = soup.title.get_text(" ", strip=True).lower() if soup.title else ""
-            if title:
+            title = soup.title.get_text(" ", strip=True) if soup.title else ""
+            title_lower = title.lower()
+            if title_lower:
                 for brand in self.TARGET_BRANDS:
-                    if brand in title and brand not in self.domain:
+                    if brand in title_lower and brand not in self.domain:
                         self.add_risk(35)
                         self.ai_analysis.append(f"[Critical] DOM Title spoofing. Page claims to be '{brand.upper()}' but domain does not match.")
             
             # 3.5 Captcha Wall Detection (Cloudflare / Recaptcha obfuscation)
             if "cf-turnstile" in self.html_content or "g-recaptcha" in self.html_content:
                 self.ai_analysis.append("[Info] A CAPTCHA limited parts of the page review.")
+            self.page_summary = {
+                "reviewed": True,
+                "status": "Reviewed" + (" (CAPTCHA limited some content)" if "cf-turnstile" in self.html_content or "g-recaptcha" in self.html_content else ""),
+                "title": title[:120] or "No title found",
+                "password_fields": len(password_inputs),
+                "forms": len(forms),
+                "cross_domain_forms": cross_domain_forms,
+                "hidden_iframes": len(hidden_iframes),
+                "scripts": len(soup.find_all("script")),
+            }
 
         except requests.exceptions.Timeout:
+            self.page_summary = {"reviewed": False, "status": "Timed out safely"}
             self.ai_analysis.append("[Info] Page review timed out; no score was added for this alone.")
         except Exception:
+            self.page_summary = {"reviewed": False, "status": "Could not review page"}
             self.ai_analysis.append("[Info] Page content could not be reviewed.")
 
     # ---------------------------------------------------------
@@ -344,6 +427,7 @@ class TitanScanner:
             "display_verdict": display_verdict,
             "user_message": user_message,
             "disclaimer": "A safe result means no known indicators were found during this scan; it is not a guarantee of safety.",
+            "details": self.build_details(),
         }
 
 

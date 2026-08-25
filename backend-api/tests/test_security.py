@@ -250,6 +250,19 @@ class BackendBehaviorTests(unittest.TestCase):
         self.assertIn(result["status"], {"SAFE", "SUSPICIOUS", "MALWARE DETECTED"})
         self.assertIn(result["confidence_level"], {"LOW", "MEDIUM", "HIGH"})
         self.assertIn("disclaimer", result)
+        self.assertTrue(any(section["title"] == "URL details" for section in result["details"]))
+        self.assertTrue(any(section["title"] == "Page checks" for section in result["details"]))
+
+    def test_dashboard_returns_structured_url_scan_details(self):
+        raw_key = "FREE-" + "E" * 32
+        user = main.verify_and_sync_user(raw_key)
+        main.log_scan(
+            user["api_key"], "https://example.com", "SAFE", 0, "Titan Web Scanner", ["[Info] Test"],
+            [{"title": "URL details", "items": [{"label": "Host", "value": "example.com"}]}],
+        )
+        payload = asyncio.run(main.get_dashboard_data(raw_key))
+        self.assertEqual(payload["logs"][0]["details"][0]["title"], "URL details")
+        self.assertEqual(payload["logs"][0]["details"][0]["items"][0]["value"], "example.com")
 
     def test_official_bank_login_is_not_a_brand_spoof(self):
         scanner = TitanScanner("https://www.sbi.co.in/login")

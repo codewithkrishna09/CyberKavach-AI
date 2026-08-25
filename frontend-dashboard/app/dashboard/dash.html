@@ -198,13 +198,18 @@
 
                 <div class="grid grid-cols-2 gap-4">
                     <div class="p-5 bg-slate-50 rounded-xl border border-slate-200">
-                        <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-1.5 mb-1"><i data-lucide="activity" class="w-3 h-3"></i> AI Confidence</span>
+                        <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-1.5 mb-1"><i data-lucide="activity" class="w-3 h-3"></i> Risk score</span>
                         <div id="mScore" class="text-3xl font-black">0<span class="text-sm text-slate-400">%</span></div>
                     </div>
                     <div class="p-5 bg-slate-50 rounded-xl border border-slate-200">
                         <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-1.5 mb-1"><i data-lucide="cpu" class="w-3 h-3"></i> Detection Node</span>
                         <div id="mMethod" class="text-lg font-bold text-slate-800 mt-1 uppercase">Method</div>
                     </div>
+                </div>
+
+                <div id="mDetailsSection" class="hidden">
+                    <h4 class="text-xs font-bold text-slate-800 uppercase tracking-widest mb-3 flex items-center gap-2"><i data-lucide="table-properties" class="w-4 h-4 text-indigo-600"></i> Scan details</h4>
+                    <div id="mDetails" class="grid sm:grid-cols-2 gap-3"></div>
                 </div>
 
                 <div>
@@ -337,7 +342,7 @@
             }
 
             logsData.forEach(log => {
-                const isSafe = log.verdict === 'SAFE' || log.verdict === 'CLEAN';
+                const isSafe = log.verdict === 'SAFE' || log.verdict === 'CLEAN' || log.verdict === 'NO STRONG WARNING';
                 const color = isSafe ? 'emerald' : (log.verdict === 'SUSPICIOUS' ? 'amber' : 'red');
                 const icon = isSafe ? 'shield-check' : 'alert-triangle';
 
@@ -396,7 +401,7 @@
         function openModal(log) {
             currentModalData = log; // Save for PDF
 
-            const isSafe = log.verdict === 'SAFE' || log.verdict === 'CLEAN';
+            const isSafe = log.verdict === 'SAFE' || log.verdict === 'CLEAN' || log.verdict === 'NO STRONG WARNING';
             const color = isSafe ? 'emerald' : (log.verdict === 'SUSPICIOUS' ? 'amber' : 'red');
 
             document.getElementById('mVerdict').innerText = log.verdict;
@@ -420,6 +425,38 @@
                 analysisHtml = `<li class="text-slate-500 italic">Standard API trace complete. No further data.</li>`;
             }
             ul.innerHTML = analysisHtml;
+
+            // Full scan evidence comes from the backend as structured fields.
+            // Build the cards with textContent so URL/page text cannot inject HTML.
+            const detailSection = document.getElementById('mDetailsSection');
+            const detailGrid = document.getElementById('mDetails');
+            detailGrid.replaceChildren();
+            const detailGroups = Array.isArray(log.details) ? log.details : [];
+            detailGroups.forEach(group => {
+                const card = document.createElement('section');
+                card.className = 'rounded-xl border border-slate-200 bg-slate-50 p-4';
+                const title = document.createElement('h5');
+                title.className = 'mb-3 text-[10px] font-black uppercase tracking-widest text-slate-600';
+                title.textContent = String(group.title || 'Details');
+                card.appendChild(title);
+                const fields = document.createElement('dl');
+                fields.className = 'space-y-2';
+                (Array.isArray(group.items) ? group.items : []).forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = 'border-t border-slate-200 pt-2 first:border-0 first:pt-0';
+                    const label = document.createElement('dt');
+                    label.className = 'text-[9px] font-bold uppercase tracking-wide text-slate-400';
+                    label.textContent = String(item.label || 'Field');
+                    const value = document.createElement('dd');
+                    value.className = 'mt-0.5 break-all text-xs font-medium text-slate-700';
+                    value.textContent = String(item.value || 'Not available');
+                    row.append(label, value);
+                    fields.appendChild(row);
+                });
+                card.appendChild(fields);
+                detailGrid.appendChild(card);
+            });
+            detailSection.classList.toggle('hidden', detailGrid.children.length === 0);
 
             modal.classList.remove('hidden-state');
             setTimeout(() => {

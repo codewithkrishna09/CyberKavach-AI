@@ -253,13 +253,26 @@ def reserve_quota(user: dict, quota_type: str) -> None:
         conn.close()
 
 
-def log_scan(owner_id: str, target: str, verdict: str, score: int, method: str, analysis: list) -> None:
+def log_scan(owner_id: str, target: str, verdict: str, score: int, method: str, analysis: list, details: list | None = None) -> None:
     # Keep dashboard history useful but bounded; never store unbounded engine output.
     safe_analysis = [str(item)[:1000] for item in analysis[:50]] if isinstance(analysis, list) else []
+    safe_details = []
+    for section in (details or [])[:8]:
+        if not isinstance(section, dict):
+            continue
+        items = []
+        for item in section.get("items", [])[:12]:
+            if isinstance(item, dict):
+                items.append({"label": str(item.get("label", "Field"))[:80], "value": str(item.get("value", ""))[:240]})
+        if items:
+            safe_details.append({"title": str(section.get("title", "Details"))[:80], "items": items})
+    # Older logs contain a plain list. New URL scans use an object so the
+    # dashboard can show both short indicators and full structured evidence.
+    stored_analysis = {"indicators": safe_analysis, "details": safe_details} if safe_details else safe_analysis
     conn = get_db_connection()
     conn.execute(
         "INSERT INTO scan_logs (api_key, url, verdict, score, method, analysis_json) VALUES (?, ?, ?, ?, ?, ?)",
-        (owner_id, str(target)[:2048], str(verdict)[:80], max(0, min(int(score), 100)), method[:80], json.dumps(safe_analysis)),
+        (owner_id, str(target)[:2048], str(verdict)[:80], max(0, min(int(score), 100)), method[:80], json.dumps(stored_analysis)),
     )
     conn.commit()
     conn.close()
@@ -319,7 +332,7 @@ async def scan_url_endpoint(
         raise HTTPException(status_code=504, detail="URL scan timed out safely.")
     # 3. Store a bounded audit record for the user's dashboard.
     method = "Titan Extension Guard" if is_extension_background_scan else "Titan Web Scanner"
-    log_scan(user["api_key"], req.url, result["status"], result["risk_score"], method, result.get("ai_analysis", []))
+    log_scan(user["api_key"], req.url, result["status"], result["risk_score"], method, result.get("ai_analysis", []), result.get("details"))
     result["quota_charged"] = not is_extension_background_scan
     return result
 
@@ -436,10 +449,15 @@ async def get_dashboard_data(x_api_key: str = Header("GUEST_SESSION")):
         is_safe = item["verdict"] in {"SAFE", "CLEAN", "AUTHENTIC", "NO STRONG WARNING"}
         safe_count += int(is_safe)
         try:
-            analysis = json.loads(item["analysis_json"])
+            stored_analysis = json.loads(item["analysis_json"])
         except (TypeError, json.JSONDecodeError):
-            analysis = []
-        logs.append({"id": item["id"], "url": item["url"], "verdict": item["verdict"], "score": item["score"], "method": item["method"], "time": item["timestamp"], "analysis": analysis})
+            stored_analysis = []
+        if isinstance(stored_analysis, dict):
+            analysis = stored_analysis.get("indicators", [])
+            details = stored_analysis.get("details", [])
+        else:
+            analysis, details = stored_analysis if isinstance(stored_analysis, list) else [], []
+        logs.append({"id": item["id"], "url": item["url"], "verdict": item["verdict"], "score": item["score"], "method": item["method"], "time": item["timestamp"], "analysis": analysis, "details": details})
     return {"stats": {"safe": safe_count, "phishing": len(logs) - safe_count, "total": len(logs)}, "logs": logs}
 
 

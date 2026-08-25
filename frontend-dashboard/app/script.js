@@ -215,6 +215,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById('rDisclaimer').textContent = data.user_message || data.disclaimer || 'This result is a risk assessment, not a guarantee of safety.';
                 const feedbackStatus = document.getElementById('feedbackStatus');
                 if (feedbackStatus) feedbackStatus.textContent = '';
+
+                // The public scanner shows only a small useful summary. Full
+                // evidence is stored with the scan and is available in OpsCenter.
+                const quickDetails = document.getElementById('rQuickDetails');
+                quickDetails?.replaceChildren();
+                const urlSection = Array.isArray(data.details) ? data.details.find(section => section.title === 'URL details') : null;
+                if (quickDetails && urlSection?.items) {
+                    const wanted = new Set(['Final destination', 'Host', 'Redirects followed', 'Connection']);
+                    urlSection.items.filter(item => wanted.has(item.label)).forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = 'rounded-lg border border-slate-200 bg-white px-3 py-2';
+                        const label = document.createElement('div');
+                        label.className = 'text-[9px] font-bold uppercase tracking-wide text-slate-400';
+                        label.textContent = item.label;
+                        const value = document.createElement('div');
+                        value.className = 'mt-0.5 break-all text-[11px] font-mono font-semibold text-slate-700';
+                        value.textContent = item.value;
+                        card.append(label, value);
+                        quickDetails.appendChild(card);
+                    });
+                    quickDetails.classList.toggle('hidden', quickDetails.children.length === 0);
+                }
                 
                 document.getElementById('rIconBox').className = `p-3 md:p-4 rounded-xl md:rounded-2xl bg-${color}-50 text-${color}-600 border border-${color}-100`;
                 document.getElementById('rIcon').setAttribute('data-lucide', isSafe ? 'shield-check' : 'alert-triangle');

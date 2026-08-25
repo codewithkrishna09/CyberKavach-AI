@@ -78,7 +78,7 @@ def safe_get(url: str, *, headers: dict[str, str], timeout: float, max_bytes: in
     session = requests.Session()
     session.trust_env = False
     try:
-        for _ in range(max_redirects + 1):
+        for redirect_count in range(max_redirects + 1):
             # Redirect targets are validated again because a public URL can
             # redirect a server-side scanner toward an internal address.
             response = session.get(current, headers=headers, timeout=timeout, allow_redirects=False, stream=True)
@@ -111,6 +111,9 @@ def safe_get(url: str, *, headers: dict[str, str], timeout: float, max_bytes: in
                     response.close()
                     raise ValueError("Remote response exceeded the scan size limit.")
                 chunks.append(chunk)
+            # The scanner needs the redirect count for an explainable report.
+            # Store it only on this in-memory response object, never in headers.
+            response._cyberkavach_redirect_count = redirect_count
             return response, b"".join(chunks)
         raise ValueError("Too many redirects.")
     finally:
