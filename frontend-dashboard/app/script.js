@@ -10,12 +10,7 @@
 const API_URL = window.CYBERKAVACH_CONFIG?.API_URL || "http://127.0.0.1:8000";
 
 function getOrCreateApiKey() {
-    let key = localStorage.getItem("cyberkavach_key");
-    if (!key || key === "GUEST_SESSION") {
-        key = `FREE-${crypto.randomUUID().replaceAll('-', '').toUpperCase()}`;
-        localStorage.setItem("cyberkavach_key", key);
-    }
-    return key;
+    return CyberKavachIdentity.getOrCreateKey();
 }
 
 document.addEventListener("DOMContentLoaded", () => {

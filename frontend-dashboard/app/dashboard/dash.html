@@ -14,6 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script src="../config.js"></script>
+    <script src="../identity.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -273,11 +274,7 @@
                 // Clean URL
                 window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
             }
-            userKey = localStorage.getItem("cyberkavach_key");
-            if (!userKey || userKey === "GUEST_SESSION") {
-                userKey = `FREE-${crypto.randomUUID().replaceAll('-', '').toUpperCase()}`;
-                localStorage.setItem("cyberkavach_key", userKey);
-            }
+            userKey = CyberKavachIdentity.getOrCreateKey();
             
             // Update Sidebar UI based on PRO status
             const isPro = userKey.includes("PRO");

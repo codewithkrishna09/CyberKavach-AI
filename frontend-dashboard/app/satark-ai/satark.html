@@ -13,6 +13,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <script src="../config.js"></script>
+    <script src="../identity.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -376,11 +377,7 @@
 
         // State Variables & API
         const API_URL = window.CYBERKAVACH_CONFIG.API_URL;
-        let userKey = localStorage.getItem("cyberkavach_key");
-        if (!userKey || userKey === "GUEST_SESSION") {
-            userKey = `FREE-${crypto.randomUUID().replaceAll('-', '').toUpperCase()}`;
-            localStorage.setItem("cyberkavach_key", userKey);
-        }
+        let userKey = CyberKavachIdentity.getOrCreateKey();
         let currentType = 'image'; // image, audio, qr
         
         const fileInput = document.getElementById('fileInput');
