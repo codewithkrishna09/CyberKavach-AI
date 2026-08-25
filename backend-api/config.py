@@ -18,7 +18,7 @@ def _csv_env(name: str, default: str) -> list[str]:
 DB_FILE = os.getenv("CYBERKAVACH_DB_FILE", str(BASE_DIR / "cyberkavach_master.db"))
 ALLOWED_ORIGINS = _csv_env(
     "CYBERKAVACH_ALLOWED_ORIGINS",
-    "http://127.0.0.1:5500,http://localhost:5500,http://[::1]:5500,http://127.0.0.1:3000,http://localhost:3000,http://[::1]:3000",
+    "http://127.0.0.1:5501,http://localhost:5501,http://[::1]:5501,http://127.0.0.1:3000,http://localhost:3000,http://[::1]:3000",
 )
 # Development convenience: any port is allowed only for loopback hosts. Public
 # deployments must keep CYBERKAVACH_ALLOWED_ORIGIN_REGEX empty and use exact

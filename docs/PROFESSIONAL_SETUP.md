@@ -25,7 +25,7 @@ In another terminal:
 
 ```bash
 cd "/home/krishna/Desktop/phishguard ai/frontend-dashboard/app"
-python3 -m http.server 5500
+python3 -m http.server 5501
 ```
 
 Reload the unpacked extension from `chrome://extensions` after changing files in

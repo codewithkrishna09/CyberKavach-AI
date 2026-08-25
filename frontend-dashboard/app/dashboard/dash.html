@@ -73,7 +73,7 @@
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span>OpsCenter</span>
             </a>
-            <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition group">
+            <a href="../index.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition group">
                 <i data-lucide="home" class="w-5 h-5"></i>
                 <span>Public Portal</span>
             </a>
@@ -388,7 +388,7 @@
         function logoutSession() {
             if(confirm("Return to community plan?")) {
                 localStorage.removeItem("cyberkavach_key");
-                window.location.href = "index.html"; // Go back to landing
+                window.location.href = "../index.html"; // Go back to the public portal.
             }
         }
 
