@@ -83,6 +83,10 @@ async def run_engine(function, *args, timeout: float):
 @app.middleware("http")
 async def security_middleware(request: Request, call_next):
     # Apply the same rate limit and browser safety headers to every API route.
+    # Keep local CORS troubleshooting visible without logging request bodies,
+    # API keys, URLs, passwords, or uploaded content.
+    if request.method == "OPTIONS":
+        logger.info("CORS preflight: origin=%s path=%s", request.headers.get("origin", "missing"), request.url.path)
     client_ip = request.client.host if request.client else "unknown"
     if not rate_limiter.allow(client_ip):
         return JSONResponse(

@@ -25,7 +25,7 @@ ALLOWED_ORIGINS = _csv_env(
 # CYBERKAVACH_ALLOWED_ORIGIN_REGEX empty and use exact HTTPS/extension origins.
 ALLOWED_ORIGIN_REGEX = os.getenv(
     "CYBERKAVACH_ALLOWED_ORIGIN_REGEX",
-    r"^(?:http://(localhost|127\.0\.0\.1|\[::1\]):[0-9]{1,5}|chrome-extension://[a-p]{32})$",
+    r"^(?:http://(localhost|127\.0\.0\.1|0\.0\.0\.0|\[::1\]):[0-9]{1,5}|chrome-extension://[a-p]{32})$",
 )
 ALLOWED_EXTENSION_ORIGINS = _csv_env("CYBERKAVACH_EXTENSION_ORIGINS", "")
 ALLOWED_HOSTS = _csv_env("CYBERKAVACH_ALLOWED_HOSTS", "127.0.0.1,localhost,testserver")
