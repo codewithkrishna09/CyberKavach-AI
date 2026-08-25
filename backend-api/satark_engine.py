@@ -411,14 +411,14 @@ class SatarkForensicsEngine:
         self.risk_score = max(0, min(self.risk_score, 100)) # Clamp 0-100
 
         if self.risk_score >= 70:
-            self.verdict = "FABRICATION DETECTED"
-            self.message = "High probability of Deepfake or Digital Tampering. DO NOT TRUST."
+            self.verdict = "HIGH RISK FILE"
+            self.message = "Strong warning signs were found. Do not trust, share, install or pay from this file yet."
         elif self.risk_score >= 40:
-            self.verdict = "SUSPICIOUS"
-            self.message = "Anomalies found in file structure. Verify source immediately."
+            self.verdict = "CHECK THIS FILE"
+            self.message = "Some warning signs were found. Check the source before you act on it."
         else:
-            self.verdict = "AUTHENTIC"
-            self.message = "No conclusive tampering indicators were found in this limited forensic screen. This does not prove authenticity."
+            self.verdict = "NO STRONG WARNING"
+            self.message = "No strong warning signs were found. This does not prove that the file is safe or original."
             if not self.found_triggers:
                 self.found_triggers.append("[Secure] Artifact structure is intact and natural.")
 

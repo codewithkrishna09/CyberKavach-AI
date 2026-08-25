@@ -531,7 +531,7 @@
             document.getElementById('stateLoading').classList.add('hidden-state');
             document.getElementById('stateResult').classList.remove('hidden-state');
 
-            const isThreat = data.verdict === 'HIGH RISK' || data.verdict === 'SUSPICIOUS' || data.verdict.includes('DETECTED');
+            const isThreat = Number(data.risk_score) >= 40 || data.verdict === 'HIGH RISK FILE' || data.verdict === 'CHECK THIS FILE';
             const color = isThreat ? 'red' : 'emerald';
             const icon = isThreat ? 'alert-triangle' : 'shield-check';
 

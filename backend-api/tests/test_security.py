@@ -202,7 +202,7 @@ class BackendBehaviorTests(unittest.TestCase):
         payload = io.BytesIO()
         image.save(payload, "JPEG", quality=85)
         report = SatarkForensicsEngine(payload.getvalue(), "shared-photo.jpg").scan()
-        self.assertEqual(report["verdict"], "AUTHENTIC")
+        self.assertEqual(report["verdict"], "NO STRONG WARNING")
         self.assertLess(report["risk_score"], 40)
         self.assertTrue(any(section["title"] == "File details" for section in report["details"]))
         self.assertTrue(any(section["title"] == "Image properties" for section in report["details"]))

@@ -433,7 +433,7 @@ async def get_dashboard_data(x_api_key: str = Header("GUEST_SESSION")):
     safe_count = 0
     for row in rows:
         item = dict(row)
-        is_safe = item["verdict"] in {"SAFE", "CLEAN", "AUTHENTIC"}
+        is_safe = item["verdict"] in {"SAFE", "CLEAN", "AUTHENTIC", "NO STRONG WARNING"}
         safe_count += int(is_safe)
         try:
             analysis = json.loads(item["analysis_json"])
