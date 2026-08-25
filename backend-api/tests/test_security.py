@@ -28,7 +28,7 @@ from scanner import TitanScanner, scan_website_logic  # noqa: E402
 from apk_shield import TitanAPKScanner  # noqa: E402
 from security import normalize_api_key, safe_get, validate_public_url, validate_upload  # noqa: E402
 from shadow_scout import analyze_shadow_query  # noqa: E402
-from ml_url_model import FEATURE_NAMES, extract_url_features  # noqa: E402
+from ml_url_model import FEATURE_NAMES, extract_url_features, predict_phishing_probability  # noqa: E402
 from satark_engine import SatarkForensicsEngine  # noqa: E402
 from PIL import Image  # noqa: E402
 
@@ -39,6 +39,14 @@ class SecurityValidationTests(unittest.TestCase):
         self.assertEqual(len(features), len(FEATURE_NAMES))
         self.assertEqual(features[7], 0.0)
         self.assertGreater(features[-1], 0)
+
+    def test_url_model_is_off_until_explicitly_enabled(self):
+        previous = os.environ.pop("CYBERKAVACH_ENABLE_URL_MODEL", None)
+        try:
+            self.assertIsNone(predict_phishing_probability("https://example.com/"))
+        finally:
+            if previous is not None:
+                os.environ["CYBERKAVACH_ENABLE_URL_MODEL"] = previous
     @staticmethod
     def upload(name, data, content_type):
         file_object = tempfile.SpooledTemporaryFile()

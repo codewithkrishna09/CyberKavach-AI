@@ -35,3 +35,10 @@ python train_url_model.py data/url_labels.csv --output models/preliminary_url_mo
 after reviewing the labels and metrics, train to
 `models/url_phishing_model.joblib`; the scanner then uses it on restart. You can
 also set `CYBERKAVACH_URL_MODEL_PATH` to a different trusted artifact.
+
+Before enabling a reviewed final model, set this in `backend-api/.env` and restart
+the API:
+
+```text
+CYBERKAVACH_ENABLE_URL_MODEL=true
+```

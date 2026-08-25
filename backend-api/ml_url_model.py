@@ -43,6 +43,15 @@ def configured_model_path() -> Path:
     return Path(configured) if configured else Path(__file__).with_name("models") / "url_phishing_model.joblib"
 
 
+def model_enabled() -> bool:
+    """Only use a reviewed model when an operator explicitly enables it.
+
+    A local joblib file can be a preliminary experiment. Loading it by default
+    would turn unreviewed labels into live browser warnings.
+    """
+    return os.getenv("CYBERKAVACH_ENABLE_URL_MODEL", "false").strip().lower() in {"1", "true", "yes"}
+
+
 @lru_cache(maxsize=1)
 def _load_model(path_value: str):
     # Joblib files can execute Python during loading. Load only a local artifact
@@ -62,6 +71,8 @@ def _load_model(path_value: str):
 
 def predict_phishing_probability(url: str) -> float | None:
     """Return a 0–100 probability only when a validated local artifact exists."""
+    if not model_enabled():
+        return None
     artifact = _load_model(str(configured_model_path()))
     if artifact is None:
         return None
