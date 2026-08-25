@@ -7,6 +7,7 @@ import unittest
 import json
 import io
 import wave
+import zipfile
 from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
@@ -24,6 +25,7 @@ os.environ["CYBERKAVACH_ALLOWED_ORIGIN_REGEX"] = r"^(?:http://(localhost|127\.0\
 import main  # noqa: E402
 from fastapi import HTTPException, UploadFile  # noqa: E402
 from scanner import TitanScanner, scan_website_logic  # noqa: E402
+from apk_shield import TitanAPKScanner  # noqa: E402
 from security import normalize_api_key, safe_get, validate_public_url, validate_upload  # noqa: E402
 from shadow_scout import analyze_shadow_query  # noqa: E402
 from ml_url_model import FEATURE_NAMES, extract_url_features  # noqa: E402
@@ -284,6 +286,23 @@ class BackendBehaviorTests(unittest.TestCase):
         self.assertIn("redirect parameter", joined)
         self.assertIn("risky download", joined)
         self.assertGreaterEqual(scanner.risk_score, 50)
+
+    def test_apk_report_includes_structured_file_and_code_details(self):
+        payload = io.BytesIO()
+        with zipfile.ZipFile(payload, "w") as archive:
+            archive.writestr("AndroidManifest.xml", b"android.permission.RECEIVE_SMS android.permission.CAMERA")
+            archive.writestr("classes.dex", b"Landroid/telephony/SmsManager;->sendTextMessage api.telegram.org 8.8.8.8")
+            archive.writestr("META-INF/CERT.RSA", b"test certificate")
+            archive.writestr("lib/arm64-v8a/libsample.so", b"native code")
+        report = TitanAPKScanner(payload.getvalue(), "sample.apk").scan()
+        sections = {section["title"]: section["items"] for section in report["details"]}
+        file_values = {item["label"]: item["value"] for item in sections["File details"]}
+        structure_values = {item["label"]: item["value"] for item in sections["APK structure"]}
+        permission_values = {item["label"]: item["value"] for item in sections["Permissions"]}
+        self.assertEqual(file_values["File name"], "sample.apk")
+        self.assertEqual(structure_values["Manifest"], "Found")
+        self.assertIn("arm64-v8a", structure_values["Native code"])
+        self.assertIn("RECEIVE_SMS", permission_values["High-risk permissions"])
 
     @patch("scanner.safe_get")
     def test_dom_review_reports_risky_forms_downloads_and_embeds(self, safe_get_mock):

@@ -65,16 +65,31 @@ class TitanAPKScanner:
         self.found_permissions = []
         self.found_triggers = []
         self.is_packed = False
+        self.md5_hash = ""
+        self.sha256_hash = ""
+        self.manifest_found = False
+        self.declared_permissions = []
+        self.dex_files = []
+        self.dex_entropy = {}
+        self.dangerous_apis = []
+        self.network_indicators = []
+        self.public_ips = []
+        self.archive_entry_count = 0
+        self.uncompressed_size = 0
+        self.compressed_size = 0
+        self.certificate_files = []
+        self.native_abis = []
+        self.duplicate_entries = 0
         
     # ---------------------------------------------------------
     # 1. CRYPTOGRAPHIC HASHING & INTEGRITY
     # ---------------------------------------------------------
     def calculate_hashes(self):
         """Calculates MD5 and SHA-256 for database matching."""
-        md5_hash = hashlib.md5(self.raw_bytes).hexdigest()
-        sha256_hash = hashlib.sha256(self.raw_bytes).hexdigest()
+        self.md5_hash = hashlib.md5(self.raw_bytes).hexdigest()
+        self.sha256_hash = hashlib.sha256(self.raw_bytes).hexdigest()
         
-        self.found_triggers.append(f"[Info] SHA-256: {sha256_hash[:15]}... generated.")
+        self.found_triggers.append("[Info] File hash created for reference.")
         
         # In a real setup, you would query these hashes against VirusTotal or your DB.
         # For local heuristics, we skip network DB calls to keep latency < 0.5s.
@@ -101,6 +116,13 @@ class TitanAPKScanner:
         try:
             if "AndroidManifest.xml" in apk_zip.namelist():
                 manifest_data = apk_zip.read("AndroidManifest.xml")
+                self.manifest_found = True
+                # Android's binary XML still stores permission strings in its
+                # string pool. Record declared permissions for the report, but
+                # only score the high-risk subset below.
+                permission_pattern = re.compile(br"android\.permission\.[A-Z0-9_\.]+")
+                declared = [item.decode("utf-8", errors="ignore").split(".")[-1] for item in permission_pattern.findall(manifest_data)]
+                self.declared_permissions = list(dict.fromkeys(declared))
                 
                 # Raw byte searching (Since AndroidManifest is binary XML)
                 perms_found = 0
@@ -131,6 +153,7 @@ class TitanAPKScanner:
     def parse_dex_files(self, apk_zip: zipfile.ZipFile):
         """Extracts classes.dex and hunts for malicious APIs and hardcoded IPs."""
         dex_files = [f for f in apk_zip.namelist() if f.endswith('.dex')]
+        self.dex_files = dex_files
         
         if not dex_files:
             self.risk_score += 10
@@ -143,6 +166,7 @@ class TitanAPKScanner:
                 
                 # 4.1 Check Entropy for Packers (e.g., Tencent Sec, Bangcle, etc.)
                 entropy = self.calculate_entropy(dex_data)
+                self.dex_entropy[dex] = round(entropy, 2)
                 if entropy > 7.5:
                     self.is_packed = True
                     self.risk_score += 30
@@ -152,12 +176,14 @@ class TitanAPKScanner:
                 for api in self.MALICIOUS_API_CALLS:
                     if api in dex_data:
                         api_str = api.decode('utf-8').split('->')[-1]
+                        self.dangerous_apis.append(api_str)
                         self.risk_score += 20
                         self.found_triggers.append(f"[Threat] Dangerous API Call detected: {api_str}")
 
                 # 4.3 Hardcoded Telegram/C2 Webhooks
                 for c2 in self.SUSPICIOUS_STRINGS:
                     if c2 in dex_data:
+                        self.network_indicators.append(c2.decode('utf-8'))
                         self.risk_score += 25
                         self.found_triggers.append(f"[Critical] Hardcoded shady network string found: {c2.decode('utf-8')}")
 
@@ -171,11 +197,54 @@ class TitanAPKScanner:
                     # Filter out local IPs
                     public_ips = [ip for ip in unique_ips if not ip.startswith((b"127.", b"192.168.", b"10."))]
                     if public_ips:
+                        self.public_ips.extend(ip.decode("ascii", errors="ignore") for ip in public_ips)
                         self.risk_score += 10
                         self.found_triggers.append(f"[Warning] Found {len(public_ips)} hardcoded public IP address(es) in bytecode. Potential Command & Control server.")
 
             except Exception as e:
                 self.found_triggers.append(f"[Warning] Could not fully analyze {dex}: {str(e)}")
+
+    @staticmethod
+    def _summary(values: list[str], empty: str = "None found", limit: int = 6) -> str:
+        """Return a compact report value without overwhelming the result UI."""
+        unique = list(dict.fromkeys(str(value) for value in values if value))
+        if not unique:
+            return empty
+        shown = unique[:limit]
+        suffix = f" (+{len(unique) - limit} more)" if len(unique) > limit else ""
+        return ", ".join(shown) + suffix
+
+    def build_details(self) -> list[dict]:
+        """Create evidence cards for the APK page and dashboard history."""
+        highest_entropy = max(self.dex_entropy.values(), default=0)
+        return [
+            {"title": "File details", "items": [
+                {"label": "File name", "value": self.filename},
+                {"label": "File size", "value": f"{self.file_size_mb:.2f} MB"},
+                {"label": "SHA-256", "value": self.sha256_hash or "Not available"},
+                {"label": "MD5", "value": self.md5_hash or "Not available"},
+            ]},
+            {"title": "APK structure", "items": [
+                {"label": "Manifest", "value": "Found" if self.manifest_found else "Missing or unreadable"},
+                {"label": "Archive files", "value": str(self.archive_entry_count)},
+                {"label": "Uncompressed size", "value": f"{self.uncompressed_size / (1024 * 1024):.2f} MB"},
+                {"label": "DEX files", "value": self._summary(self.dex_files)},
+                {"label": "Native code", "value": self._summary(self.native_abis, "None found")},
+                {"label": "Signing files", "value": self._summary(self.certificate_files, "Not found")},
+                {"label": "Duplicate archive entries", "value": str(self.duplicate_entries)},
+            ]},
+            {"title": "Permissions", "items": [
+                {"label": "Declared permissions", "value": self._summary(self.declared_permissions)},
+                {"label": "High-risk permissions", "value": self._summary(self.found_permissions)},
+            ]},
+            {"title": "Code checks", "items": [
+                {"label": "Packed or obfuscated", "value": "Possible" if self.is_packed else "No strong sign found"},
+                {"label": "Highest DEX entropy", "value": f"{highest_entropy:.2f}" if self.dex_entropy else "Not available"},
+                {"label": "Sensitive API calls", "value": self._summary(self.dangerous_apis)},
+                {"label": "Network strings", "value": self._summary(self.network_indicators)},
+                {"label": "Public IP addresses", "value": self._summary(self.public_ips)},
+            ]},
+        ]
 
     # ---------------------------------------------------------
     # 5. MASTER EXECUTION & REPORT GENERATION
@@ -198,11 +267,27 @@ class TitanAPKScanner:
             with zipfile.ZipFile(apk_io, 'r') as apk_zip:
                 entries = apk_zip.infolist()
                 total_size = sum(entry.file_size for entry in entries)
+                self.archive_entry_count = len(entries)
+                self.uncompressed_size = total_size
+                self.compressed_size = sum(entry.compress_size for entry in entries)
+                names = [entry.filename for entry in entries]
+                self.duplicate_entries = sum(count - 1 for count in Counter(names).values() if count > 1)
+                self.certificate_files = [
+                    name for name in names
+                    if name.upper().startswith("META-INF/") and name.upper().endswith((".RSA", ".DSA", ".EC"))
+                ]
+                self.native_abis = list(dict.fromkeys(
+                    name.split("/")[1] for name in names
+                    if name.startswith("lib/") and name.count("/") >= 2 and name.endswith(".so")
+                ))
                 if total_size > self.MAX_TOTAL_UNCOMPRESSED_BYTES or any(entry.file_size > self.MAX_ENTRY_BYTES for entry in entries):
                     raise ValueError("APK archive exceeds safe decompression limits.")
                 for entry in entries:
                     if entry.compress_size and entry.file_size / entry.compress_size > 200:
                         raise ValueError("APK contains a suspicious compression ratio.")
+                if self.duplicate_entries:
+                    self.risk_score += 10
+                    self.found_triggers.append("[Warning] APK archive contains duplicate file entries.")
 
                 # ZipFile shares a seekable stream, so deterministic sequential reads
                 # are safer than concurrent reads from the same archive object.
@@ -236,16 +321,14 @@ class TitanAPKScanner:
             if not self.found_triggers:
                 self.found_triggers.append("[Secure] Binary is clean. No anomalies detected.")
 
-        if not self.found_permissions:
-            self.found_permissions = ["STANDARD_NETWORK_ACCESS"]
-
         return {
             "verdict": verdict,
             "risk_score": self.risk_score,
             "message": msg,
             "size_mb": self.file_size_mb,
             "permissions": list(set(self.found_permissions)), # Unique list
-            "triggers": self.found_triggers
+            "triggers": self.found_triggers,
+            "details": self.build_details(),
         }
 
 
@@ -275,7 +358,8 @@ def analyze_apk(file_obj: UploadFile) -> dict:
             "message": f"Engine Crash: {str(e)}",
             "size_mb": 0,
             "permissions": [],
-            "triggers": ["Failed to process the binary payload."]
+            "triggers": ["Failed to process the binary payload."],
+            "details": [],
         }
 
 # For Local Testing without FastAPI

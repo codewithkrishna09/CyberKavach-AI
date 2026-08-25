@@ -384,7 +384,11 @@ async def scan_apk_endpoint(file: UploadFile = File(...), x_api_key: str = Heade
         result = await run_engine(analyze_apk, file, timeout=20)
     except TimeoutError:
         raise HTTPException(status_code=504, detail="APK scan timed out safely.")
-    log_scan(user["api_key"], Path(file.filename or "upload.apk").name, result["verdict"], result["risk_score"], "APK scan", result.get("triggers", []))
+    log_scan(
+        user["api_key"], Path(file.filename or "upload.apk").name,
+        result["verdict"], result["risk_score"], "APK scan",
+        result.get("triggers", []), result.get("details"),
+    )
     return result
 
 

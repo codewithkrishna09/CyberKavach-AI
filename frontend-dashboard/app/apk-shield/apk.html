@@ -224,14 +224,21 @@
 
                         <div class="bg-slate-50 p-5 md:p-6 rounded-xl md:rounded-2xl border border-slate-200 overflow-hidden w-full">
                             <h4 class="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2">
-                                <i data-lucide="shield-alert" class="w-3.5 h-3.5 md:w-4 md:h-4 text-indigo-500"></i> Forensic Triggers Found
+                                <i data-lucide="shield-alert" class="w-3.5 h-3.5 md:w-4 md:h-4 text-indigo-500"></i> Scan findings
                             </h4>
                             <ul id="triggerList" class="space-y-2 text-[10px] md:text-xs font-mono text-slate-700 mb-4 md:mb-5 border-b border-slate-200 pb-4 md:pb-5 w-full break-words">
                             </ul>
 
-                            <h4 class="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Critical Permissions</h4>
+                            <h4 class="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">High-risk permissions</h4>
                             <div id="permissionsList" class="flex flex-wrap gap-1.5 md:gap-2">
                             </div>
+                        </div>
+
+                        <div id="apkDetailsSection" class="hidden-state bg-white p-5 md:p-6 rounded-xl md:rounded-2xl border border-slate-200 w-full">
+                            <h4 class="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <i data-lucide="file-search" class="w-3.5 h-3.5 md:w-4 md:h-4 text-indigo-500"></i> APK details
+                            </h4>
+                            <div id="apkDetails" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
                         </div>
 
                         <button onclick="resetScanner()" class="w-full py-3.5 md:py-4 bg-slate-900 hover:bg-indigo-600 text-white rounded-xl font-bold uppercase text-[10px] md:text-xs tracking-widest transition-all flex items-center justify-center gap-2 shadow-md">
@@ -556,7 +563,39 @@
                     pList.appendChild(tag);
                 });
             } else {
-                pList.innerHTML = `<span class="text-slate-500 text-[10px] md:text-xs italic">No dangerous permissions requested.</span>`;
+                pList.innerHTML = `<span class="text-slate-500 text-[10px] md:text-xs italic">No high-risk permissions found.</span>`;
+            }
+
+            // Structured details are created with textContent so APK metadata
+            // can never inject markup into the page.
+            const detailsSection = document.getElementById('apkDetailsSection');
+            const detailsGrid = document.getElementById('apkDetails');
+            detailsGrid.replaceChildren();
+            if (Array.isArray(data.details) && data.details.length > 0) {
+                data.details.forEach(group => {
+                    const card = document.createElement('section');
+                    card.className = 'bg-slate-50 border border-slate-200 rounded-xl p-4 min-w-0';
+                    const title = document.createElement('h5');
+                    title.className = 'text-[10px] font-black uppercase tracking-wider text-slate-700 mb-3';
+                    title.textContent = String(group.title || 'Details');
+                    card.appendChild(title);
+                    (Array.isArray(group.items) ? group.items : []).forEach(item => {
+                        const row = document.createElement('div');
+                        row.className = 'border-t border-slate-200 pt-2 mt-2';
+                        const label = document.createElement('p');
+                        label.className = 'text-[9px] font-bold uppercase tracking-wide text-slate-500';
+                        label.textContent = String(item.label || 'Item');
+                        const value = document.createElement('p');
+                        value.className = 'text-[10px] font-mono text-slate-700 mt-1 break-all';
+                        value.textContent = String(item.value ?? 'Not available');
+                        row.append(label, value);
+                        card.appendChild(row);
+                    });
+                    detailsGrid.appendChild(card);
+                });
+                detailsSection.classList.remove('hidden-state');
+            } else {
+                detailsSection.classList.add('hidden-state');
             }
 
             lucide.createIcons();
