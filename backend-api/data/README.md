@@ -14,6 +14,23 @@ python prepare_url_dataset.py \
 The phishing list needs manual review. A trusted popular-domain list is only a
 benign *candidate* source: sample and review it before deployment.
 
+## PhiUSIIL public dataset
+
+For the downloaded `PhiUSIIL_Phishing_URL_Dataset.csv`, use this converter. It
+uses only the URL and label columns; it does not fetch any listed website.
+PhiUSIIL labels are reversed from CyberKavach, so the converter safely maps
+PhiUSIIL `0=phishing, 1=legitimate` to CyberKavach `1=phishing, 0=benign`.
+
+```bash
+python prepare_phiusiil_dataset.py data/PhiUSIIL_Phishing_URL_Dataset.csv \
+  --per-class 10000 \
+  --output data/phiusiil_url_labels.csv
+```
+
+Use the output for an offline benchmark, not a real-world accuracy claim. It
+contains historical URLs and source-dataset labels; add recent reviewed feeds
+before enabling a live model.
+
 The generated CSV has these columns:
 
 ```csv

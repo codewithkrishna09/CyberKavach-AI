@@ -29,6 +29,7 @@ from apk_shield import TitanAPKScanner  # noqa: E402
 from security import normalize_api_key, safe_get, validate_public_url, validate_upload  # noqa: E402
 from shadow_scout import analyze_shadow_query  # noqa: E402
 from ml_url_model import FEATURE_NAMES, extract_url_features, predict_phishing_probability  # noqa: E402
+from prepare_phiusiil_dataset import cyberkavach_label  # noqa: E402
 from satark_engine import SatarkForensicsEngine  # noqa: E402
 from PIL import Image  # noqa: E402
 
@@ -47,6 +48,11 @@ class SecurityValidationTests(unittest.TestCase):
         finally:
             if previous is not None:
                 os.environ["CYBERKAVACH_ENABLE_URL_MODEL"] = previous
+
+    def test_phiusiil_labels_are_mapped_in_the_correct_direction(self):
+        self.assertEqual(cyberkavach_label("0"), 1)  # PhiUSIIL phishing
+        self.assertEqual(cyberkavach_label("1"), 0)  # PhiUSIIL legitimate
+        self.assertIsNone(cyberkavach_label("unknown"))
     @staticmethod
     def upload(name, data, content_type):
         file_object = tempfile.SpooledTemporaryFile()
