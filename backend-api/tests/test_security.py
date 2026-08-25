@@ -6,6 +6,7 @@ import threading
 import unittest
 import json
 import io
+import wave
 from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
@@ -203,6 +204,39 @@ class BackendBehaviorTests(unittest.TestCase):
         report = SatarkForensicsEngine(payload.getvalue(), "shared-photo.jpg").scan()
         self.assertEqual(report["verdict"], "AUTHENTIC")
         self.assertLess(report["risk_score"], 40)
+        self.assertTrue(any(section["title"] == "File details" for section in report["details"]))
+        self.assertTrue(any(section["title"] == "Image properties" for section in report["details"]))
+
+    def test_satark_pdf_report_masks_sensitive_indicators(self):
+        payload = (
+            b"%PDF-1.4\n/Type /Page\n/Creator (Canva)\n/Producer (Test)\n"
+            b"https://example.com/login contact@example.com +91 9876543210 helpdesk@ybl\n"
+        )
+        report = SatarkForensicsEngine(payload, "notice.pdf", "pdf").scan()
+        sections = {section["title"]: section["items"] for section in report["details"]}
+        values = {item["label"]: item["value"] for item in sections["Extracted indicators"]}
+        self.assertEqual(values["Phone numbers"], "+91 98******10")
+        self.assertIn("he******@ybl", values["UPI IDs"])
+
+    def test_satark_wav_report_includes_audio_properties(self):
+        payload = io.BytesIO()
+        with wave.open(payload, "wb") as audio:
+            audio.setnchannels(1)
+            audio.setsampwidth(2)
+            audio.setframerate(8000)
+            audio.writeframes(b"\x00\x00" * 8000)
+        report = SatarkForensicsEngine(payload.getvalue(), "voice.wav", "audio").scan()
+        sections = {section["title"]: section["items"] for section in report["details"]}
+        values = {item["label"]: item["value"] for item in sections["Audio properties"]}
+        self.assertEqual(values["Duration"], "1.0 seconds")
+        self.assertEqual(values["Sample rate"], "8000 Hz")
+
+    def test_satark_formats_exif_gps_coordinates(self):
+        gps = {
+            1: "N", 2: ((12, 1), (30, 1), (0, 1)),
+            3: "E", 4: ((77, 1), (15, 1), (0, 1)),
+        }
+        self.assertEqual(SatarkForensicsEngine._format_gps(gps), "12.500000, 77.250000")
 
     @patch("shadow_scout.ShadowScoutEngine.check_password_kanonymity")
     def test_password_target_never_leaks_characters_in_mask(self, _lookup):

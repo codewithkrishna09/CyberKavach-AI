@@ -100,7 +100,7 @@
                         Satark <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-500">AI Shield</span>
                     </h1>
                     <p class="text-slate-600 text-base leading-relaxed font-medium">
-                        Advanced forensic suite to combat India's rising <strong>Digital Arrest</strong> scams, <strong>AI Voice</strong> clones, and <strong>Malicious UPI QRs</strong>. We detect threats hidden deep inside pixels and soundwaves.
+                        A practical forensic suite for <strong>Digital Arrest</strong> scams, suspicious media, and <strong>malicious UPI QRs</strong>. It extracts useful file evidence before you trust or share it.
                     </p>
                 </div>
 
@@ -117,7 +117,7 @@
                         <div class="p-3 bg-orange-50 rounded-xl text-orange-600"><i data-lucide="fingerprint" class="w-5 h-5"></i></div>
                         <div>
                             <h4 class="text-slate-900 text-xs font-bold uppercase tracking-widest mb-1">Spectral Voice Pulse</h4>
-                            <p class="text-slate-500 text-xs font-medium">Detects robotic cadence in AI deepfake audio.</p>
+                            <p class="text-slate-500 text-xs font-medium">Shows audio format, integrity signals and available metadata.</p>
                         </div>
                     </div>
 
@@ -198,13 +198,21 @@
 
                         <div class="grid grid-cols-2 gap-4">
                             <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 text-center">
-                                <div class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">AI Confidence</div>
+                                <div class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Evidence Risk</div>
                                 <div id="threatScore" class="text-3xl font-black text-slate-900 font-mono">94<span class="text-base text-slate-500">%</span></div>
                             </div>
                             <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 text-center">
                                 <div class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Analysis Target</div>
                                 <div id="displayType" class="text-xl font-black text-slate-900 uppercase mt-1">IMAGE</div>
                             </div>
+                        </div>
+
+                        <div id="forensicDetails" class="hidden bg-white p-6 rounded-2xl border border-slate-200 space-y-4">
+                            <div class="flex items-center gap-2 border-b border-slate-200 pb-3">
+                                <i data-lucide="file-search" class="w-4 h-4 text-indigo-500"></i>
+                                <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Extracted Forensic Details</h4>
+                            </div>
+                            <div id="forensicDetailsGrid" class="grid md:grid-cols-2 gap-3"></div>
                         </div>
 
                         <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
@@ -272,9 +280,9 @@
 
         <section class="mt-16 border-t border-slate-200 pt-24 pb-12 fade-up">
             <div class="max-w-4xl mx-auto text-center mb-20">
-                <h2 class="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">Deep Dive: Satark AI Neural Core</h2>
+                <h2 class="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">Deep Dive: Satark AI Forensic Core</h2>
                 <p class="text-slate-600 text-lg leading-relaxed font-medium">
-                    Satark AI goes beyond surface-level metadata. It utilizes complex mathematical models and tensor-based neural networks on our backend to detect microscopic anomalies invisible to the human eye.
+                    Satark AI combines file metadata, document structure, QR decoding and conservative integrity checks. Every report explains what was found and what remains inconclusive.
                 </p>
             </div>
 
@@ -315,7 +323,7 @@
                         AI-generated voices (Deepfakes) sound incredibly realistic to the human ear. However, generative algorithms struggle to replicate the natural micro-pauses, breathing patterns, and organic frequency variance of an actual human throat.
                     </p>
                     <p class="text-slate-600 font-medium leading-relaxed mb-8">
-                        Satark AI converts audio files into a visual spectrogram. The neural network then scans for "robotic cadence" and unnatural harmonic alignment, flagging synthetic audio within seconds before you fall victim to the scam.
+                        Satark AI currently checks audio container integrity and available metadata. A trained deepfake model can be added later only after it has been validated on a suitable audio dataset.
                     </p>
                 </div>
             </div>
@@ -327,14 +335,14 @@
                     </div>
                     <h3 class="text-2xl md:text-3xl font-black text-slate-900 mb-6 leading-tight">Edge-to-Cloud Neural Sync</h3>
                     <p class="text-slate-600 font-medium leading-relaxed mb-6">
-                        Running complex TensorFlow or PyTorch models directly on a mobile device or browser is impossible without crashing it. Satark uses a streamlined Edge-to-Cloud architecture via FastAPI.
+                        File analysis runs in the configured FastAPI backend so browser pages remain responsive. File size limits and type validation are applied before forensic processing begins.
                     </p>
                     <p class="text-slate-600 font-medium leading-relaxed mb-8">
-                        When you upload media, it is transmitted via a 256-bit encrypted pipeline to our secure Indian servers. The payload is kept purely in RAM, analyzed by our GPU clusters in under 0.8 seconds, and immediately purged from memory once the forensic JSON report is returned to your dashboard.
+                        The current application reads each upload for the scan and returns a forensic JSON report. Deployments should use HTTPS and define their own retention policy before accepting real user evidence.
                     </p>
                     <div class="border-l-4 border-indigo-500 pl-4 bg-indigo-50 p-4 rounded-r-xl">
                         <p class="text-sm font-bold text-slate-800">
-                            <strong>Privacy Guarantee:</strong> No media (audio, images, or PDFs) is ever saved to persistent storage. Your sensitive files remain strictly confidential.
+                            <strong>Privacy note:</strong> Do not upload OTPs, identity documents or private recordings unless you have permission. Metadata can be sensitive and is shown carefully in the report.
                         </p>
                     </div>
                 </div>
@@ -429,7 +437,7 @@
                 fileInput.accept = "image/*,.pdf,application/pdf";
             } else if (type === 'audio') {
                 title.innerText = "Upload Audio Clip";
-                desc.innerText = "Analyze voice clips for deepfake synthesis and robotic signatures.";
+                desc.innerText = "Inspect audio file properties and available metadata. A deepfake verdict needs a validated model.";
                 icon.setAttribute('data-lucide', 'mic');
                 fileInput.accept = "audio/*";
             } else {
@@ -467,10 +475,10 @@
         async function runForensicsSimulation(file) {
             const selectedType = currentType === 'image' && file.name.toLowerCase().endsWith('.pdf') ? 'pdf' : currentType;
             let steps = [];
-            if (selectedType === 'image') steps = ["Extracting EXIF Meta-Data...", "Running ELA (Error Level Analysis)...", "Checking image integrity...", "Preparing conservative forensic verdict..."];
-            else if (selectedType === 'pdf') steps = ["Validating PDF structure...", "Inspecting document metadata...", "Checking active PDF actions...", "Preparing safety guidance..."];
-            else if (currentType === 'audio') steps = ["Validating audio container...", "Reading available audio metadata...", "Checking stream integrity...", "Preparing conservative forensic verdict..."];
-            else steps = ["Decoding QR payload locally...", "Inspecting destination structure...", "Checking image end markers...", "Preparing safety guidance..."];
+            if (selectedType === 'image') steps = ["Extracting image properties...", "Reading available metadata...", "Running ELA integrity screening...", "Preparing forensic report..."];
+            else if (selectedType === 'pdf') steps = ["Validating PDF structure...", "Extracting document indicators...", "Checking active PDF actions...", "Preparing forensic report..."];
+            else if (currentType === 'audio') steps = ["Validating audio container...", "Extracting audio properties...", "Checking stream integrity...", "Preparing forensic report..."];
+            else steps = ["Decoding QR payload locally...", "Classifying QR content...", "Inspecting destination structure...", "Preparing forensic report..."];
 
             const consoleText = document.getElementById('consoleText');
             const activeStepText = document.getElementById('activeStep');
@@ -542,6 +550,42 @@
             // Set Date
             const now = new Date();
             document.getElementById('reportDate').innerText = now.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+
+            // Render structured details with textContent only. Uploaded files can
+            // contain hostile text, so their metadata must never be inserted as HTML.
+            const detailBox = document.getElementById('forensicDetails');
+            const detailGrid = document.getElementById('forensicDetailsGrid');
+            detailGrid.replaceChildren();
+            const sections = Array.isArray(data.details) ? data.details : [];
+            if (sections.length) {
+                sections.forEach(section => {
+                    const card = document.createElement('section');
+                    card.className = 'rounded-xl border border-slate-200 bg-slate-50 p-4';
+                    const title = document.createElement('h5');
+                    title.className = 'mb-3 text-[10px] font-black uppercase tracking-widest text-slate-600';
+                    title.textContent = String(section.title || 'Details');
+                    card.appendChild(title);
+                    const list = document.createElement('dl');
+                    list.className = 'space-y-2';
+                    (Array.isArray(section.items) ? section.items : []).forEach(item => {
+                        const row = document.createElement('div');
+                        row.className = 'border-t border-slate-200 pt-2 first:border-0 first:pt-0';
+                        const label = document.createElement('dt');
+                        label.className = 'text-[9px] font-bold uppercase tracking-wide text-slate-400';
+                        label.textContent = String(item.label || 'Field');
+                        const value = document.createElement('dd');
+                        value.className = 'mt-0.5 break-words text-xs font-medium text-slate-700';
+                        value.textContent = String(item.value || 'Not available');
+                        row.append(label, value);
+                        list.appendChild(row);
+                    });
+                    card.appendChild(list);
+                    detailGrid.appendChild(card);
+                });
+                detailBox.classList.remove('hidden');
+            } else {
+                detailBox.classList.add('hidden');
+            }
 
             // Detailed List Format for Triggers
             const pList = document.getElementById('permissionsList');
