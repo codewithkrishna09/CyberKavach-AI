@@ -9,6 +9,10 @@
 *.sqlite
 *.sqlite3
 backend-api/models/*.joblib
+# Downloaded/locally prepared URL lists can contain unsafe indicators; retain only
+# the documented format in Git and do not publish these local research datasets.
+backend-api/data/*.csv
+backend-api/data/*.txt
 
 # Python environments and generated files
 .venv/
