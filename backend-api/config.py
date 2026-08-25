@@ -20,12 +20,12 @@ ALLOWED_ORIGINS = _csv_env(
     "CYBERKAVACH_ALLOWED_ORIGINS",
     "http://127.0.0.1:5501,http://localhost:5501,http://[::1]:5501,http://127.0.0.1:3000,http://localhost:3000,http://[::1]:3000",
 )
-# Development convenience: any port is allowed only for loopback hosts. Public
-# deployments must keep CYBERKAVACH_ALLOWED_ORIGIN_REGEX empty and use exact
-# HTTPS origins in CYBERKAVACH_ALLOWED_ORIGINS.
+# Development convenience: any port is allowed only for loopback hosts, along
+# with locally loaded Chrome extensions. Public deployments must keep
+# CYBERKAVACH_ALLOWED_ORIGIN_REGEX empty and use exact HTTPS/extension origins.
 ALLOWED_ORIGIN_REGEX = os.getenv(
     "CYBERKAVACH_ALLOWED_ORIGIN_REGEX",
-    r"^http://(localhost|127\.0\.0\.1|\[::1\]):[0-9]{1,5}$",
+    r"^(?:http://(localhost|127\.0\.0\.1|\[::1\]):[0-9]{1,5}|chrome-extension://[a-p]{32})$",
 )
 ALLOWED_EXTENSION_ORIGINS = _csv_env("CYBERKAVACH_EXTENSION_ORIGINS", "")
 ALLOWED_HOSTS = _csv_env("CYBERKAVACH_ALLOWED_HOSTS", "127.0.0.1,localhost,testserver")

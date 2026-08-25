@@ -19,7 +19,7 @@ os.environ["CYBERKAVACH_DB_FILE"] = TEST_DB.name
 # ASGI tests use Starlette's conventional internal host. Keep this test-only
 # setting independent from the developer's production/local .env host allowlist.
 os.environ["CYBERKAVACH_ALLOWED_HOSTS"] = "127.0.0.1,localhost,testserver"
-os.environ["CYBERKAVACH_ALLOWED_ORIGIN_REGEX"] = r"^http://(localhost|127\.0\.0\.1|\[::1\]):[0-9]{1,5}$"
+os.environ["CYBERKAVACH_ALLOWED_ORIGIN_REGEX"] = r"^(?:http://(localhost|127\.0\.0\.1|\[::1\]):[0-9]{1,5}|chrome-extension://[a-p]{32})$"
 
 import main  # noqa: E402
 from fastapi import HTTPException, UploadFile  # noqa: E402
@@ -370,6 +370,15 @@ class AsgiIntegrationTests(unittest.TestCase):
         })
         self.assertEqual(status, 200)
         self.assertEqual(headers[b"access-control-allow-origin"], b"http://[::1]:5173")
+
+    def test_local_chrome_extension_origin_is_allowed_in_development(self):
+        origin = "chrome-extension://abcdefghijklmnopabcdefghijklmnop"
+        status, headers, _ = self.request("OPTIONS", "/scan", headers={
+            "origin": origin, "access-control-request-method": "POST",
+            "access-control-request-headers": "content-type,x-api-key,x-scan-mode",
+        })
+        self.assertEqual(status, 200)
+        self.assertEqual(headers[b"access-control-allow-origin"], origin.encode())
 
     def test_untrusted_host_is_rejected(self):
         status, _, _ = self.request("GET", "/health", headers={"host": "evil.example"})
