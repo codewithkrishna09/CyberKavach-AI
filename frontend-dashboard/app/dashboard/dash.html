@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberKavach | OpsCenter</title>
+    <title>CyberKavach | Dashboard</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
@@ -69,14 +69,14 @@
         </div>
 
         <nav class="flex-1 p-4 space-y-1">
-            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 mt-2 px-4">Core Modules</div>
+            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 mt-2 px-4">Navigation</div>
             <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-50 text-indigo-700 font-semibold transition group">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-                <span>OpsCenter</span>
+                <span>Dashboard</span>
             </a>
             <a href="../index.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition group">
                 <i data-lucide="home" class="w-5 h-5"></i>
-                <span>Public Portal</span>
+                <span>Website</span>
             </a>
         </nav>
 
@@ -84,10 +84,10 @@
             <div class="p-4 rounded-xl border border-indigo-200 bg-indigo-50 mb-4 shadow-sm">
                 <div class="flex items-center gap-2 mb-1" id="planIconBox">
                     </div>
-                <p class="text-[10px] text-slate-500 font-mono truncate" id="userKeyDisplay">Loading Identity...</p>
+                <p class="text-[10px] text-slate-500 font-mono truncate" id="userKeyDisplay">Loading account...</p>
             </div>
             <button onclick="logoutSession()" class="flex items-center justify-center gap-2 px-4 py-2.5 text-red-600 hover:bg-red-50 hover:border-red-200 border border-transparent rounded-xl w-full transition-all text-xs font-bold uppercase tracking-wide">
-                <i data-lucide="log-out" class="w-4 h-4"></i> Terminate Session
+                <i data-lucide="log-out" class="w-4 h-4"></i> Sign out
             </button>
         </div>
     </aside>
@@ -98,12 +98,12 @@
             <div class="flex items-center gap-4">
                 <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-slate-900"><i data-lucide="menu"></i></button>
                 <div class="flex items-center gap-2 text-xs font-semibold text-slate-500">
-                    <span>Overview</span> <i data-lucide="chevron-right" class="w-4 h-4"></i> <span class="text-slate-900 font-bold">Threat Intelligence</span>
+                    <span>Dashboard</span> <i data-lucide="chevron-right" class="w-4 h-4"></i> <span class="text-slate-900 font-bold">Scan history</span>
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-bold tracking-wider uppercase">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> DB Synced
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> Connected
                 </div>
                 <button onclick="fetchDashboardData()" id="refreshBtn" class="p-2 border border-slate-200 hover:bg-slate-50 rounded-xl transition text-slate-600 shadow-sm bg-white">
                     <i data-lucide="refresh-cw" class="w-4 h-4"></i>
@@ -114,8 +114,8 @@
         <div class="flex-1 overflow-y-auto p-4 lg:p-8 space-y-8 relative z-10 pb-24">
             
             <div class="mb-2 fade-in">
-                <h1 class="text-2xl font-bold text-slate-900">Welcome to OpsCenter</h1>
-                <p class="text-slate-500 text-sm mt-1">Live monitoring of your browser and system-level threat intercepts.</p>
+                <h1 class="text-2xl font-bold text-slate-900">Security dashboard</h1>
+                <p class="text-slate-500 text-sm mt-1">View recent scans and security warnings.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 fade-in" style="transition-delay: 100ms;">
@@ -131,7 +131,7 @@
                     <div class="w-12 h-12 bg-red-50 text-red-600 rounded-full flex items-center justify-center mb-4">
                         <i data-lucide="shield-alert" class="w-6 h-6"></i>
                     </div>
-                    <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Threats Blocked</p>
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">High-risk scans</p>
                     <h3 class="text-4xl font-black text-red-600" id="statThreats">0</h3>
                 </div>
                 
@@ -139,7 +139,7 @@
                     <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mb-4">
                         <i data-lucide="shield-check" class="w-6 h-6"></i>
                     </div>
-                    <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Verified Safe Nodes</p>
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">No-risk scans</p>
                     <h3 class="text-4xl font-black text-emerald-600" id="statSafe">0</h3>
                 </div>
             </div>
@@ -148,10 +148,10 @@
                 <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
                     <div class="flex items-center gap-3">
                         <i data-lucide="list-filter" class="w-5 h-5 text-indigo-600"></i>
-                        <h3 class="text-slate-900 font-bold text-base">Network Intercept Logs</h3>
+                        <h3 class="text-slate-900 font-bold text-base">Scan history</h3>
                     </div>
                     <button onclick="clearLogs()" class="text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 text-xs font-bold px-4 py-2 rounded-lg border border-red-100 transition flex items-center gap-2">
-                        <i data-lucide="trash-2" class="w-4 h-4"></i> Purge History
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> Clear history
                     </button>
                 </div>
                 
@@ -160,14 +160,14 @@
                         <thead class="bg-slate-50 text-xs font-bold text-slate-500 uppercase border-b border-slate-200">
                             <tr>
                                 <th class="p-4 pl-6">Time</th>
-                                <th class="p-4">Target URL / Asset</th>
-                                <th class="p-4 text-center">Engine</th>
+                                <th class="p-4">Website or file</th>
+                                <th class="p-4 text-center">Scan type</th>
                                 <th class="p-4 text-center">Verdict</th>
                                 <th class="p-4 pr-6 text-right">Risk Score</th>
                             </tr>
                         </thead>
                         <tbody id="logsTable" class="divide-y divide-slate-100 text-sm font-medium text-slate-700">
-                            <tr><td colSpan="5" class="p-10 text-center text-slate-400">Loading Database...</td></tr>
+                            <tr><td colSpan="5" class="p-10 text-center text-slate-400">Loading scans...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -181,7 +181,7 @@
             
             <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                 <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide flex items-center gap-2">
-                    <i data-lucide="file-search" class="w-5 h-5 text-indigo-600"></i> Forensic Threat Report
+                    <i data-lucide="file-search" class="w-5 h-5 text-indigo-600"></i> Scan report
                 </h3>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-slate-800 p-1 rounded-lg transition"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
@@ -210,7 +210,7 @@
                 </div>
 
                 <div>
-                    <h4 class="text-xs font-bold text-slate-800 uppercase tracking-widest mb-3 flex items-center gap-2"><i data-lucide="list-checks" class="w-4 h-4"></i> Extracted Threat Indicators:</h4>
+                    <h4 class="text-xs font-bold text-slate-800 uppercase tracking-widest mb-3 flex items-center gap-2"><i data-lucide="list-checks" class="w-4 h-4"></i> Scan findings</h4>
                     <div class="bg-slate-900 rounded-xl p-5 shadow-inner">
                         <ul id="mAnalysis" class="space-y-2 text-xs font-mono text-emerald-400">
                             </ul>
@@ -278,10 +278,10 @@
             
             const iconBox = document.getElementById('planIconBox');
             if(isPro) {
-                iconBox.innerHTML = `<i data-lucide="zap" class="w-4 h-4 text-indigo-600 fill-indigo-600"></i><span class="text-xs font-black uppercase tracking-widest text-indigo-700">Elite Node Active</span>`;
+                iconBox.innerHTML = `<i data-lucide="zap" class="w-4 h-4 text-indigo-600 fill-indigo-600"></i><span class="text-xs font-black uppercase tracking-widest text-indigo-700">Pro plan</span>`;
                 iconBox.parentElement.className = "p-4 rounded-xl border border-indigo-200 bg-indigo-50 mb-4 shadow-sm";
             } else {
-                iconBox.innerHTML = `<i data-lucide="user" class="w-4 h-4 text-slate-500"></i><span class="text-xs font-black uppercase tracking-widest text-slate-600">Community Node</span>`;
+                iconBox.innerHTML = `<i data-lucide="user" class="w-4 h-4 text-slate-500"></i><span class="text-xs font-black uppercase tracking-widest text-slate-600">Free plan</span>`;
                 iconBox.parentElement.className = "p-4 rounded-xl border border-slate-200 bg-white mb-4 shadow-sm";
             }
             lucide.createIcons();
@@ -318,7 +318,7 @@
 
             } catch (error) {
                 console.error("Dashboard Sync Failed:", error);
-                document.getElementById('logsTable').innerHTML = `<tr><td colSpan="5" class="p-10 text-center text-red-500 font-bold bg-red-50 rounded-xl m-4">⚠️ CONNECTION TO DATABASE FAILED. Ensure main.py is running.</td></tr>`;
+                document.getElementById('logsTable').innerHTML = `<tr><td colSpan="5" class="p-10 text-center text-red-500 font-bold bg-red-50 rounded-xl m-4">Could not connect. Check that the backend is running.</td></tr>`;
             } finally {
                 if(refreshBtn) setTimeout(() => refreshBtn.classList.remove('animate-spin'), 500);
             }
@@ -330,7 +330,7 @@
             tbody.innerHTML = '';
             
             if(!logsData || logsData.length === 0) {
-                tbody.innerHTML = `<tr><td colSpan="5" class="p-10 text-center text-slate-400 font-medium">No traffic records found. Scans will appear here.</td></tr>`;
+                tbody.innerHTML = `<tr><td colSpan="5" class="p-10 text-center text-slate-400 font-medium">No scans yet.</td></tr>`;
                 return;
             }
 
@@ -368,7 +368,7 @@
 
         // 4. Delete Logs
         async function clearLogs() {
-            if(confirm("⚠️ Permanently delete all log history from the database?")) {
+            if(confirm("Delete all scan history?")) {
                 try {
                     await fetch(`${API_URL}/clear-history`, {
                         method: 'DELETE',
@@ -376,14 +376,14 @@
                     });
                     fetchDashboardData();
                 } catch (e) {
-                    alert("Purge Failed. Server unreachable.");
+                    alert("Could not clear history. Server is unavailable.");
                 }
             }
         }
 
         // 5. Logout
         function logoutSession() {
-            if(confirm("Return to community plan?")) {
+            if(confirm("Sign out of this dashboard?")) {
                 localStorage.removeItem("cyberkavach_key");
                 window.location.href = "../index.html"; // Go back to the public portal.
             }
@@ -419,7 +419,7 @@
             if (log.analysis && Array.isArray(log.analysis) && log.analysis.length > 0) {
                 analysisHtml = log.analysis.map(item => `<li class="flex items-start gap-2"><span class="text-slate-500">></span> <span>${escapeHtml(item)}</span></li>`).join('');
             } else {
-                analysisHtml = `<li class="text-slate-500 italic">Standard API trace complete. No further data.</li>`;
+                analysisHtml = `<li class="text-slate-500 italic">No additional findings.</li>`;
             }
             ul.innerHTML = analysisHtml;
 
@@ -480,7 +480,7 @@
             // Header
             doc.setFontSize(20);
             doc.setTextColor(79, 70, 229); // Indigo
-            doc.text("CyberKavach Forensic Report", 20, 20);
+            doc.text("CyberKavach Scan Report", 20, 20);
             
             doc.setFontSize(10);
             doc.setTextColor(100, 116, 139);
@@ -491,34 +491,31 @@
             doc.setFontSize(12);
             doc.setTextColor(15, 23, 42); // Black
             
-            doc.text("Target Analyzed:", 20, 50);
+            doc.text("Checked item:", 20, 50);
             doc.setFont("courier", "normal");
             doc.text(log.url, 20, 58, { maxWidth: 170 });
             
             doc.setFont("helvetica", "bold");
             doc.text(`Verdict: ${log.verdict}`, 20, 75);
             doc.text(`Risk Score: ${log.score}/100`, 20, 85);
-            doc.text(`Scan Engine: ${log.method}`, 20, 95);
-
-            // Indicators
-            doc.text("Neural Indicators:", 20, 110);
+            doc.text("Scan findings:", 20, 100);
             doc.setFont("courier", "normal");
             doc.setFontSize(10);
             
-            let y = 120;
+            let y = 110;
             if (log.analysis && log.analysis.length > 0) {
                 log.analysis.forEach((item) => {
                     doc.text(`> ${item}`, 20, y, { maxWidth: 170 });
                     y += 10;
                 });
             } else {
-                doc.text("> No detailed indicators provided by engine.", 20, y);
+                doc.text("> No additional findings.", 20, y);
             }
 
             // Footer
             doc.setFontSize(8);
             doc.setTextColor(150, 150, 150);
-            doc.text("This is an automatically generated AI forensic report. Not for legal use.", 20, 280);
+            doc.text("Automated scan report. This result is not a safety guarantee or legal evidence.", 20, 280);
 
             // Save
             doc.save(`CyberKavach_Report_${log.id}.pdf`);

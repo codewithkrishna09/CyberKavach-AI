@@ -335,7 +335,8 @@ async def scan_url_endpoint(
     except TimeoutError:
         raise HTTPException(status_code=504, detail="URL scan timed out safely.")
     # 3. Store a bounded audit record for the user's dashboard.
-    method = "Titan Extension Guard" if is_extension_background_scan else "Titan Web Scanner"
+    # Keep scan-history labels short and clear for people using the dashboard.
+    method = "Browser scan" if is_extension_background_scan else "Website scan"
     log_scan(user["api_key"], req.url, result["status"], result["risk_score"], method, result.get("ai_analysis", []), result.get("details"))
     result["quota_charged"] = not is_extension_background_scan
     return result
@@ -383,7 +384,7 @@ async def scan_apk_endpoint(file: UploadFile = File(...), x_api_key: str = Heade
         result = await run_engine(analyze_apk, file, timeout=20)
     except TimeoutError:
         raise HTTPException(status_code=504, detail="APK scan timed out safely.")
-    log_scan(user["api_key"], Path(file.filename or "upload.apk").name, result["verdict"], result["risk_score"], "APK Kavach", result.get("triggers", []))
+    log_scan(user["api_key"], Path(file.filename or "upload.apk").name, result["verdict"], result["risk_score"], "APK scan", result.get("triggers", []))
     return result
 
 
@@ -407,7 +408,7 @@ async def satark_scan(file: UploadFile = File(...), scan_type: str = Form(...), 
         result = await run_engine(analyze_forensics, file, scan_type, timeout=20)
     except TimeoutError:
         raise HTTPException(status_code=504, detail="Forensic scan timed out safely.")
-    log_scan(user["api_key"], Path(file.filename or "upload").name, result["verdict"], result["risk_score"], f"Satark AI ({scan_type.upper()})", result.get("triggers", []))
+    log_scan(user["api_key"], Path(file.filename or "upload").name, result["verdict"], result["risk_score"], f"File scan ({scan_type.upper()})", result.get("triggers", []))
     return result
 
 
@@ -421,7 +422,7 @@ async def shadow_scout_endpoint(req: ShadowRequest, x_api_key: str = Header("GUE
         result = await run_engine(analyze_shadow_query, req.query, req.type, timeout=10)
     except TimeoutError:
         raise HTTPException(status_code=504, detail="Intelligence lookup timed out safely.")
-    log_scan(user["api_key"], f"[{req.type.upper()}] {result.get('masked_target', '***')}", result["status"], result.get("risk_score", 0), "Shadow Scout", result.get("logs", []))
+    log_scan(user["api_key"], f"[{req.type.upper()}] {result.get('masked_target', '***')}", result["status"], result.get("risk_score", 0), "Privacy check", result.get("logs", []))
     return result
 
 
