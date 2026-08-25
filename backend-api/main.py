@@ -446,10 +446,17 @@ async def get_user_status(x_api_key: str = Header("GUEST_SESSION")):
 
 @app.get("/dashboard-data")
 async def get_dashboard_data(x_api_key: str = Header("GUEST_SESSION")):
-    # Return only the current user's hashed-key history, never another user's scans.
+    # The dashboard is the URL-protection history, not a mixed list of every
+    # upload/privacy tool. Satark, APK Kavach and Privacy Check keep their own
+    # results on their feature pages so this view stays simple and useful.
+    # "Titan Web Scanner" is included only for older URL entries created before
+    # the labels were simplified to Website scan / Browser scan.
     user = verify_and_sync_user(x_api_key)
     conn = get_db_connection()
-    rows = conn.execute("SELECT * FROM scan_logs WHERE api_key=? ORDER BY timestamp DESC LIMIT 100", (user["api_key"],)).fetchall()
+    rows = conn.execute(
+        "SELECT * FROM scan_logs WHERE api_key=? AND method IN (?, ?, ?) ORDER BY timestamp DESC LIMIT 100",
+        (user["api_key"], "Website scan", "Browser scan", "Titan Web Scanner"),
+    ).fetchall()
     conn.close()
     logs = []
     safe_count = 0

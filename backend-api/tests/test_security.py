@@ -279,7 +279,13 @@ class BackendBehaviorTests(unittest.TestCase):
             user["api_key"], "https://example.com", "SAFE", 0, "Titan Web Scanner", ["[Info] Test"],
             [{"title": "URL details", "items": [{"label": "Host", "value": "example.com"}]}],
         )
+        # Feature-page scans are deliberately excluded from the URL dashboard.
+        main.log_scan(user["api_key"], "photo.jpg", "SAFE", 0, "File scan (IMAGE)", [])
+        main.log_scan(user["api_key"], "sample.apk", "CLEAN", 0, "APK scan", [])
+        main.log_scan(user["api_key"], "[UPI] ***", "SAFE", 0, "Privacy check", [])
         payload = asyncio.run(main.get_dashboard_data(raw_key))
+        self.assertEqual(len(payload["logs"]), 1)
+        self.assertEqual(payload["logs"][0]["method"], "Titan Web Scanner")
         self.assertEqual(payload["logs"][0]["details"][0]["title"], "URL details")
         self.assertEqual(payload["logs"][0]["details"][0]["items"][0]["value"], "example.com")
 
