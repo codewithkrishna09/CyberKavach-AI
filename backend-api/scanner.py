@@ -58,6 +58,17 @@ class TitanScanner:
         # Vercel and Netlify are intentionally not treated as malicious.
         self.SUSPICIOUS_TLDS = [".xyz", ".top", ".click", ".zip", ".tk", ".ml", ".ga", ".cf", ".gq"]
         self.PHISHING_KEYWORDS = ["login", "verify", "update", "kyc", "wallet", "secure", "account", "auth", "confirm", "refund", "support", "blocked"]
+        # Short links and executable downloads are not automatically malicious,
+        # but they hide the destination or can harm a device. They are therefore
+        # supporting signals that ask the person to check before opening.
+        self.URL_SHORTENERS = {
+            "bit.ly", "bitly.com", "t.co", "tinyurl.com", "goo.gl", "is.gd",
+            "cutt.ly", "shorturl.at", "rb.gy", "rebrand.ly", "tiny.cc",
+        }
+        self.RISKY_DOWNLOAD_EXTENSIONS = {
+            ".apk", ".exe", ".msi", ".dmg", ".pkg", ".scr", ".bat", ".cmd",
+            ".ps1", ".js", ".vbs", ".jar", ".iso", ".zip", ".rar", ".7z",
+        }
         
         # State variables for the scan
         self.risk_score = 0
@@ -132,7 +143,13 @@ class TitanScanner:
                 {"label": "Password fields", "value": str(page.get("password_fields", 0))},
                 {"label": "Forms", "value": str(page.get("forms", 0))},
                 {"label": "Cross-domain forms", "value": str(page.get("cross_domain_forms", 0))},
+                {"label": "Risky form actions", "value": str(page.get("risky_form_actions", 0))},
                 {"label": "Hidden iframes", "value": str(page.get("hidden_iframes", 0))},
+                {"label": "External page resources", "value": str(page.get("external_resources", 0))},
+                {"label": "External links", "value": str(page.get("external_links", 0))},
+                {"label": "Download links", "value": str(page.get("download_links", 0))},
+                {"label": "Mail links", "value": str(page.get("mail_links", 0))},
+                {"label": "Pop-up scripts", "value": str(page.get("popup_scripts", 0))},
                 {"label": "Scripts", "value": str(page.get("scripts", 0))},
             ]},
             {"title": "Threat intelligence", "items": [
@@ -156,6 +173,8 @@ class TitanScanner:
     def analyze_lexical_features(self):
         """Extracts structural anomalies from the URL string."""
         url_lower = self.raw_url.lower()
+        parsed = urllib.parse.urlsplit(self.raw_url)
+        host = (parsed.hostname or self.domain).lower()
         
         # 1.1 IP Address in URL (Classic Phishing)
         ip_pattern = re.compile(r'\b(?:\d{1,3}\.){3}\d{1,3}\b')
@@ -213,6 +232,42 @@ class TitanScanner:
         if entropy > 4.5:
             self.add_risk(15)
             self.ai_analysis.append(f"[Warning] High mathematical entropy ({entropy:.2f}). Domain appears to be machine-generated (DGA).")
+
+        # 1.8 Destination-hiding and lookalike patterns. These are deliberately
+        # lower-weight than a threat-feed hit or a credential-stealing form.
+        if host in self.URL_SHORTENERS or any(host.endswith(f".{item}") for item in self.URL_SHORTENERS):
+            self.add_risk(15)
+            self.ai_analysis.append("[Warning] Shortened link hides the final destination.")
+        if "xn--" in host or any(ord(character) > 127 for character in host):
+            self.add_risk(20)
+            self.ai_analysis.append("[Warning] Internationalised domain characters can be used to imitate another website.")
+
+        hyphenated_labels = [label for label in host.split(".") if label.count("-") >= 2]
+        if hyphenated_labels:
+            self.add_risk(8)
+            self.ai_analysis.append("[Warning] Domain uses multiple hyphens, a pattern sometimes used in lookalike links.")
+        if re.search(r"%(?:2f|2e|5c|40|3f|23)", url_lower):
+            self.add_risk(10)
+            self.ai_analysis.append("[Warning] URL contains encoded separators that can hide its real path.")
+
+        # An external URL nested in a redirect parameter may lead somewhere
+        # different from the domain a person thinks they are opening.
+        redirect_parameters = {"url", "redirect", "redirect_uri", "next", "return", "continue", "destination", "target"}
+        for key, value in urllib.parse.parse_qsl(parsed.query, keep_blank_values=False):
+            if key.lower() not in redirect_parameters:
+                continue
+            candidate = urllib.parse.urlsplit(urllib.parse.unquote(value))
+            if candidate.scheme in {"http", "https"} and candidate.hostname and candidate.hostname.lower() != host:
+                self.add_risk(12)
+                self.ai_analysis.append("[Warning] Link contains a redirect parameter pointing to a different domain.")
+                break
+
+        download_path = urllib.parse.unquote(parsed.path).lower()
+        suffix = next((item for item in self.RISKY_DOWNLOAD_EXTENSIONS if download_path.endswith(item)), None)
+        if suffix:
+            points = 20 if suffix in {".apk", ".exe", ".msi", ".dmg", ".pkg", ".scr", ".bat", ".cmd", ".ps1", ".js", ".vbs", ".jar"} else 12
+            self.add_risk(points)
+            self.ai_analysis.append(f"[Warning] Link points directly to a potentially risky download ({suffix}).")
 
     # ---------------------------------------------------------
     # 2. DNS & INFRASTRUCTURE INTELLIGENCE
@@ -298,25 +353,92 @@ class TitanScanner:
                 else:
                     self.ai_analysis.append("[Info] Page contains a password field.")
 
-            # 3.2 Suspicious Form Actions
+            # 3.2 Suspicious form actions. A password form posting to another
+            # site, using GET, or opening a mail client is strong evidence of
+            # credential collection. Normal same-site forms do not add risk.
             forms = soup.find_all('form')
             cross_domain_forms = 0
+            risky_form_actions = 0
+            final_host = (urllib.parse.urlsplit(response.url).hostname or self.domain).lower()
             for form in forms:
-                action = form.get('action', '').lower()
-                action_host = urllib.parse.urlsplit(urllib.parse.urljoin(self.raw_url, action)).hostname
-                if action_host and action_host.lower() != self.domain.lower():
+                action = (form.get('action') or '').strip()
+                action_lower = action.lower()
+                method = (form.get('method') or 'get').lower()
+                action_url = urllib.parse.urlsplit(urllib.parse.urljoin(response.url, action))
+                action_host = (action_url.hostname or '').lower()
+                if action_lower.startswith(('mailto:', 'javascript:', 'data:')):
+                    risky_form_actions += 1
+                    self.add_risk(30 if password_inputs else 12)
+                    self.ai_analysis.append("[Threat] This form uses an unsafe submission destination.")
+                elif action_host and action_host != final_host:
                     cross_domain_forms += 1
                     score = 30 if password_inputs else 15
                     self.add_risk(score)
                     self.ai_analysis.append("[Threat] This form sends information to a different domain.")
+                if password_inputs and method == 'get':
+                    risky_form_actions += 1
+                    self.add_risk(20)
+                    self.ai_analysis.append("[Threat] Password form uses GET, which can expose submitted data in a URL.")
 
-            # 3.3 Hidden iFrames (Used for drive-by downloads or tracking)
-            hidden_iframes = soup.find_all('iframe', style=lambda value: value and ('display:none' in value.replace(' ', '') or 'visibility:hidden' in value.replace(' ', '')))
+            # 3.3 Hidden iFrames can conceal unwanted embeds or downloads.
+            def iframe_is_hidden(frame) -> bool:
+                style = (frame.get('style') or '').replace(' ', '').lower()
+                dimensions = {(frame.get('width') or '').strip(), (frame.get('height') or '').strip()}
+                return (
+                    frame.has_attr('hidden') or frame.get('aria-hidden') == 'true' or
+                    'display:none' in style or 'visibility:hidden' in style or
+                    'opacity:0' in style or '0' in dimensions
+                )
+
+            hidden_iframes = [frame for frame in soup.find_all('iframe') if iframe_is_hidden(frame)]
             if hidden_iframes:
                 self.add_risk(10)
                 self.ai_analysis.append("[Warning] Hidden embedded page elements were found.")
 
-            # 3.4 Page Title Brand Spoofing Check
+            # 3.4 Resource, link and download review. Third-party resources are
+            # common on modern pages, so they are recorded as evidence and only
+            # increase risk when paired with a credential form.
+            def external_url(value: str | None) -> bool:
+                if not value or value.startswith(('#', 'javascript:', 'data:', 'mailto:', 'tel:')):
+                    return False
+                target_host = urllib.parse.urlsplit(urllib.parse.urljoin(response.url, value)).hostname
+                return bool(target_host and target_host.lower() != final_host)
+
+            resource_values = []
+            for element in soup.find_all(['script', 'img', 'iframe', 'audio', 'video', 'source']):
+                resource_values.append(element.get('src'))
+            for element in soup.find_all('link'):
+                resource_values.append(element.get('href'))
+            external_resources = sum(external_url(value) for value in resource_values)
+
+            anchors = soup.find_all('a', href=True)
+            external_links = sum(external_url(anchor.get('href')) for anchor in anchors)
+            mail_links = sum(anchor.get('href', '').strip().lower().startswith('mailto:') for anchor in anchors)
+            download_links = 0
+            for anchor in anchors:
+                href = urllib.parse.urlsplit(urllib.parse.urljoin(response.url, anchor.get('href', ''))).path.lower()
+                if anchor.has_attr('download') or any(href.endswith(extension) for extension in self.RISKY_DOWNLOAD_EXTENSIONS):
+                    download_links += 1
+            if download_links:
+                self.add_risk(12)
+                self.ai_analysis.append("[Warning] Page contains links to downloadable files. Check the file and source before opening.")
+            if password_inputs and resource_values and external_resources / len(resource_values) >= 0.75:
+                self.add_risk(8)
+                self.ai_analysis.append("[Warning] Sign-in page loads most resources from other domains.")
+
+            popup_scripts = self.html_content.lower().count('window.open(')
+            if popup_scripts and password_inputs:
+                self.add_risk(8)
+                self.ai_analysis.append("[Warning] Sign-in page contains pop-up opening code.")
+            blocked_context_menu = bool(
+                soup.find(attrs={'oncontextmenu': True}) or
+                'oncontextmenu' in self.html_content.lower() and 'preventdefault' in self.html_content.lower()
+            )
+            if blocked_context_menu and password_inputs:
+                self.add_risk(5)
+                self.ai_analysis.append("[Info] Sign-in page tries to disable the context menu.")
+
+            # 3.5 Page Title Brand Spoofing Check
             title = soup.title.get_text(" ", strip=True) if soup.title else ""
             title_lower = title.lower()
             if title_lower:
@@ -325,7 +447,7 @@ class TitanScanner:
                         self.add_risk(35)
                         self.ai_analysis.append(f"[Critical] DOM Title spoofing. Page claims to be '{brand.upper()}' but domain does not match.")
             
-            # 3.5 Captcha Wall Detection (Cloudflare / Recaptcha obfuscation)
+            # 3.6 Captcha Wall Detection (Cloudflare / Recaptcha obfuscation)
             if "cf-turnstile" in self.html_content or "g-recaptcha" in self.html_content:
                 self.ai_analysis.append("[Info] A CAPTCHA limited parts of the page review.")
             self.page_summary = {
@@ -335,7 +457,13 @@ class TitanScanner:
                 "password_fields": len(password_inputs),
                 "forms": len(forms),
                 "cross_domain_forms": cross_domain_forms,
+                "risky_form_actions": risky_form_actions,
                 "hidden_iframes": len(hidden_iframes),
+                "external_resources": external_resources,
+                "external_links": external_links,
+                "download_links": download_links,
+                "mail_links": mail_links,
+                "popup_scripts": popup_scripts,
                 "scripts": len(soup.find_all("script")),
             }
 

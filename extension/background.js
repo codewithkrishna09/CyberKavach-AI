@@ -52,6 +52,11 @@ const MAX_CACHE_SIZE = 1000;      // Safety limit
 const MAX_SCAN_URL_LENGTH = 2048;
 const TEMPORARY_ALLOWLIST = new Map();
 const ALLOW_TTL = 10 * 60 * 1000;
+const URL_SHORTENERS = new Set([
+    "bit.ly", "bitly.com", "t.co", "tinyurl.com", "goo.gl", "is.gd",
+    "cutt.ly", "shorturl.at", "rb.gy", "rebrand.ly", "tiny.cc"
+]);
+const RISKY_DOWNLOAD_EXTENSIONS = /\.(apk|exe|msi|dmg|pkg|scr|bat|cmd|ps1|js|vbs|jar|iso|zip|rar|7z)$/i;
 
 function localUrlAssessment(url) {
     const parsed = new URL(url);
@@ -71,6 +76,38 @@ function localUrlAssessment(url) {
     if (branded && action) { score += 30; signals.push('Brand name paired with credential/urgency language'); }
     if (/\.(zip|mov|top|xyz|click|gq|tk|ml|ga|cf)$/.test(host)) { score += 15; signals.push('High-abuse domain suffix'); }
     if (parsed.protocol === 'http:' && action) { score += 25; signals.push('Sensitive action over unencrypted HTTP'); }
+    if (URL_SHORTENERS.has(host) || [...URL_SHORTENERS].some(domain => host.endsWith(`.${domain}`))) {
+        score += 15;
+        signals.push('Short link hides the final destination');
+    }
+    if (labels.some(label => (label.match(/-/g) || []).length >= 2)) {
+        score += 8;
+        signals.push('Multiple hyphens in domain can indicate a lookalike link');
+    }
+    if (/%(?:2f|2e|5c|40|3f|23)/i.test(url)) {
+        score += 10;
+        signals.push('Encoded URL characters can hide the real destination');
+    }
+    let decodedPath = parsed.pathname;
+    try { decodedPath = decodeURIComponent(parsed.pathname); } catch (_) { /* keep raw path */ }
+    if (RISKY_DOWNLOAD_EXTENSIONS.test(decodedPath)) {
+        score += 20;
+        signals.push('Direct link to a potentially risky download');
+    }
+    for (const key of ['url', 'redirect', 'redirect_uri', 'next', 'return', 'continue', 'destination', 'target']) {
+        const value = parsed.searchParams.get(key);
+        if (!value) continue;
+        try {
+            const target = new URL(value);
+            if (target.hostname !== host) {
+                score += 12;
+                signals.push('Redirect parameter points to another domain');
+                break;
+            }
+        } catch (_) {
+            // Non-URL values are harmless for this local, no-network check.
+        }
+    }
     return { score: Math.min(100, score), signals };
 }
 

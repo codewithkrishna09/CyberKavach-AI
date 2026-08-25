@@ -275,6 +275,41 @@ class BackendBehaviorTests(unittest.TestCase):
         scanner.analyze_lexical_features()
         self.assertGreaterEqual(scanner.risk_score, 30)
 
+    def test_scanner_flags_hidden_destination_and_risky_download_patterns(self):
+        scanner = TitanScanner("https://bit.ly/paytm-kyc-update.apk?next=https%3A%2F%2Fevil.example")
+        scanner.analyze_lexical_features()
+        joined = " ".join(scanner.ai_analysis)
+        self.assertIn("Shortened link hides", joined)
+        self.assertIn("encoded separators", joined)
+        self.assertIn("redirect parameter", joined)
+        self.assertIn("risky download", joined)
+        self.assertGreaterEqual(scanner.risk_score, 50)
+
+    @patch("scanner.safe_get")
+    def test_dom_review_reports_risky_forms_downloads_and_embeds(self, safe_get_mock):
+        class Response:
+            url = "https://login.example/"
+            encoding = "utf-8"
+            _cyberkavach_redirect_count = 0
+
+        html = b'''<html><head><title>Sign in</title></head><body oncontextmenu="return false">
+            <form method="get" action="https://collect.example/submit"><input type="password"></form>
+            <iframe hidden src="https://embed.example/"></iframe>
+            <script src="https://cdn.example/app.js"></script><script>window.open('popup')</script>
+            <a href="https://files.example/update.apk">Download update</a><a href="mailto:help@example.com">Mail</a>
+        </body></html>'''
+        safe_get_mock.return_value = (Response(), html)
+        scanner = TitanScanner("https://login.example/")
+        scanner.analyze_dom()
+        page = scanner.page_summary
+        self.assertEqual(page["cross_domain_forms"], 1)
+        self.assertGreaterEqual(page["risky_form_actions"], 1)
+        self.assertEqual(page["hidden_iframes"], 1)
+        self.assertEqual(page["download_links"], 1)
+        self.assertEqual(page["mail_links"], 1)
+        self.assertEqual(page["popup_scripts"], 1)
+        self.assertGreaterEqual(scanner.risk_score, 60)
+
     @patch("scanner.lookup_url_reputation", return_value={
         "checked": True, "hit": True, "provider": "test", "categories": ["SOCIAL_ENGINEERING"]
     })
