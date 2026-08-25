@@ -97,8 +97,8 @@
             <div class="val" id="targetUrl">...</div>
         </div>
 
-        <button id="backBtn" class="btn btn-safe">Exit to Safety</button>
-        <button id="ignoreBtn" class="btn btn-ignore" disabled>Verify threat (5s)</button>
+        <button id="backBtn" class="btn btn-safe">Exit to a Safe Page</button>
+        <button id="ignoreBtn" class="btn btn-ignore">Proceed anyway (Unsafe)</button>
     </div>
 
     <script>
@@ -114,22 +114,12 @@
         document.getElementById('targetUrl').innerText = target;
 
         document.getElementById('backBtn').onclick = () => {
-            history.length > 1 ? history.back() : window.location.replace("https://www.google.com/");
+            // Going back would reopen the unsafe URL and immediately trigger
+            // another block. Replace the tab with a known safe destination.
+            window.location.replace("https://www.google.com/");
         };
 
-        let timeLeft = 5;
         const ignoreBtn = document.getElementById('ignoreBtn');
-        const timer = setInterval(() => {
-            timeLeft--;
-            if(timeLeft > 0) {
-                ignoreBtn.innerText = `Verify threat (${timeLeft}s)`;
-            } else {
-                clearInterval(timer);
-                ignoreBtn.disabled = false;
-                ignoreBtn.innerText = "Proceed anyway (Unsafe)";
-            }
-        }, 1000);
-
         ignoreBtn.onclick = () => {
             if(confirm("🚨 CRITICAL WARNING: This site is confirmed as Phishing. Do you want to proceed at your own risk?")) {
                 chrome.runtime.sendMessage({ action: 'ALLOW_TEMPORARILY', url: target }, () => {
