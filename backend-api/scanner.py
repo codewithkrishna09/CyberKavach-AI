@@ -139,7 +139,6 @@ class TitanScanner:
                 {"label": "Reputation check", "value": reputation.get("provider") or "Not configured"},
                 {"label": "Known threat hit", "value": "Yes" if reputation.get("hit") else "No known hit" if reputation.get("checked") else "Not checked"},
                 {"label": "Categories", "value": ", ".join(reputation.get("categories") or []) or "Not available"},
-                {"label": "Local ML probability", "value": f"{self.ml_probability:.0f}%" if self.ml_probability is not None else "Model not installed"},
             ]},
         ]
 
