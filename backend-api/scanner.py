@@ -102,6 +102,25 @@ class TitanScanner:
         """Avoid flagging legitimate brand login pages solely for saying 'login'."""
         return any(self.domain == domain or self.domain.endswith(f".{domain}") for domain in self.BRAND_DOMAINS.get(brand, set()))
 
+    def is_normal_search_results_page(self) -> bool:
+        """Identify a search-result page without creating a broad trusted bypass.
+
+        A long search query is normal and must not make a major search engine
+        look like phishing. Redirect parameters are explicitly excluded so a
+        search-engine URL which points elsewhere still receives normal checks.
+        """
+        parsed = urllib.parse.urlsplit(self.raw_url)
+        host = (parsed.hostname or "").lower()
+        search_paths = {
+            ("google.com", "/search"), ("www.google.com", "/search"),
+            ("bing.com", "/search"), ("www.bing.com", "/search"),
+            ("search.yahoo.com", "/search"), ("duckduckgo.com", "/"),
+        }
+        if (host, parsed.path or "/") not in search_paths:
+            return False
+        redirect_keys = {"url", "redirect", "redirect_uri", "next", "return", "continue", "destination", "target"}
+        return not any(key.lower() in redirect_keys for key, _ in urllib.parse.parse_qsl(parsed.query))
+
     @staticmethod
     def _format_date(value) -> str | None:
         """Return a short readable WHOIS date without exposing raw provider data."""
@@ -182,8 +201,10 @@ class TitanScanner:
             self.add_risk(35)
             self.ai_analysis.append("[Threat] URL uses an IP address instead of a Domain Name to hide identity.")
             
-        # 1.2 URL Length (Phishers use long URLs to hide the actual domain on mobile)
-        if len(self.raw_url) > 75:
+        # 1.2 Structural URL length. Search/tracking query text is not a useful
+        # phishing indicator by itself and caused false alerts on normal search pages.
+        structural_url = urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, "", ""))
+        if len(structural_url) > 75:
             self.add_risk(10)
             self.ai_analysis.append("[Warning] Suspiciously long URL detected (Often used to hide domain structure on mobile).")
 
@@ -482,7 +503,11 @@ class TitanScanner:
         
         # Run all analysis modules concurrently for maximum speed (Titan Latency < 0.8s)
         self.analyze_lexical_features()
-        self.ml_probability = predict_phishing_probability(self.raw_url)
+        # A lexical model sees a long query string but cannot understand that it
+        # is an ordinary search phrase. Keep it out of this narrow false-positive
+        # case; all live-page, redirect and reputation checks still run below.
+        if not self.is_normal_search_results_page():
+            self.ml_probability = predict_phishing_probability(self.raw_url)
         with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
             futures = [executor.submit(self.analyze_whois), executor.submit(self.analyze_dom), executor.submit(self.analyze_reputation)]
             for future in futures:

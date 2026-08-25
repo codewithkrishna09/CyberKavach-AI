@@ -209,6 +209,15 @@ class BackendBehaviorTests(unittest.TestCase):
         self.assertTrue(any(section["title"] == "File details" for section in report["details"]))
         self.assertTrue(any(section["title"] == "Image properties" for section in report["details"]))
 
+    def test_normal_google_search_query_is_not_a_long_url_warning(self):
+        scanner = TitanScanner(
+            "https://www.google.com/search?q=open+phishing&sourceid=chrome&long_tracking_value=" + "x" * 200
+        )
+        scanner.analyze_lexical_features()
+        self.assertTrue(scanner.is_normal_search_results_page())
+        self.assertFalse(any("Suspiciously long URL" in item for item in scanner.ai_analysis))
+        self.assertEqual(scanner.risk_score, 0)
+
     def test_satark_pdf_report_masks_sensitive_indicators(self):
         payload = (
             b"%PDF-1.4\n/Type /Page\n/Creator (Canva)\n/Producer (Test)\n"

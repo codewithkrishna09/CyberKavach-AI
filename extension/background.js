@@ -72,7 +72,10 @@ function localUrlAssessment(url) {
     if (parsed.username || parsed.password || parsed.href.includes('@')) { score += 45; signals.push('URL contains credential-style @ redirection'); }
     if (host.includes('xn--')) { score += 35; signals.push('Punycode domain may impersonate another brand'); }
     if (labels.length > 4) { score += 20; signals.push('Excessive subdomains'); }
-    if (url.length > 150) { score += 10; signals.push('Unusually long URL'); }
+    // Search terms and tracking parameters can be long on normal sites. Score
+    // only the visible domain/path structure, not an arbitrary query string.
+    const structuralUrl = `${parsed.protocol}//${parsed.host}${parsed.pathname}`;
+    if (structuralUrl.length > 150) { score += 10; signals.push('Unusually long URL'); }
     if (branded && action) { score += 30; signals.push('Brand name paired with credential/urgency language'); }
     if (/\.(zip|mov|top|xyz|click|gq|tk|ml|ga|cf)$/.test(host)) { score += 15; signals.push('High-abuse domain suffix'); }
     if (parsed.protocol === 'http:' && action) { score += 25; signals.push('Sensitive action over unencrypted HTTP'); }
