@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scan Report | CyberKavach AI</title>
+    <title>Security Report | CyberKavach AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -12,104 +12,102 @@
     <style>
         html, body { max-width: 100%; overflow-x: hidden; }
         body { font-family: Inter, system-ui, sans-serif; }
-        .detail-card dt { color: #64748b; font-size: 0.68rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
-        .detail-card dd { color: #1e293b; font-size: .8rem; font-weight: 500; margin-top: .25rem; overflow-wrap: anywhere; }
+        .report-rule { border-left: 3px solid #e2e8f0; }
+        [data-state="danger"] .report-rule { border-left-color: #ef4444; }
+        [data-state="caution"] .report-rule { border-left-color: #f59e0b; }
+        [data-state="safe"] .report-rule { border-left-color: #10b981; }
+        .report-details summary { cursor: pointer; list-style: none; }
+        .report-details summary::-webkit-details-marker { display: none; }
+        .report-details[open] summary .chevron { transform: rotate(180deg); }
+        .detail-row + .detail-row { border-top: 1px solid #e2e8f0; }
     </style>
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-900">
+<body class="min-h-screen bg-white text-slate-900">
     <header class="border-b border-slate-200 bg-white">
-        <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
+        <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
             <a href="../index.html" class="flex items-center gap-3" aria-label="CyberKavach home">
-                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm"><i data-lucide="shield" class="h-5 w-5"></i></span>
-                <span>
-                    <strong class="block text-sm font-extrabold tracking-tight sm:text-base">CyberKavach.AI</strong>
-                    <span class="block text-[10px] font-bold uppercase tracking-widest text-slate-400">Scan report</span>
-                </span>
+                <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 text-white"><i data-lucide="shield" class="h-5 w-5"></i></span>
+                <strong class="text-sm tracking-tight sm:text-base">CyberKavach.AI</strong>
             </a>
-            <div class="flex items-center gap-2">
-                <a href="../index.html#scanForm" class="hidden rounded-lg px-3 py-2 text-xs font-bold text-slate-600 transition hover:bg-slate-100 sm:inline-flex">Scan a website</a>
-                <button id="refreshBtn" type="button" onclick="fetchDashboardData()" class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50" aria-label="Refresh report">
-                    <i data-lucide="refresh-cw" class="h-4 w-4"></i>
-                </button>
-            </div>
+            <button id="refreshBtn" type="button" onclick="fetchDashboardData()" class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold text-slate-600 transition hover:bg-slate-100" aria-label="Refresh report">
+                <i data-lucide="refresh-cw" class="h-4 w-4"></i><span>Refresh</span>
+            </button>
         </div>
     </header>
 
-    <main class="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
-        <div class="mb-8 max-w-2xl">
-            <p class="text-xs font-bold uppercase tracking-[0.18em] text-indigo-600">Website protection</p>
-            <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Latest scan report</h1>
-            <p class="mt-3 text-sm leading-6 text-slate-500">See the result and the exact warning signs found during the website scan.</p>
-        </div>
+    <main class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
+        <a href="../index.html#scanForm" class="inline-flex items-center gap-2 text-xs font-bold text-slate-500 transition hover:text-indigo-600"><i data-lucide="arrow-left" class="h-4 w-4"></i> Scan another website</a>
 
-        <!-- This section always shows one useful report: the selected scan or the newest scan. -->
-        <section id="reportCard" class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <div id="reportLoading" class="p-8 text-sm font-medium text-slate-500">Loading latest scan…</div>
-            <div id="reportEmpty" class="hidden p-8 text-center sm:p-12">
-                <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600"><i data-lucide="search-check" class="h-7 w-7"></i></span>
-                <h2 class="mt-5 text-xl font-bold text-slate-900">No website scans yet</h2>
-                <p class="mx-auto mt-2 w-full max-w-md break-words text-sm leading-6 text-slate-500">Open a website in the extension and scan it. Its full result will appear here.</p>
-                <a href="../index.html#scanForm" class="mt-6 inline-flex rounded-xl bg-indigo-600 px-4 py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-indigo-700">Scan a website</a>
-            </div>
-            <div id="reportContent" class="hidden">
-                <div class="border-b border-slate-100 p-5 sm:p-7">
-                    <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-                        <div class="flex min-w-0 items-start gap-4">
-                            <span id="reportIconBox" class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl"></span>
-                            <div class="min-w-0">
-                                <p id="reportStatus" class="text-xs font-extrabold uppercase tracking-widest"></p>
-                                <h2 id="reportTarget" class="mt-2 break-all text-base font-bold leading-6 text-slate-900 sm:text-lg"></h2>
-                                <p id="reportTime" class="mt-1 text-xs text-slate-500"></p>
-                            </div>
-                        </div>
-                        <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-left sm:text-right">
-                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Risk level</p>
-                            <p id="reportScore" class="mt-1 text-2xl font-extrabold"></p>
+        <div id="reportLoading" class="py-20 text-center text-sm font-medium text-slate-500">Loading scan report…</div>
+
+        <section id="reportEmpty" class="hidden py-20 text-center">
+            <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600"><i data-lucide="search-check" class="h-6 w-6"></i></span>
+            <h1 class="mt-4 text-2xl font-extrabold tracking-tight">No website scan yet</h1>
+            <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">Scan a website in the extension. Its security report will appear here.</p>
+        </section>
+
+        <!-- One report surface: verdict first, evidence second, technical data only on request. -->
+        <article id="reportContent" class="hidden pt-8" data-state="neutral">
+            <div class="border-b border-slate-200 pb-7 sm:pb-9">
+                <p id="reportHost" class="break-all font-mono text-sm font-bold text-slate-600"></p>
+                <div class="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div class="flex min-w-0 items-start gap-4">
+                        <span id="reportIcon" class="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"></span>
+                        <div class="min-w-0">
+                            <h1 id="reportVerdict" class="text-3xl font-extrabold tracking-tight sm:text-4xl"></h1>
+                            <p id="reportSummary" class="mt-2 max-w-2xl text-sm leading-6 text-slate-600"></p>
                         </div>
                     </div>
+                    <span id="riskLabel" class="w-fit shrink-0 rounded-full px-3 py-1.5 text-xs font-extrabold uppercase tracking-wider"></span>
                 </div>
-
-                <div class="grid gap-8 p-5 sm:p-7 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.9fr)]">
-                    <section>
-                        <h3 class="flex items-center gap-2 text-sm font-bold text-slate-900"><i data-lucide="list-checks" class="h-4 w-4 text-indigo-600"></i> What we found</h3>
-                        <ul id="findingsList" class="mt-4 space-y-3"></ul>
-                    </section>
-                    <section id="detailsSection" class="hidden">
-                        <h3 class="flex items-center gap-2 text-sm font-bold text-slate-900"><i data-lucide="file-search" class="h-4 w-4 text-indigo-600"></i> Technical details</h3>
-                        <div id="detailsGrid" class="mt-4 grid gap-3"></div>
-                    </section>
-                </div>
-
-                <div id="reportAction" class="hidden border-t border-amber-100 bg-amber-50 px-5 py-4 sm:px-7">
-                    <p class="text-sm font-semibold text-amber-950">Do not enter passwords, OTPs, card details, or UPI PIN until you verify this website independently.</p>
-                </div>
+                <div id="metadata" class="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-xs font-medium text-slate-500"></div>
             </div>
-        </section>
 
-        <!-- Only threat results are retained below. Safe-history clutter is intentionally excluded. -->
-        <section class="mt-10">
-            <div class="flex items-end justify-between gap-4">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Recent alerts</p>
-                    <h2 class="mt-1 text-xl font-extrabold tracking-tight text-slate-900">Warnings that need attention</h2>
-                </div>
-                <span id="warningCount" class="rounded-full bg-slate-200 px-3 py-1 text-xs font-bold text-slate-600">0 alerts</span>
+            <div id="warningNotice" class="hidden border-b border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold leading-6 text-red-950 sm:px-5"></div>
+
+            <div class="grid gap-10 py-8 lg:grid-cols-[minmax(0,1.45fr)_minmax(240px,0.75fr)] lg:py-10">
+                <section>
+                    <p id="findingsEyebrow" class="text-xs font-extrabold uppercase tracking-[0.16em] text-slate-400"></p>
+                    <h2 id="findingsHeading" class="mt-2 text-xl font-extrabold tracking-tight"></h2>
+                    <ul id="findingsList" class="report-rule mt-5 space-y-4 pl-5"></ul>
+                </section>
+
+                <aside id="actionPanel" class="hidden border-t border-slate-200 pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
+                    <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-slate-400">Recommended action</p>
+                    <h2 class="mt-2 text-lg font-extrabold tracking-tight">Pause before continuing</h2>
+                    <p class="mt-3 text-sm leading-6 text-slate-600">Do not enter passwords, OTPs, card details, or UPI PIN until you verify this site through an official source.</p>
+                    <div class="mt-5 flex flex-col gap-2">
+                        <button type="button" onclick="closeReport()" class="rounded-lg bg-slate-900 px-4 py-3 text-sm font-bold text-white transition hover:bg-slate-700">Close report</button>
+                        <button id="wrongAlertBtn" type="button" onclick="submitWrongAlert()" class="rounded-lg border border-slate-300 px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50">This warning is wrong</button>
+                        <p id="feedbackStatus" class="hidden text-xs font-medium text-slate-500"></p>
+                    </div>
+                </aside>
             </div>
-            <div id="warningsList" class="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"></div>
-        </section>
+
+            <details id="technicalPanel" class="report-details border-t border-slate-200 py-5">
+                <summary class="flex items-center justify-between gap-4 text-sm font-bold text-slate-700">
+                    <span class="flex items-center gap-2"><i data-lucide="file-search" class="h-4 w-4 text-slate-400"></i> Technical details</span>
+                    <i data-lucide="chevron-down" class="chevron h-4 w-4 text-slate-400 transition-transform"></i>
+                </summary>
+                <div id="technicalDetails" class="mt-5 grid gap-6 pt-1 sm:grid-cols-2"></div>
+            </details>
+
+            <details id="previousPanel" class="report-details border-t border-slate-200 py-5">
+                <summary class="flex items-center justify-between gap-4 text-sm font-bold text-slate-700">
+                    <span class="flex items-center gap-2"><i data-lucide="history" class="h-4 w-4 text-slate-400"></i> Previous alerts <span id="alertCount" class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-slate-500"></span></span>
+                    <i data-lucide="chevron-down" class="chevron h-4 w-4 text-slate-400 transition-transform"></i>
+                </summary>
+                <div id="previousAlerts" class="mt-4 divide-y divide-slate-100 border-t border-slate-100"></div>
+            </details>
+        </article>
     </main>
 
     <script>
         const API_URL = window.CYBERKAVACH_CONFIG.API_URL;
-        let userKey = "";
+        let userKey = '';
         let logsData = [];
-        let requestedTarget = "";
-
-        function escapeHtml(value) {
-            return String(value).replace(/[&<>'"]/g, character => ({
-                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-            })[character]);
-        }
+        let activeReport = null;
+        let requestedTarget = '';
 
         function isSafe(log) {
             return ['SAFE', 'CLEAN', 'AUTHENTIC', 'NO STRONG WARNING'].includes(log.verdict);
@@ -119,14 +117,17 @@
             return ['REJECTED', 'SKIPPED', 'ERROR'].includes(log.verdict);
         }
 
-        function reportStyle(log) {
-            if (isSafe(log)) return { icon: 'shield-check', label: 'No strong warning found', foreground: '#059669', background: '#ecfdf5' };
-            if (isUnavailable(log)) return { icon: 'circle-help', label: 'Scan not completed', foreground: '#475569', background: '#f1f5f9' };
-            if (log.verdict === 'SUSPICIOUS') return { icon: 'triangle-alert', label: 'Warning signs found', foreground: '#d97706', background: '#fffbeb' };
-            return { icon: 'shield-alert', label: 'Threat detected', foreground: '#dc2626', background: '#fef2f2' };
+        function presentation(log) {
+            if (isSafe(log)) return { state: 'safe', icon: 'shield-check', title: 'No strong warning found', summary: 'The scan did not find a strong phishing or malware signal. Stay careful with unexpected requests.', foreground: '#047857', background: '#ecfdf5' };
+            if (isUnavailable(log)) return { state: 'neutral', icon: 'circle-help', title: 'Scan not completed', summary: 'This website could not be fully checked. Do not treat this as a safe result.', foreground: '#475569', background: '#f1f5f9' };
+            if (log.verdict === 'SUSPICIOUS') return { state: 'caution', icon: 'triangle-alert', title: 'Suspicious website', summary: 'The scan found warning signs that need verification before you continue.', foreground: '#b45309', background: '#fffbeb' };
+            return { state: 'danger', icon: 'shield-alert', title: 'Threat detected', summary: 'The scan found strong signs of phishing, malware, or a dangerous website.', foreground: '#dc2626', background: '#fef2f2' };
         }
 
-        // Read the extension session and the exact active-page URL before removing it from the address bar.
+        function cleanFinding(value) {
+            return String(value).replace(/^\[(Warning|Info)\]\s*/i, '');
+        }
+
         function syncIdentity() {
             const parameters = new URLSearchParams(window.location.hash.slice(1));
             const keyFromUrl = parameters.get('key');
@@ -138,99 +139,197 @@
             userKey = CyberKavachIdentity.getOrCreateKey();
         }
 
-        function showState(state) {
-            document.getElementById('reportLoading').classList.toggle('hidden', state !== 'loading');
-            document.getElementById('reportEmpty').classList.toggle('hidden', state !== 'empty');
-            document.getElementById('reportContent').classList.toggle('hidden', state !== 'report');
+        function showState(name) {
+            document.getElementById('reportLoading').classList.toggle('hidden', name !== 'loading');
+            document.getElementById('reportEmpty').classList.toggle('hidden', name !== 'empty');
+            document.getElementById('reportContent').classList.toggle('hidden', name !== 'report');
         }
 
-        function renderReport(log) {
-            if (!log) return showState('empty');
-            showState('report');
-            const style = reportStyle(log);
-            const iconBox = document.getElementById('reportIconBox');
-            iconBox.className = 'flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl';
-            iconBox.style.backgroundColor = style.background;
-            iconBox.style.color = style.foreground;
-            iconBox.innerHTML = `<i data-lucide="${style.icon}" class="h-6 w-6"></i>`;
-            const status = document.getElementById('reportStatus');
-            status.className = 'text-xs font-extrabold uppercase tracking-widest';
-            status.style.color = style.foreground;
-            status.textContent = style.label;
-            document.getElementById('reportTarget').textContent = log.url;
-            document.getElementById('reportTime').textContent = `Scanned ${log.time || 'recently'} · ${log.method || 'Website scan'}`;
-            const score = document.getElementById('reportScore');
-            score.className = 'mt-1 text-2xl font-extrabold';
-            score.style.color = style.foreground;
-            score.textContent = `${Number(log.score) || 0}/100`;
-            document.getElementById('reportAction').classList.toggle('hidden', isSafe(log) || isUnavailable(log));
+        function addMetadata(label, value) {
+            const normalized = String(value ?? '').trim();
+            if (!normalized || /^not available$/i.test(normalized)) return;
+            const item = document.createElement('span');
+            item.textContent = `${label}: ${normalized}`;
+            document.getElementById('metadata').appendChild(item);
+        }
 
-            const findings = Array.isArray(log.analysis) ? log.analysis : [];
-            const findingsList = document.getElementById('findingsList');
-            findingsList.innerHTML = findings.length
-                ? findings.map(item => `<li class="flex gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm leading-5 text-slate-700"><i data-lucide="${style.icon}" class="mt-0.5 h-4 w-4 shrink-0" style="color:${style.foreground}"></i><span>${escapeHtml(item)}</span></li>`).join('')
-                : `<li class="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm leading-5 text-slate-600">No additional warning signs were recorded for this scan.</li>`;
-
-            const detailsGrid = document.getElementById('detailsGrid');
-            detailsGrid.replaceChildren();
+        function readDetails(log) {
+            const lookup = {};
             (Array.isArray(log.details) ? log.details : []).forEach(group => {
-                const card = document.createElement('section');
-                card.className = 'detail-card rounded-xl border border-slate-200 bg-slate-50 p-4';
-                const heading = document.createElement('h4');
-                heading.className = 'mb-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-600';
+                (Array.isArray(group.items) ? group.items : []).forEach(item => {
+                    lookup[String(item.label || '').toLowerCase()] = String(item.value || '');
+                });
+            });
+            return lookup;
+        }
+
+        function renderFindings(log, view) {
+            const findings = Array.isArray(log.analysis) ? log.analysis.map(cleanFinding).filter(Boolean).slice(0, 4) : [];
+            const list = document.getElementById('findingsList');
+            list.replaceChildren();
+            document.getElementById('findingsEyebrow').textContent = isSafe(log) ? 'Scan result' : 'Why this was flagged';
+            document.getElementById('findingsHeading').textContent = isSafe(log) ? 'What the scan checked' : 'Warning signs found';
+            const visibleFindings = findings.length ? findings : [isSafe(log) ? 'No strong warning signs were recorded in this scan.' : 'No short explanation was saved for this scan. Open technical details to review the available evidence.'];
+            visibleFindings.forEach(finding => {
+                const row = document.createElement('li');
+                row.className = 'flex items-start gap-3 text-sm leading-6 text-slate-700';
+                const icon = document.createElement('i');
+                icon.setAttribute('data-lucide', view.icon);
+                icon.className = 'mt-1 h-4 w-4 shrink-0';
+                icon.style.color = view.foreground;
+                const text = document.createElement('span');
+                text.textContent = finding;
+                row.append(icon, text);
+                list.appendChild(row);
+            });
+        }
+
+        function renderTechnicalDetails(log) {
+            const panel = document.getElementById('technicalPanel');
+            const container = document.getElementById('technicalDetails');
+            container.replaceChildren();
+            const groups = Array.isArray(log.details) ? log.details : [];
+            groups.forEach(group => {
+                const section = document.createElement('section');
+                const heading = document.createElement('h3');
+                heading.className = 'mb-3 text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-400';
                 heading.textContent = String(group.title || 'Details');
-                card.appendChild(heading);
+                section.appendChild(heading);
                 const list = document.createElement('dl');
-                list.className = 'space-y-3';
                 (Array.isArray(group.items) ? group.items : []).forEach(item => {
                     const row = document.createElement('div');
-                    row.className = 'border-t border-slate-200 pt-3 first:border-t-0 first:pt-0';
+                    row.className = 'detail-row py-3 first:pt-0';
                     const label = document.createElement('dt');
+                    label.className = 'text-[10px] font-bold uppercase tracking-wider text-slate-400';
                     label.textContent = String(item.label || 'Field');
                     const value = document.createElement('dd');
+                    value.className = 'mt-1 break-all text-sm font-medium text-slate-700';
                     value.textContent = String(item.value || 'Not available');
                     row.append(label, value);
                     list.appendChild(row);
                 });
-                card.appendChild(list);
-                detailsGrid.appendChild(card);
+                section.appendChild(list);
+                container.appendChild(section);
             });
-            document.getElementById('detailsSection').classList.toggle('hidden', detailsGrid.children.length === 0);
+            panel.classList.toggle('hidden', container.children.length === 0);
+            panel.open = false;
+        }
+
+        function renderPreviousAlerts() {
+            const alerts = logsData.filter(log => !isSafe(log) && !isUnavailable(log));
+            document.getElementById('alertCount').textContent = alerts.length;
+            const container = document.getElementById('previousAlerts');
+            container.replaceChildren();
+            if (!alerts.length) {
+                const message = document.createElement('p');
+                message.className = 'py-4 text-sm text-slate-500';
+                message.textContent = 'No previous suspicious website reports.';
+                container.appendChild(message);
+                return;
+            }
+            alerts.slice(0, 10).forEach(log => {
+                const view = presentation(log);
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'flex w-full items-center gap-3 py-4 text-left transition hover:bg-slate-50';
+                const mark = document.createElement('span');
+                mark.className = 'h-2.5 w-2.5 shrink-0 rounded-full';
+                mark.style.backgroundColor = view.foreground;
+                const text = document.createElement('span');
+                text.className = 'min-w-0 flex-1';
+                const host = document.createElement('strong');
+                host.className = 'block truncate text-sm text-slate-800';
+                host.textContent = log.url;
+                const time = document.createElement('span');
+                time.className = 'mt-1 block text-xs text-slate-500';
+                time.textContent = `${log.time || 'Recent'} · ${Number(log.score) || 0}/100`;
+                text.append(host, time);
+                const arrow = document.createElement('i');
+                arrow.setAttribute('data-lucide', 'chevron-right');
+                arrow.className = 'h-4 w-4 shrink-0 text-slate-400';
+                button.append(mark, text, arrow);
+                button.addEventListener('click', () => {
+                    renderReport(log);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+                container.appendChild(button);
+            });
+        }
+
+        function renderReport(log) {
+            if (!log) return showState('empty');
+            activeReport = log;
+            showState('report');
+            const view = presentation(log);
+            const content = document.getElementById('reportContent');
+            content.dataset.state = view.state;
+            const details = readDetails(log);
+            document.getElementById('reportHost').textContent = details.host || log.url;
+            const iconBox = document.getElementById('reportIcon');
+            iconBox.style.color = view.foreground;
+            iconBox.style.backgroundColor = view.background;
+            iconBox.innerHTML = `<i data-lucide="${view.icon}" class="h-6 w-6"></i>`;
+            const verdict = document.getElementById('reportVerdict');
+            verdict.textContent = view.title;
+            verdict.style.color = view.foreground;
+            document.getElementById('reportSummary').textContent = view.summary;
+            const risk = document.getElementById('riskLabel');
+            risk.textContent = `Risk ${Number(log.score) || 0}/100`;
+            risk.style.color = view.foreground;
+            risk.style.backgroundColor = view.background;
+            const metadata = document.getElementById('metadata');
+            metadata.replaceChildren();
+            addMetadata('Scanned', log.time || 'recently');
+            addMetadata('Connection', details.connection);
+            addMetadata('Redirects', details['redirects followed']);
+            addMetadata('Domain age', details['domain age']);
+            const warning = document.getElementById('warningNotice');
+            const needsAction = !isSafe(log) && !isUnavailable(log);
+            warning.classList.toggle('hidden', !needsAction);
+            warning.textContent = needsAction ? 'Do not enter passwords, OTPs, card details, or UPI PIN until you verify this site through an official source.' : '';
+            document.getElementById('actionPanel').classList.toggle('hidden', !needsAction);
+            document.getElementById('feedbackStatus').classList.add('hidden');
+            document.getElementById('wrongAlertBtn').disabled = false;
+            renderFindings(log, view);
+            renderTechnicalDetails(log);
+            renderPreviousAlerts();
             lucide.createIcons();
         }
 
-        function renderWarnings() {
-            const warnings = logsData.filter(log => !isSafe(log) && !isUnavailable(log));
-            const count = document.getElementById('warningCount');
-            count.textContent = `${warnings.length} ${warnings.length === 1 ? 'alert' : 'alerts'}`;
-            const container = document.getElementById('warningsList');
-            if (!warnings.length) {
-                container.innerHTML = '<div class="p-6 text-sm leading-6 text-slate-500">No recent warnings. When a suspicious website is detected, its report will appear here.</div>';
-                return;
-            }
-            container.innerHTML = warnings.slice(0, 10).map(log => {
-                const style = reportStyle(log);
-                const summary = Array.isArray(log.analysis) && log.analysis[0] ? log.analysis[0] : 'Open the report to review the detected warning signs.';
-                return `<button type="button" data-log-id="${Number(log.id)}" class="warning-row flex w-full items-center gap-4 border-b border-slate-100 p-4 text-left transition last:border-b-0 hover:bg-slate-50 sm:p-5">
-                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style="background:${style.background};color:${style.foreground}"><i data-lucide="${style.icon}" class="h-5 w-5"></i></span>
-                    <span class="min-w-0 flex-1"><strong class="block truncate text-sm text-slate-900">${escapeHtml(log.url)}</strong><span class="mt-1 block truncate text-xs text-slate-500">${escapeHtml(summary)}</span></span>
-                    <span class="hidden text-right sm:block"><strong class="block text-sm" style="color:${style.foreground}">${Number(log.score) || 0}/100</strong><span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">${escapeHtml(log.time || '')}</span></span>
-                    <i data-lucide="chevron-right" class="h-4 w-4 shrink-0 text-slate-400"></i>
-                </button>`;
-            }).join('');
-            container.querySelectorAll('.warning-row').forEach(button => {
-                button.addEventListener('click', () => {
-                    const selected = logsData.find(log => Number(log.id) === Number(button.dataset.logId));
-                    renderReport(selected);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+        async function submitWrongAlert() {
+            if (!activeReport) return;
+            const button = document.getElementById('wrongAlertBtn');
+            const status = document.getElementById('feedbackStatus');
+            button.disabled = true;
+            button.textContent = 'Saving…';
+            try {
+                const response = await fetch(`${API_URL}/scan-feedback`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'x-api-key': userKey },
+                    body: JSON.stringify({ target: activeReport.url, feedback_type: 'false_positive' })
                 });
-            });
-            lucide.createIcons();
+                if (!response.ok) throw new Error('Feedback failed');
+                status.textContent = 'Thanks. Your feedback was saved for review.';
+            } catch (_) {
+                status.textContent = 'Could not save feedback. Please try again later.';
+            } finally {
+                status.classList.remove('hidden');
+                button.textContent = 'This warning is wrong';
+                button.disabled = false;
+            }
+        }
+
+        function closeReport() {
+            window.close();
+            window.setTimeout(() => {
+                if (!window.closed) window.location.href = '../index.html#scanForm';
+            }, 250);
         }
 
         async function fetchDashboardData() {
             const refreshButton = document.getElementById('refreshBtn');
-            refreshButton.classList.add('animate-spin');
+            const refreshIcon = refreshButton.querySelector('svg');
+            refreshIcon?.classList.add('animate-spin');
             try {
                 const response = await fetch(`${API_URL}/dashboard-data`, { headers: { 'x-api-key': userKey } });
                 if (response.status === 401) {
@@ -238,20 +337,18 @@
                     syncIdentity();
                     return fetchDashboardData();
                 }
-                if (!response.ok) throw new Error('Dashboard request failed');
+                if (!response.ok) throw new Error('Report request failed');
                 const data = await response.json();
                 logsData = Array.isArray(data.logs) ? data.logs : [];
                 const selected = logsData.find(log => requestedTarget && log.url === requestedTarget) || logsData[0];
                 renderReport(selected);
-                renderWarnings();
             } catch (error) {
                 console.error('Could not load scan report:', error);
                 showState('empty');
-                document.getElementById('reportEmpty').innerHTML = '<span class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-600"><i data-lucide="server-off" class="h-7 w-7"></i></span><h2 class="mt-5 text-xl font-bold text-slate-900">Could not load reports</h2><p class="mx-auto mt-2 w-full max-w-md break-words text-sm leading-6 text-slate-500">Start the backend server, then refresh this page.</p>';
-                document.getElementById('warningsList').innerHTML = '';
+                document.getElementById('reportEmpty').innerHTML = '<span class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-red-600"><i data-lucide="server-off" class="h-6 w-6"></i></span><h1 class="mt-4 text-2xl font-extrabold tracking-tight">Could not load scan report</h1><p class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">Start the backend server, then refresh this page.</p>';
                 lucide.createIcons();
             } finally {
-                window.setTimeout(() => refreshButton.classList.remove('animate-spin'), 350);
+                window.setTimeout(() => refreshIcon?.classList.remove('animate-spin'), 350);
             }
         }
 
