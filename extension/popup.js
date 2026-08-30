@@ -92,7 +92,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     ui.btnWrongAlert?.addEventListener("click", () => submitFeedback("false_positive"));
     ui.btnReportScam?.addEventListener("click", () => submitFeedback("reported_scam"));
     ui.btnDashboard?.addEventListener("click", async () => {
-        chrome.tabs.create({ url: `${DASHBOARD_URL}#key=${encodeURIComponent(await sessionKey())}` });
+        // Send the active URL so the report page opens on this exact scan.
+        const target = feedbackTarget ? `&target=${encodeURIComponent(feedbackTarget)}` : "";
+        chrome.tabs.create({ url: `${DASHBOARD_URL}#key=${encodeURIComponent(await sessionKey())}${target}` });
     });
     scanActiveTab();
 });
