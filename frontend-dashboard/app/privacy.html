@@ -164,7 +164,7 @@
             
             <nav class="hidden md:flex items-center gap-8 bg-slate-50/80 px-6 py-2 rounded-full border border-slate-200 shadow-sm">
                 <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Scanner</a>
-                <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Pricing</a>
+                <a href="/index.html#platform" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Platform</a>
             </nav>
 
             <div class="flex items-center shrink-0">
@@ -237,7 +237,7 @@
                 <section id="manifesto" class="scroll-mt-32 pt-4">
                     <h3><div class="p-2 bg-emerald-50 rounded-lg"><i data-lucide="scroll-text" class="w-5 h-5 text-emerald-500"></i></div> 1. The Zero-Data Manifesto</h3>
                     <p>Most cybersecurity companies operate on a flawed business model: they monitor your traffic to protect you, but simultaneously log your digital footprint to train their proprietary AI models or sell telemetry data to third-party brokers. At CyberKavach, we believe this fundamentally violates user sovereignty.</p>
-                    <p>We are a SaaS company, not a data broker. Our revenue is generated exclusively through the sale of <strong>Titan Elite Licenses</strong>. Because our financial incentives are aligned directly with your security, we have engineered our systems to process threats locally or ephemerally. If a server gets compromised, the hackers will find nothing but encrypted API keys and anonymized scan logs.</p>
+                    <p>This submission build is a security research platform, not a payment service. It processes threats locally or ephemerally and does not request payment details or sell access keys.</p>
                 </section>
 
                 <div class="w-full h-px bg-gradient-to-r from-slate-200 via-slate-300 to-transparent my-10"></div>
@@ -247,7 +247,7 @@
                     <p>Designed natively for the Indian demographic, our architecture strictly adheres to the mandates set forth by the <strong>DPDP Act of 2023</strong> by the Ministry of Electronics and Information Technology (MeitY).</p>
                     <ul>
                         <li><strong>Notice and Consent:</strong> You are explicitly informed when an external server call is required (e.g., uploading a CBI warrant to Satark AI). We do not run background telemetry without your active invocation.</li>
-                        <li><strong>Data Minimization:</strong> The only personal identifier we retain is the email address used during the Razorpay checkout process (solely for delivering your License Key and invoices).</li>
+                        <li><strong>Data Minimization:</strong> We do not request payment details or delivery emails. Local session identifiers are stored as one-way hashes for scan-history separation.</li>
                         <li><strong>Data Deletion:</strong> Any digital artifact (Audio, Video, APK, or Image) uploaded to our API nodes is processed entirely in the Volatile Memory (RAM). It is cryptographically shredded the millisecond a verdict is generated.</li>
                         <li><strong>Data Principal Rights:</strong> As an Indian citizen, you hold the absolute right to erasure. By clicking "Terminate Session" in your extension, your local identity is permanently revoked.</li>
                     </ul>
@@ -279,8 +279,7 @@
 
                 <section id="financial" class="scroll-mt-32">
                     <h3><div class="p-2 bg-emerald-50 rounded-lg"><i data-lucide="landmark" class="w-5 h-5 text-emerald-500"></i></div> 4. Financial Data & RBI Compliance</h3>
-                    <p>CyberKavach utilizes <strong>Razorpay</strong> as our exclusive payment gateway. We do not collect, process, or store your Credit Card, Debit Card, UPI, or Netbanking details on our servers.</p>
-                    <p>All transactions are processed directly within Razorpay's PCI-DSS compliant infrastructure, strictly adhering to the <strong>Reserve Bank of India (RBI)</strong> guidelines regarding payment data localization and tokenization. The only data Razorpay returns to our system is a binary <code>Success/Failure</code> webhook to generate your license key.</p>
+                    <p>CyberKavach does not include a payment gateway in this submission build. We do not collect, process, or store card, UPI, netbanking, or payment-token details.</p>
                 </section>
 
                 <div class="w-full h-px bg-gradient-to-r from-slate-200 via-slate-300 to-transparent my-10"></div>

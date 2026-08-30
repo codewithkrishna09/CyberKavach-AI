@@ -82,13 +82,10 @@
 
         <div class="p-4 border-t border-slate-100 bg-slate-50">
             <div class="p-4 rounded-xl border border-indigo-200 bg-indigo-50 mb-4 shadow-sm">
-                <div class="flex items-center gap-2 mb-1" id="planIconBox">
-                    </div>
-                <p class="text-[10px] text-slate-500 font-mono truncate" id="userKeyDisplay">Loading account...</p>
+                <div class="flex items-center gap-2 text-indigo-700">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i><span class="text-xs font-black uppercase tracking-widest">Protection dashboard</span>
+                </div>
             </div>
-            <button onclick="logoutSession()" class="flex items-center justify-center gap-2 px-4 py-2.5 text-red-600 hover:bg-red-50 hover:border-red-200 border border-transparent rounded-xl w-full transition-all text-xs font-bold uppercase tracking-wide">
-                <i data-lucide="log-out" class="w-4 h-4"></i> Sign out
-            </button>
         </div>
     </aside>
 
@@ -272,18 +269,6 @@
             }
             userKey = CyberKavachIdentity.getOrCreateKey();
             
-            // Update Sidebar UI based on PRO status
-            const isPro = userKey.includes("PRO");
-            document.getElementById('userKeyDisplay').innerText = userKey;
-            
-            const iconBox = document.getElementById('planIconBox');
-            if(isPro) {
-                iconBox.innerHTML = `<i data-lucide="zap" class="w-4 h-4 text-indigo-600 fill-indigo-600"></i><span class="text-xs font-black uppercase tracking-widest text-indigo-700">Pro plan</span>`;
-                iconBox.parentElement.className = "p-4 rounded-xl border border-indigo-200 bg-indigo-50 mb-4 shadow-sm";
-            } else {
-                iconBox.innerHTML = `<i data-lucide="user" class="w-4 h-4 text-slate-500"></i><span class="text-xs font-black uppercase tracking-widest text-slate-600">Free plan</span>`;
-                iconBox.parentElement.className = "p-4 rounded-xl border border-slate-200 bg-white mb-4 shadow-sm";
-            }
             lucide.createIcons();
         }
 
@@ -299,7 +284,7 @@
                 
                 if (response.status === 401) {
                     // A stale licence in localStorage must not leave the whole
-                    // dashboard unusable. Start a new valid FREE session once.
+                    // dashboard unusable. Start a new local session once.
                     localStorage.removeItem("cyberkavach_key");
                     syncIdentity();
                     return fetchDashboardData();

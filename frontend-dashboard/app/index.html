@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
         tailwind.config = {
             theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] } } }
@@ -35,14 +34,13 @@
                 <a href="#about" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors">About Us</a>
                 <a href="#ecosystem" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors">AI & Features</a>
                 <a href="#extension" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors">Extension</a>
-                <a href="#pricing" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors">Pricing</a>
                 <a href="#faq" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors">FAQ</a>
                 <a href="/blog/blog.html" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors">Blog</a>
             </nav>
 
             <div class="flex gap-3 items-center">
-                <button onclick="document.getElementById('pricing').scrollIntoView({behavior: 'smooth'})" class="hidden md:flex px-6 py-2.5 bg-slate-900 text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-indigo-600 hover:shadow-[0_0_20px_rgba(79,70,229,0.3)] transition-all">
-                    Get Elite
+                <button onclick="window.location.href='/dashboard/dash.html'" class="hidden md:flex px-6 py-2.5 bg-slate-900 text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-indigo-600 hover:shadow-[0_0_20px_rgba(79,70,229,0.3)] transition-all">
+                    Open Dashboard
                 </button>
                 <button id="mobileMenuBtn" class="lg:hidden p-2 text-slate-900 bg-white rounded-xl border border-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     <i data-lucide="menu" class="w-5 h-5"></i>
@@ -84,11 +82,6 @@
             <span class="text-lg font-bold text-slate-700 group-hover:text-slate-900">Browser Extension</span>
         </a>
         
-        <a href="#pricing" class="menu-item-anim group flex items-center gap-4 p-3.5 rounded-2xl hover:bg-slate-50 transition-colors">
-            <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors"><i data-lucide="credit-card" class="w-4 h-4"></i></div>
-            <span class="text-lg font-bold text-slate-700 group-hover:text-slate-900">Pricing Tiers</span>
-        </a>
-        
         <a href="#faq" class="menu-item-anim group flex items-center gap-4 p-3.5 rounded-2xl hover:bg-slate-50 transition-colors">
             <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors"><i data-lucide="help-circle" class="w-4 h-4"></i></div>
             <span class="text-lg font-bold text-slate-700 group-hover:text-slate-900">FAQ & Support</span>
@@ -102,8 +95,8 @@
     </nav>
 
     <div class="mt-auto p-6 border-t border-slate-100 bg-slate-50/50 rounded-bl-3xl">
-        <button onclick="document.getElementById('pricing').scrollIntoView(); closeMobileMenu();" class="menu-item-anim w-full py-4 bg-slate-900 text-white font-bold rounded-xl uppercase tracking-widest text-xs shadow-lg flex justify-center items-center gap-2 hover:bg-indigo-600 transition-all hover:scale-[1.02] hover:shadow-indigo-500/30">
-            <i data-lucide="shield-check" class="w-4 h-4"></i> Activate License
+        <button onclick="window.location.href='/dashboard/dash.html'" class="menu-item-anim w-full py-4 bg-slate-900 text-white font-bold rounded-xl uppercase tracking-widest text-xs shadow-lg flex justify-center items-center gap-2 hover:bg-indigo-600 transition-all hover:scale-[1.02] hover:shadow-indigo-500/30">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Open Dashboard
         </button>
     </div>
 </div>
@@ -472,108 +465,70 @@
     </div>
 </section>
   
-<section id="pricing" class="py-24 px-4 md:px-6 bg-white border-y border-slate-200 relative z-10">
+<section id="platform" class="py-24 px-4 md:px-6 bg-white border-y border-slate-200 relative z-10">
     <div class="max-w-5xl mx-auto">
         
-        <div class="text-center mb-16 md:mb-20 pricing-fade-up">
-            <h2 class="text-4xl md:text-5xl font-black mb-4 text-slate-900 tracking-tight">Transparent Pricing.</h2>
+        <div class="text-center mb-16 md:mb-20 platform-fade-up">
+            <h2 class="text-4xl md:text-5xl font-black mb-4 text-slate-900 tracking-tight">One Security Platform.</h2>
             <p class="text-slate-500 font-medium text-lg max-w-xl mx-auto">
-                Enterprise-grade AI security. No hidden fees. No recurring subscriptions. Just pure proactive defense.
+                Explore the CyberKavach tools from one simple workspace.
             </p>
         </div>
 
         <div class="grid md:grid-cols-2 gap-6 md:gap-8 items-stretch max-w-4xl mx-auto">
             
-            <div class="pricing-card flex flex-col bg-white border border-slate-200 rounded-3xl p-8 md:p-10 pricing-fade-up">
+            <div class="platform-card flex flex-col bg-white border border-slate-200 rounded-3xl p-8 md:p-10 platform-fade-up">
                 <div class="mb-8">
-                    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-widest rounded-md mb-4">Community</span>
-                    <div class="flex items-baseline gap-2 text-slate-900">
-                        <span class="text-5xl font-black tracking-tighter">₹0</span>
-                    </div>
-                    <p class="text-slate-500 text-sm mt-4 font-medium">Basic protection for casual web browsing.</p>
+                    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-widest rounded-md mb-4">Browser Protection</span>
+                    <p class="text-slate-500 text-sm mt-4 font-medium">Inspect links, redirects, page signals and phishing indicators.</p>
                 </div>
 
                 <div class="space-y-4 mb-10 flex-grow">
                     <div class="flex items-center gap-3">
                         <i data-lucide="check" class="w-4 h-4 text-slate-900 shrink-0"></i>
-                        <span class="text-sm font-medium text-slate-700">10 Browser Scans / Day</span>
+                        <span class="text-sm font-medium text-slate-700">Website URL analysis</span>
                     </div>
                     <div class="flex items-center gap-3">
                         <i data-lucide="check" class="w-4 h-4 text-slate-900 shrink-0"></i>
-                        <span class="text-sm font-medium text-slate-700">10 AI Forensics / Day</span>
+                        <span class="text-sm font-medium text-slate-700">Browser extension protection</span>
                     </div>
-                    <div class="flex items-center gap-3 opacity-50">
-                        <i data-lucide="minus" class="w-4 h-4 text-slate-400 shrink-0"></i>
-                        <span class="text-sm font-medium text-slate-500">No Shadow Scout Access</span>
-                    </div>
-                    <div class="flex items-center gap-3 opacity-50">
-                        <i data-lucide="minus" class="w-4 h-4 text-slate-400 shrink-0"></i>
-                        <span class="text-sm font-medium text-slate-500">Community Support Only</span>
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="check" class="w-4 h-4 text-slate-900 shrink-0"></i>
+                        <span class="text-sm font-medium text-slate-700">Detailed scan dashboard</span>
                     </div>
                 </div>
 
-                <button class="w-full py-4 rounded-xl border border-slate-200 text-slate-900 font-bold text-xs uppercase tracking-widest hover:bg-slate-50 transition-colors">
-                    Current Plan
-                </button>
+                <a href="#scanForm" class="w-full py-4 rounded-xl border border-slate-200 text-slate-900 font-bold text-xs uppercase tracking-widest hover:bg-slate-50 transition-colors text-center">
+                    Scan a Website
+                </a>
             </div>
 
-            <div class="pricing-card flex flex-col relative bg-slate-900 border border-slate-900 rounded-3xl p-8 md:p-10 pricing-fade-up pricing-delay-100 shadow-xl">
-                <div class="absolute top-0 right-8 transform -translate-y-1/2 bg-indigo-600 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-[0.2em] shadow-md">
-                   Pro
-                </div>
-                
+            <div class="platform-card flex flex-col relative bg-slate-900 border border-slate-900 rounded-3xl p-8 md:p-10 platform-fade-up platform-delay-100 shadow-xl">
                 <div class="mb-8">
-                    <span class="inline-block px-3 py-1 bg-slate-800 text-slate-300 text-[10px] font-bold uppercase tracking-widest rounded-md mb-4">Pro Feature</span>
-                    <div class="flex items-baseline gap-2 text-white">
-                        <span class="text-5xl font-black tracking-tighter">₹199</span>
-                    </div>
-                    <p class="text-slate-400 text-sm mt-4 font-medium">Full AI arsenal unlocked. Secure your digital identity forever.</p>
+                    <span class="inline-block px-3 py-1 bg-slate-800 text-slate-300 text-[10px] font-bold uppercase tracking-widest rounded-md mb-4">Analysis Tools</span>
+                    <p class="text-slate-400 text-sm mt-4 font-medium">File checks, APK analysis and privacy tools for security research.</p>
                 </div>
                 
                 <div class="space-y-4 mb-8 flex-grow">
                     <div class="flex items-center gap-3">
                         <i data-lucide="check" class="w-4 h-4 text-indigo-400 shrink-0"></i>
-                        <span class="text-sm font-medium text-slate-200">2,000 Extension Scans Credits </span>
+                        <span class="text-sm font-medium text-slate-200">Satark AI file analysis</span>
                     </div>
                     <div class="flex items-center gap-3">
                         <i data-lucide="check" class="w-4 h-4 text-indigo-400 shrink-0"></i>
-                        <span class="text-sm font-medium text-slate-200">200 Deep AI Forensics Credits</span>
+                        <span class="text-sm font-medium text-slate-200">APK Kavach security checks</span>
                     </div>
                     <div class="flex items-center gap-3">
                         <i data-lucide="check" class="w-4 h-4 text-indigo-400 shrink-0"></i>
-                        <span class="text-sm font-medium text-slate-200">Unrestricted Shadow Scout</span>
+                        <span class="text-sm font-medium text-slate-200">Shadow Scout privacy checks</span>
                     </div>
                     <div class="flex items-center gap-3">
                         <i data-lucide="check" class="w-4 h-4 text-indigo-400 shrink-0"></i>
-                        <span class="text-sm font-medium text-slate-200">Priority Threat Reports</span>
+                        <span class="text-sm font-medium text-slate-200">Structured security reports</span>
                     </div>
                 </div>
                 
-                <div id="paymentArea" class="mt-auto">
-                    <div class="relative mb-3">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <i data-lucide="mail" class="w-4 h-4 text-slate-500"></i>
-                        </div>
-                        <input type="email" id="checkoutEmail" placeholder="Enter delivery email" required class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl pl-11 pr-4 py-4 text-sm outline-none focus:border-indigo-500 transition-colors font-medium placeholder:text-slate-500">
-                    </div>
-                    
-                    <button id="payBtn" onclick="initiateCheckout()" class="w-full py-4 rounded-xl bg-white text-slate-900 font-black text-xs uppercase tracking-widest hover:bg-indigo-50 transition-colors flex items-center justify-center gap-2">
-                        <i data-lucide="arrow-right" class="w-4 h-4"></i> Secure Checkout
-                    </button>
-                    <p class="text-[10px] text-center text-slate-500 mt-4 font-bold uppercase tracking-widest flex items-center justify-center gap-1.5">
-                        <i data-lucide="lock" class="w-3 h-3"></i> Encrypted by Razorpay
-                    </p>
-                </div>
-
-                <div id="successArea" class="hidden-state flex-col items-center justify-center text-center p-6 bg-slate-800 rounded-2xl border border-slate-700 mt-auto">
-                    <div class="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center text-white mb-4">
-                        <i data-lucide="check-circle-2" class="w-6 h-6"></i>
-                    </div>
-                    <p class="text-white font-bold text-sm mb-2">Payment Verified!</p>
-                    <p class="text-slate-400 text-xs mb-3">Your Elite License Key:</p>
-                    <code id="genKey" class="block w-full bg-slate-900 p-3 rounded-lg border border-slate-700 font-mono font-black text-emerald-400 text-lg tracking-widest mb-3 select-all"></code>
-                    <p class="text-[10px] text-slate-500 font-medium">Copy & paste this into your extension.</p>
-                </div>
+                <a href="#ecosystem" class="block w-full py-4 rounded-xl bg-white text-slate-900 font-black text-xs uppercase tracking-widest hover:bg-indigo-50 transition-colors text-center">Explore Tools</a>
 
             </div>
         </div>
@@ -859,7 +814,7 @@
 
             <div class="faq-card bg-white border border-slate-200 rounded-2xl overflow-hidden faq-fade-up faq-delay-300">
                 <button class="faq-btn w-full flex items-center justify-between p-6 md:p-8 text-left focus:outline-none group" aria-expanded="false">
-                    <span class="text-base md:text-lg font-bold text-slate-900 pr-4 group-hover:text-indigo-600 transition-colors">Is the Titan Elite license a subscription?</span>
+                    <span class="text-base md:text-lg font-bold text-slate-900 pr-4 group-hover:text-indigo-600 transition-colors">How do scan warnings work?</span>
                     <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0 group-hover:bg-indigo-50 group-hover:border-indigo-200 transition-colors">
                         <i data-lucide="plus" class="faq-icon w-4 h-4 text-slate-500 group-hover:text-indigo-600 transition-transform duration-300"></i>
                     </div>
@@ -867,7 +822,7 @@
                 <div class="faq-content bg-slate-50/50">
                     <div class="px-6 md:px-8 pb-6 md:pb-8 pt-0">
                         <p class="text-slate-600 text-sm md:text-base font-medium leading-relaxed">
-                            No. We hate recurring fees as much as you do. The Titan Elite plan is a <strong>one-time payment for lifetime access</strong>. Pay ₹199 once, and get unrestricted access to 2,000 daily extension scans, AI forensics, and priority threat intelligence updates forever.
+                            CyberKavach combines URL structure checks, redirect analysis, page signals, and optional reputation data. A warning means you should verify the destination independently before entering passwords, OTPs, or payment details.
                         </p>
                     </div>
                 </div>
@@ -941,8 +896,8 @@
                 </p>
                 
                 <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-10">
-                    <button onclick="document.getElementById('pricing').scrollIntoView({behavior: 'smooth'})" class="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs md:text-sm uppercase tracking-widest rounded-xl transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] flex items-center justify-center gap-2 group">
-                        <i data-lucide="shield-check" class="w-5 h-5 group-hover:scale-110 transition-transform duration-300"></i> Get CyberKavach PRO
+                    <button onclick="window.location.href='/dashboard/dash.html'" class="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs md:text-sm uppercase tracking-widest rounded-xl transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] flex items-center justify-center gap-2 group">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5 group-hover:scale-110 transition-transform duration-300"></i> Open Dashboard
                     </button>
                     
                     <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-full sm:w-auto px-8 py-4 bg-slate-800/80 hover:bg-slate-700 text-white font-bold text-xs md:text-sm uppercase tracking-widest rounded-xl border border-slate-700 hover:border-slate-500 transition-all flex items-center justify-center gap-2 group">

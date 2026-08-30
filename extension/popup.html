@@ -68,15 +68,6 @@
         }
         .brand svg { color: var(--primary); }
         
-        .badge {
-            font-size: 9px; font-weight: 800; padding: 5px 10px;
-            border-radius: 8px; border: 1px solid var(--border);
-            text-transform: uppercase; letter-spacing: 0.5px;
-            transition: all 0.3s;
-        }
-        .badge.free { color: var(--text-muted); background: var(--bg); }
-        .badge.pro { border-color: var(--primary); color: var(--primary); background: rgba(79, 70, 229, 0.1); }
-
         /* 🎯 MAIN SCANNER (Clean Radar) */
         .scan-area {
             /* min-height: 0 is essential in a flex popup: it lets this visual
@@ -119,7 +110,7 @@
 
         /* 📊 METRICS GRID */
         .metrics {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+            display: grid; grid-template-columns: 1fr; gap: 12px;
             width: 100%; padding: 0 20px; margin-bottom: 12px; flex: 0 0 auto;
         }
         .metric-card {
@@ -226,7 +217,6 @@
         Cyberkavach.AI
 
         </div>
-        <div id="planBadge" class="badge free">SYNCING...</div>
     </header>
 
     <div class="scan-area">
@@ -249,24 +239,9 @@
             <span class="metric-val" id="riskScore">--/100</span>
             <div class="progress"><div class="bar" id="riskBar" style="background: var(--danger); width: 0%;"></div></div>
         </div>
-        <div class="metric-card">
-            <span class="metric-label">Daily Scans</span>
-            <span class="metric-val" id="creditScore">--</span>
-            <div class="progress"><div class="bar" id="creditBar" style="background: var(--primary); width: 0%;"></div></div>
-        </div>
     </div>
 
-    <div id="authView" class="controls">
-        <div class="input-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            <input type="text" id="licenseKey" placeholder="Paste PRO License Key">
-        </div>
-        <button id="btnActivate" class="btn btn-primary">
-            Unlock Titan Elite
-        </button>
-    </div>
-
-    <div id="dashView" class="controls hidden">
+    <div class="controls">
         <button id="btnDashboard" class="btn btn-primary" style="margin-bottom: 8px;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
            OPEN DASHBOARD
@@ -279,12 +254,7 @@
             </div>
             <span id="feedbackStatus" class="feedback-status" aria-live="polite"></span>
         </div>
-        <div style="display: flex; gap: 10px;">
-            <button class="btn btn-outline" style="flex:1; pointer-events: none; opacity: 0.7; color: var(--success); font-weight: bold; border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.05);">Shield Active</button>
-            <button id="btnLogout" class="btn btn-outline" style="width: 45px; padding: 0; color: var(--danger); border-color: rgba(239,68,68,0.2);" title="Logout">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            </button>
-        </div>
+        <div class="btn btn-outline" style="pointer-events: none; color: var(--success); font-weight: bold; border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.05);">Shield Active</div>
     </div>
 
     <script src="config.js"></script>

@@ -60,8 +60,9 @@ class SecurityValidationTests(unittest.TestCase):
         file_object.seek(0)
         return UploadFile(filename=name, file=file_object, headers={"content-type": content_type})
 
-    def test_api_key_format_rejects_injection_and_accepts_secure_free_key(self):
-        self.assertEqual(normalize_api_key("FREE-" + "A" * 32), "FREE-" + "A" * 32)
+    def test_api_key_format_rejects_injection_and_accepts_local_session_key(self):
+        local_key = "CK-LOCAL-" + "A" * 32
+        self.assertEqual(normalize_api_key(local_key), local_key)
         with self.assertRaises(HTTPException):
             normalize_api_key("' OR 1=1 --")
 
@@ -120,13 +121,12 @@ class BackendBehaviorTests(unittest.TestCase):
     def setUp(self):
         conn = main.get_db_connection()
         conn.execute("DELETE FROM scan_logs")
-        conn.execute("DELETE FROM payments")
         conn.execute("DELETE FROM users")
         conn.commit()
         conn.close()
 
     def test_database_stores_only_key_hash(self):
-        raw_key = "FREE-" + "B" * 32
+        raw_key = "CK-LOCAL-" + "B" * 32
         user = main.verify_and_sync_user(raw_key)
         self.assertTrue(user["api_key"].startswith("sha256$"))
         conn = main.get_db_connection()
@@ -134,30 +134,17 @@ class BackendBehaviorTests(unittest.TestCase):
         conn.close()
         self.assertNotEqual(stored, raw_key)
 
-    def test_fake_pro_key_is_rejected(self):
+    def test_unsupported_key_is_rejected(self):
         with self.assertRaises(HTTPException) as context:
             main.verify_and_sync_user("CK-PRO-" + "A" * 24)
         self.assertEqual(context.exception.status_code, 401)
 
-    def test_configured_demo_pro_key_unlocks_pro_plan(self):
-        if not main.DEMO_PRO_KEY:
-            self.skipTest("No local demo key configured")
-        user = main.verify_and_sync_user(main.DEMO_PRO_KEY)
-        self.assertEqual(user["plan"], "PRO")
-
-    def test_unconfigured_payment_endpoint_fails_closed(self):
-        if main.razorpay_client is not None:
-            self.skipTest("Payment credentials are configured in this environment")
-        with self.assertRaises(HTTPException) as context:
-            asyncio.run(main.create_order())
-        self.assertEqual(context.exception.status_code, 503)
-
-    def test_spoofed_apk_is_rejected_before_quota_charge(self):
+    def test_spoofed_apk_is_rejected_before_analysis(self):
         file_object = tempfile.SpooledTemporaryFile()
         file_object.write(b"this is not a zip archive")
         file_object.seek(0)
         upload = UploadFile(filename="fake.apk", file=file_object, headers={"content-type": "application/octet-stream"})
-        key = "FREE-" + "F" * 32
+        key = "CK-LOCAL-" + "F" * 32
         with self.assertRaises(HTTPException) as context:
             asyncio.run(main.scan_apk_endpoint(upload, key))
         file_object.close()
@@ -165,40 +152,17 @@ class BackendBehaviorTests(unittest.TestCase):
         user = main.verify_and_sync_user(key)
         self.assertEqual(user["ai_used"], 0)
 
-    def test_quota_reservation_is_atomic(self):
-        raw_key = "FREE-" + "C" * 32
-        user = main.verify_and_sync_user(raw_key)
-        outcomes = []
-        lock = threading.Lock()
-
-        def reserve():
-            try:
-                main.reserve_quota(user, "url")
-                result = "ok"
-            except HTTPException:
-                result = "limited"
-            with lock:
-                outcomes.append(result)
-
-        threads = [threading.Thread(target=reserve) for _ in range(20)]
-        for thread in threads:
-            thread.start()
-        for thread in threads:
-            thread.join()
-        self.assertEqual(outcomes.count("ok"), main.LIMITS["FREE"]["url"])
-        self.assertEqual(outcomes.count("limited"), 10)
-
     @patch("main.run_engine", new_callable=AsyncMock, return_value={"status": "SAFE", "risk_score": 0, "ai_analysis": []})
-    def test_extension_background_scan_does_not_consume_manual_quota(self, _engine):
-        raw_key = "FREE-" + "H" * 32
-        asyncio.run(main.scan_url_endpoint(
+    def test_extension_background_scan_returns_result_without_quota_data(self, _engine):
+        raw_key = "CK-LOCAL-" + "A" * 32
+        result = asyncio.run(main.scan_url_endpoint(
             main.UrlRequest(url="https://example.com"), raw_key, "extension-background"
         ))
-        user = main.verify_and_sync_user(raw_key)
-        self.assertEqual(user["url_used"], 0)
+        self.assertEqual(result["status"], "SAFE")
+        self.assertNotIn("quota_charged", result)
 
     def test_clear_history_uses_normalized_owner(self):
-        raw_key = "FREE-" + "D" * 32
+        raw_key = "CK-LOCAL-" + "D" * 32
         user = main.verify_and_sync_user(raw_key)
         main.log_scan(user["api_key"], "https://example.com", "SAFE", 0, "test", [])
         asyncio.run(main.clear_history(raw_key))
@@ -279,7 +243,7 @@ class BackendBehaviorTests(unittest.TestCase):
         self.assertTrue(any(section["title"] == "Page checks" for section in result["details"]))
 
     def test_dashboard_returns_structured_url_scan_details(self):
-        raw_key = "FREE-" + "E" * 32
+        raw_key = "CK-LOCAL-" + "E" * 32
         user = main.verify_and_sync_user(raw_key)
         main.log_scan(
             user["api_key"], "https://example.com", "SAFE", 0, "Titan Web Scanner", ["[Info] Test"],
@@ -449,7 +413,7 @@ class AsgiIntegrationTests(unittest.TestCase):
         payload = json.dumps({"url": "http://127.0.0.1/admin"}).encode()
         status, _, body = self.request(
             "POST", "/scan",
-            headers={"content-type": "application/json", "x-api-key": "FREE-" + "E" * 32},
+            headers={"content-type": "application/json", "x-api-key": "CK-LOCAL-" + "E" * 32},
             body=payload,
         )
         self.assertEqual(status, 200)
@@ -458,7 +422,7 @@ class AsgiIntegrationTests(unittest.TestCase):
     def test_overlong_scan_url_is_rejected_with_validation_error(self):
         payload = json.dumps({"url": "https://example.com/" + ("a" * 2100)}).encode()
         status, _, _ = self.request(
-            "POST", "/scan", headers={"content-type": "application/json", "x-api-key": "FREE-" + "J" * 32}, body=payload
+            "POST", "/scan", headers={"content-type": "application/json", "x-api-key": "CK-LOCAL-" + "B" * 32}, body=payload
         )
         self.assertEqual(status, 422)
 
@@ -466,7 +430,7 @@ class AsgiIntegrationTests(unittest.TestCase):
         payload = json.dumps({
             "target": "https://example.com/", "feedback_type": "false_positive", "comment": "Known-safe test site"
         }).encode()
-        key = "FREE-" + "G" * 32
+        key = "CK-LOCAL-" + "C" * 32
         status, _, body = self.request(
             "POST", "/scan-feedback", headers={"content-type": "application/json", "x-api-key": key}, body=payload
         )

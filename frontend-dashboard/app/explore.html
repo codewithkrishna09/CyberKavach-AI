@@ -142,7 +142,7 @@
             
             <nav class="hidden md:flex items-center gap-8 bg-slate-50/80 px-6 py-2 rounded-full border border-slate-200 shadow-sm">
                 <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Scanner</a>
-                <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Pricing</a>
+                <a href="/index.html#platform" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Platform</a>
             </nav>
 
             <div class="flex items-center shrink-0">
@@ -174,7 +174,7 @@
 
                 <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 fade-up delay-300">
                     <a href="#" class="chrome-btn-glow w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-black text-xs md:text-sm uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-3">
-                        <i data-lucide="downloadCloud" class="w-5 h-5"></i> Add to Chrome — It's Free
+                        <i data-lucide="downloadCloud" class="w-5 h-5"></i> Add to Chrome
                     </a>
                     <a href="#dashboard" class="w-full sm:w-auto px-8 py-4 bg-white border border-slate-200 hover:border-slate-300 text-slate-700 hover:text-slate-900 font-bold text-xs md:text-sm uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">
                         Explore OpsCenter <i data-lucide="arrow-down" class="w-4 h-4"></i>
@@ -299,7 +299,7 @@ chrome.webRequest.onBeforeRequest.addListener(
             <div class="text-center max-w-3xl mx-auto mb-16 md:mb-24 fade-up">
                 <div class="text-cyan-400 font-bold uppercase tracking-widest text-[10px] md:text-xs mb-3 md:mb-4 flex items-center gap-2 justify-center"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> The Command Center</div>
                 <h2 class="text-3xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tight">The OpsCenter Dashboard</h2>
-                <p class="text-slate-400 font-medium text-base md:text-lg">Gain absolute visibility over your digital perimeter. Manage your Elite License, track intercepted threats, and monitor your AI quotas in real-time.</p>
+                <p class="text-slate-400 font-medium text-base md:text-lg">Gain clear visibility over your digital perimeter, intercepted threats, and URL scan history.</p>
             </div>
 
             
@@ -316,14 +316,14 @@ chrome.webRequest.onBeforeRequest.addListener(
                 <div class="md:col-span-4 bg-[#1e293b] border border-slate-700 p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-[40px] pointer-events-none group-hover:bg-cyan-500/20 transition-colors"></div>
                     <div class="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center text-white mb-6 border border-slate-600"><i data-lucide="pie-chart" class="w-6 h-6"></i></div>
-                    <h3 class="text-xl md:text-2xl font-black mb-3 text-white">AI Quota Monitor</h3>
-                    <p class="text-slate-400 text-sm md:text-base leading-relaxed font-medium">Keep track of your daily limits. Monitor your 2,000 extension URL scans and 200 Deep AI forensic scans with visual, real-time progress bars synced directly to the master node.</p>
+                    <h3 class="text-xl md:text-2xl font-black mb-3 text-white">Scan Overview</h3>
+                    <p class="text-slate-400 text-sm md:text-base leading-relaxed font-medium">Review URL scan outcomes, risk scores, and clear evidence from the master node.</p>
                 </div>
 
                 <div class="md:col-span-5 bg-[#1e293b] border border-slate-700 p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] relative overflow-hidden group">
-                    <div class="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center text-white mb-6 border border-slate-600"><i data-lucide="key" class="w-6 h-6"></i></div>
-                    <h3 class="text-xl md:text-2xl font-black mb-3 text-white">Cryptographic Keys</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed font-medium">Manage your <code>CK-PRO-XXXXX</code> Elite License. Sync your extension instantly by pasting your key, or revoke it if your credentials get compromised.</p>
+                    <div class="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center text-white mb-6 border border-slate-600"><i data-lucide="shield-check" class="w-6 h-6"></i></div>
+                    <h3 class="text-xl md:text-2xl font-black mb-3 text-white">Private Local Sessions</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed font-medium">The browser creates a local anonymous identifier only to keep your own scan history separate.</p>
                 </div>
 
                 <div class="md:col-span-7 bg-[#1e293b] border border-slate-700 p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] relative overflow-hidden group">
@@ -348,8 +348,8 @@ chrome.webRequest.onBeforeRequest.addListener(
                     Install the CyberKavach extension in 5 seconds and instantly upgrade your digital perimeter. Connect your OpsCenter to track every neutralized threat.
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <a href="index.html#pricing" class="flex justify-center px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs sm:text-sm uppercase tracking-widest rounded-xl transition-all shadow-[0_0_30px_rgba(79,70,229,0.4)] items-center gap-2 w-full sm:w-auto">
-                        <i data-lucide="shield-check" class="w-5 h-5"></i> Get Elite License
+                    <a href="index.html#platform" class="flex justify-center px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs sm:text-sm uppercase tracking-widest rounded-xl transition-all shadow-[0_0_30px_rgba(79,70,229,0.4)] items-center gap-2 w-full sm:w-auto">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i> Explore Platform
                     </a>
                     <a href="#" class="flex justify-center px-8 py-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-white font-black text-xs sm:text-sm uppercase tracking-widest rounded-xl transition-all items-center gap-2 w-full sm:w-auto">
                         <i data-lucide="chrome" class="w-5 h-5"></i> Add to Chrome

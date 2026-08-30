@@ -164,7 +164,7 @@
             
             <nav class="hidden md:flex items-center gap-8 bg-slate-50/80 px-6 py-2 rounded-full border border-slate-200 shadow-sm">
                 <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Scanner</a>
-                <a href="/index.html" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Pricing</a>
+                <a href="/index.html#platform" class="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Platform</a>
             </nav>
 
             <div class="flex items-center shrink-0">
@@ -201,11 +201,10 @@
                 </h4>
                 <nav class="flex flex-col space-y-1.5" id="toc-nav">
                     <a href="#acceptance" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">1. Protocol Acceptance</a>
-                    <a href="#license" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">2. License & Fair Use</a>
+                    <a href="#license" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">2. Research Use</a>
                     <a href="#limitations" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">3. AI Liability Disclaimer</a>
                     <a href="#prohibited" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">4. Prohibited Conduct</a>
-                    <a href="#payments" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">5. Billing & Revocation</a>
-                    <a href="#jurisdiction" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">6. Governing Law</a>
+                    <a href="#jurisdiction" class="nav-link px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 border-l-2 border-transparent transition-colors">5. Governing Law</a>
                 </nav>
             </div>
         </aside>
@@ -220,20 +219,15 @@
                 
                 <section id="acceptance" class="scroll-mt-32 pt-4">
                     <h3><div class="p-2 bg-cyan-50 rounded-lg"><i data-lucide="check-square" class="w-5 h-5 text-cyan-500"></i></div> 1. Protocol Acceptance</h3>
-                    <p>These Terms of Protocol ("Terms") constitute a legally binding agreement between you (the "User" or "Node Operator") and CyberKavach AI ("Company", "We", "Our"). By generating an API key, installing the Chromium extension, or interacting with the <code>api.cyberkavach.ai</code> endpoints, you acknowledge that you have read, understood, and agreed to be bound by these algorithms of engagement.</p>
+                    <p>These Terms of Protocol ("Terms") constitute a legally binding agreement between you (the "User" or "Node Operator") and CyberKavach AI ("Company", "We", "Our"). By installing the Chromium extension or interacting with the CyberKavach dashboard and API, you acknowledge that you have read, understood, and agreed to be bound by these algorithms of engagement.</p>
                 </section>
 
                 <div class="w-full h-px bg-gradient-to-r from-slate-200 via-slate-300 to-transparent my-10"></div>
 
                 <section id="license" class="scroll-mt-32">
-                    <h3><div class="p-2 bg-cyan-50 rounded-lg"><i data-lucide="key" class="w-5 h-5 text-cyan-500"></i></div> 2. License Allocation & Fair Usage (FUP)</h3>
-                    <p>Subject to your compliance with these Terms, CyberKavach grants you a limited, non-exclusive, non-transferable, and revocable license to deploy the Titan Engine for personal or internal business security validation.</p>
-                    
-                    <h4>The "Community" Node (Free Tier)</h4>
-                    <p>Guest sessions are allocated an ephemeral ID (e.g., <code>FREE-XXXXX</code>). You are entitled to strictly 10 Domain Scans and 10 Forensic AI Scans (inclusive of Satark and Shadow Scout) per 24-hour cycle. Attempting to bypass this limit by spoofing LocalStorage or IP rotating constitutes an abuse of infrastructure.</p>
-
-                    <h4>The "Titan Elite" License (PRO Tier)</h4>
-                    <p>Elite License holders receive a cryptographic key (<code>CK-PRO-XXXXX</code>). This key unlocks 2,000 Extension Scans and 200 Deep AI Scans daily. <strong>This is a strictly single-user license.</strong> If our heuristic monitors detect concurrent API requests from geographically impossible locations using the same PRO key, the key will be permanently cryptographically burned without refund.</p>
+                    <h3><div class="p-2 bg-cyan-50 rounded-lg"><i data-lucide="shield-check" class="w-5 h-5 text-cyan-500"></i></div> 2. Research Use & Fair Usage</h3>
+                    <p>Subject to these Terms, CyberKavach grants a limited, non-exclusive, non-transferable, and revocable right to use the project for personal, educational, or internal security validation.</p>
+                    <p>The submission build is intended for demonstration, personal learning, and security validation. Excessive automated requests may still be rate-limited to protect the service.</p>
                 </section>
 
                 <div class="w-full h-px bg-gradient-to-r from-slate-200 via-slate-300 to-transparent my-10"></div>
@@ -267,19 +261,8 @@
 
                 <div class="w-full h-px bg-gradient-to-r from-slate-200 via-slate-300 to-transparent my-10"></div>
 
-                <section id="payments" class="scroll-mt-32">
-                    <h3><div class="p-2 bg-cyan-50 rounded-lg"><i data-lucide="credit-card" class="w-5 h-5 text-cyan-500"></i></div> 5. Billing, Lifetime Access & Revocation</h3>
-                    <p>Purchases for the "Titan Elite" tier are processed securely via <strong>Razorpay</strong>. The fee of ₹199 is a one-time payment for the "Lifetime" of the current major product version (V1.x).</p>
-                    <ul>
-                        <li><strong>No Refund Policy:</strong> Because the product is a digital cryptographic key that unlocks API access instantly, <strong>all sales are strictly final and non-refundable</strong>. Once a <code>CK-PRO-XXXX</code> key is generated and emailed, the transaction is closed.</li>
-                        <li><strong>Service Availability:</strong> While we strive for 99.9% uptime, API nodes may occasionally go offline for maintenance. Lifetime access implies access for as long as CyberKavach maintains these specific server nodes.</li>
-                    </ul>
-                </section>
-
-                <div class="w-full h-px bg-gradient-to-r from-slate-200 via-slate-300 to-transparent my-10"></div>
-
                 <section id="jurisdiction" class="scroll-mt-32 mb-16">
-                    <h3><div class="p-2 bg-cyan-50 rounded-lg"><i data-lucide="gavel" class="w-5 h-5 text-cyan-500"></i></div> 6. Governing Law & Jurisdiction</h3>
+                    <h3><div class="p-2 bg-cyan-50 rounded-lg"><i data-lucide="gavel" class="w-5 h-5 text-cyan-500"></i></div> 5. Governing Law & Jurisdiction</h3>
                     <p>These terms are governed exclusively by the laws of the Republic of India, specifically the <strong>Information Technology Act, 2000</strong> and the <strong>Digital Personal Data Protection Act, 2023</strong>.</p>
                     <p>Any dispute, controversy, or claim arising out of your use of the CyberKavach Engine shall be subject to the exclusive jurisdiction of the competent courts located in New Delhi, India.</p>
                 </section>

@@ -1,18 +1,17 @@
 # CyberKavach API security setup
 
 Phase 1 removes embedded credentials, hashes stored API keys, validates uploads,
-blocks private-network URL scans, limits request rates, makes quota updates atomic,
-and verifies payment amount/status/replay before issuing a license.
+blocks private-network URL scans, limits request rates, validates file uploads,
+and stores only hashed local session identifiers for scan history.
 
 ## Required before deployment
 
-1. Revoke the Razorpay secret that was previously committed and create a new one.
-2. Copy `.env.example` to a deployment secret store. Do not commit `.env`.
-3. Set exact frontend origins, extension origin, and public API host. Do not use `*`.
-4. Terminate TLS at a trusted reverse proxy and expose only HTTPS publicly.
-5. Run the API as a non-root user with outbound firewall rules. URL scanning should
+1. Copy `.env.example` to a deployment secret store. Do not commit `.env`.
+2. Set exact frontend origins, extension origin, and public API host. Do not use `*`.
+3. Terminate TLS at a trusted reverse proxy and expose only HTTPS publicly.
+4. Run the API as a non-root user with outbound firewall rules. URL scanning should
    have no route to private networks or cloud metadata, even if application checks fail.
-6. Back up the database with restricted filesystem permissions.
+5. Back up the database with restricted filesystem permissions.
 
 ## Verification
 

@@ -13,8 +13,7 @@ import requests
 from fastapi import HTTPException, UploadFile
 
 
-FREE_KEY_RE = re.compile(r"^FREE-[A-Za-z0-9_-]{9,80}$")
-PRO_KEY_RE = re.compile(r"^CK-PRO-[A-Z0-9]{12,80}$")
+LOCAL_KEY_RE = re.compile(r"^CK-LOCAL-[A-F0-9]{16,64}$")
 ALLOWED_SCHEMES = {"http", "https"}
 REDIRECT_CODES = {301, 302, 303, 307, 308}
 
@@ -23,7 +22,7 @@ def normalize_api_key(value: str | None) -> str:
     key = (value or "").strip()
     if key in {"", "null", "FREE"}:
         return "GUEST_SESSION"
-    if key == "GUEST_SESSION" or FREE_KEY_RE.fullmatch(key) or PRO_KEY_RE.fullmatch(key):
+    if key == "GUEST_SESSION" or LOCAL_KEY_RE.fullmatch(key):
         return key
     raise HTTPException(status_code=401, detail="Invalid API key format.")
 

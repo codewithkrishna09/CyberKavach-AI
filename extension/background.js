@@ -5,9 +5,9 @@
 importScripts("config.js");
 const API_URL = globalThis.CYBERKAVACH_API_URL;
 const BLOCK_PAGE = "blocked.html";
-const createFreeKey = () => {
+const createSessionKey = () => {
     const bytes = crypto.getRandomValues(new Uint8Array(16));
-    return "FREE-" + Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+    return "CK-LOCAL-" + Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
 };
 
 // 🚀 NAVIGATION TRACKER (Prevents infinite loops & spam)
@@ -125,11 +125,10 @@ chrome.runtime.onInstalled.addListener(() => {
         contexts: ["link"]
     });
     
-    // 🚀 INITIALIZE UNIQUE FREE IDENTITY
-    chrome.storage.local.get(['licenseKey'], (storage) => {
-        if (!storage.licenseKey || storage.licenseKey === "FREE" || storage.licenseKey === "GUEST_SESSION") {
-            const uniqueFreeKey = createFreeKey();
-            chrome.storage.local.set({ licenseKey: uniqueFreeKey });
+    // Create a local anonymous identifier only for separating local history.
+    chrome.storage.local.get(['sessionKey'], (storage) => {
+        if (!storage.sessionKey) {
+            chrome.storage.local.set({ sessionKey: createSessionKey() });
         }
     });
 
@@ -160,11 +159,6 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
         
         const data = await requestNeuralScan(info.linkUrl);
         
-        if (data.status === 'LIMIT_HIT') {
-            chrome.notifications.create({ type: 'basic', iconUrl: 'icons/icon48.png', title: '⚠️ Quota Exceeded', message: 'Elite Node Required.'});
-            return;
-        }
-
         const isSafe = data.status === 'SAFE';
         chrome.notifications.create({ 
             type: 'basic', 
@@ -270,17 +264,8 @@ async function executeSecurePipeline(tabId, url) {
         updateBadge(tabId, "...", "#4f46e5"); // Indigo Scanning state
         const data = await requestNeuralScan(url);
 
-        // 🔄 SYNC STRICT QUOTA TO UI (Popup.js can read this)
-        if (data.url_remaining !== undefined) {
-            chrome.storage.local.set({ 
-                lastCreditCount: data.url_remaining,
-                lastTotalLimit: data.url_limit,
-                lastPlan: data.plan || "FREE"
-            });
-        }
-
-        // Cache successful non-limit hits
-        if (!data.error && data.status !== "OFFLINE" && data.status !== "LIMIT_HIT") {
+        // Cache successful results so repeat navigation stays responsive.
+        if (!data.error && data.status !== "OFFLINE") {
             RESULTS_CACHE.set(url, { data: data, timestamp: Date.now() });
         }
         
@@ -293,14 +278,12 @@ async function executeSecurePipeline(tabId, url) {
 }
 
 // --- API BRIDGE ---
-async function requestNeuralScan(url, retriedAfterInvalidKey = false) {
-    const storage = await chrome.storage.local.get(["licenseKey"]);
-    let apiKey = storage.licenseKey;
-
-    // 🚀 THE FIX: If somehow the key is missing during scan, generate one on the fly
-    if (!apiKey || apiKey === "FREE" || apiKey === "GUEST_SESSION") {
-        apiKey = createFreeKey();
-        chrome.storage.local.set({ licenseKey: apiKey });
+async function requestNeuralScan(url) {
+    const storage = await chrome.storage.local.get(["sessionKey"]);
+    let apiKey = storage.sessionKey;
+    if (!apiKey) {
+        apiKey = createSessionKey();
+        chrome.storage.local.set({ sessionKey: apiKey });
     }
 
     const controller = new AbortController();
@@ -312,8 +295,7 @@ async function requestNeuralScan(url, retriedAfterInvalidKey = false) {
             headers: { 
                 'Content-Type': 'application/json', 
                 'x-api-key': apiKey,
-                // Automatic navigation checks are credit-free. Manual scans
-                // from the dashboard continue to use the normal URL quota.
+                // Marks a browser navigation scan for dashboard history only.
                 'x-scan-mode': 'extension-background'
             },
             body: JSON.stringify({ url: url }),
@@ -322,14 +304,6 @@ async function requestNeuralScan(url, retriedAfterInvalidKey = false) {
         
         clearTimeout(id);
         
-        if (response.status === 429) return { status: "LIMIT_HIT", risk_score: 0 };
-        if (response.status === 401 && !retriedAfterInvalidKey) {
-            // An old demo/PRO key should not make browser protection appear
-            // offline. Switch safely to a new local FREE identity and retry once.
-            const replacementKey = createFreeKey();
-            await chrome.storage.local.set({ licenseKey: replacementKey, lastPlan: "FREE" });
-            return requestNeuralScan(url, true);
-        }
         if (response.status === 422 || response.status === 400) {
             const details = await response.json().catch(() => ({}));
             return { status: "SKIPPED", risk_score: 0, reason: details.detail || "This browser URL cannot be scanned." };
@@ -338,17 +312,6 @@ async function requestNeuralScan(url, retriedAfterInvalidKey = false) {
         
         const responseData = await response.json();
         
-        // Asynchronously update Quota status from backend after scan
-        fetch(`${API_URL}/user-status`, { headers: { 'x-api-key': apiKey } })
-            .then(r => r.json())
-            .then(qData => {
-                chrome.storage.local.set({ 
-                    lastCreditCount: qData.url_remaining,
-                    lastTotalLimit: qData.url_limit,
-                    lastPlan: qData.plan
-                });
-            }).catch(()=>{});
-
         return responseData;
 
     } catch (error) {
@@ -361,11 +324,6 @@ async function requestNeuralScan(url, retriedAfterInvalidKey = false) {
 function applyVerdict(tabId, url, data) {
     if (data.error || data.status === "OFFLINE") {
         updateBadge(tabId, "OFF", "#64748b"); // Slate
-        return;
-    }
-
-    if (data.status === "LIMIT_HIT") {
-        updateBadge(tabId, "FULL", "#f59e0b"); // Amber
         return;
     }
 

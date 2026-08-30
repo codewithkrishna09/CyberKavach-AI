@@ -1,6 +1,5 @@
 fastapi
 uvicorn[standard]
-razorpay
 beautifulsoup4
 pillow
 python-multipart

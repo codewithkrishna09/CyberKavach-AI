@@ -355,30 +355,30 @@ body, html {
 
 
 /* ========================================== */
-/* PRICING SECTION - MINIMALIST SAAS STYLES   */
+/* PLATFORM SECTION - CARD AND ANIMATION STYLES */
 /* ========================================== */
 
 /* Clean Card Container */
-.pricing-card {
+.platform-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Very subtle lift, no heavy shadows */
-.pricing-card:hover {
+.platform-card:hover {
     transform: translateY(-4px);
 }
 
 /* Animations */
-.pricing-fade-up {
+.platform-fade-up {
     opacity: 0;
     transform: translateY(20px);
     transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.pricing-fade-up.visible {
+.platform-fade-up.visible {
     opacity: 1;
     transform: translateY(0);
 }
-.pricing-delay-100 { 
+.platform-delay-100 {
     transition-delay: 100ms; 
 }
 

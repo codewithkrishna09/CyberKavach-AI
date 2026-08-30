@@ -3,7 +3,7 @@
  * CYBERKAVACH AI - ENTERPRISE FRONTEND LOGIC (index.html)
  * ======================================================================
  * This script handles all UI interactions, animations, API calls, 
- * and payment gateways for the main landing page.
+ * and API calls for the main landing page.
  */
 
 // Global Configuration
@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==========================================
     // 4. UNIVERSAL SCROLL ANIMATION OBSERVER
     // ==========================================
-    // This single observer handles ALL fade-ups (Hero, About, Modules, Ext, Pricing, FAQ, CTA)
+    // This single observer handles page fade-up animations.
     const fadeObserverOptions = {
         threshold: 0.15,
         rootMargin: "0px 0px -40px 0px"
@@ -117,9 +117,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }, fadeObserverOptions);
 
     const fadeClasses = [
-        '.hero-fade-up', '.about-fade-up', '.module-fade-up', 
-        '.ext-fade-up', '.pricing-fade-up', '.faq-fade-up', 
-        '.honesty-fade-up', '.cta-fade-up', '.fade-up'
+        '.hero-fade-up', '.about-fade-up', '.module-fade-up',
+        '.ext-fade-up', '.faq-fade-up',
+        '.honesty-fade-up', '.cta-fade-up', '.platform-fade-up', '.fade-up'
     ];
     
     fadeClasses.forEach(selector => {
@@ -379,121 +379,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
-
-
-// ==========================================
-// 9. RAZORPAY CHECKOUT INTEGRATION
-// ==========================================
-// Attached to window so inline onclick="initiateCheckout()" in HTML works flawlessly
-window.initiateCheckout = async function() {
-    const emailInput = document.getElementById('checkoutEmail');
-    const email = emailInput ? emailInput.value.trim() : null;
-    const payBtn = document.getElementById('payBtn');
-    const paymentArea = document.getElementById('paymentArea');
-    const successArea = document.getElementById('successArea');
-    const genKeyDisplay = document.getElementById('genKey');
-
-    // Validation
-    if(!email || !email.includes('@') || !email.includes('.')) {
-        alert("Please enter a valid email address for delivery.");
-        if(emailInput) emailInput.focus();
-        return;
-    }
-
-    // Set Loading State
-    const originalBtnHTML = payBtn.innerHTML;
-    payBtn.innerHTML = `<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i> Processing...`;
-    payBtn.disabled = true;
-    payBtn.classList.add('opacity-70', 'cursor-wait');
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-
-    try {
-        // 1. Create Order via Backend
-        const orderResponse = await fetch(`${API_URL}/create-payment-order`, { method: "POST" });
-        if (!orderResponse.ok) throw new Error("Failed to connect to secure server.");
-        
-        const orderData = await orderResponse.json();
-        if(orderData.detail) throw new Error(orderData.detail);
-
-        // 2. Init Razorpay Options
-        const options = {
-            key: orderData.key_id,
-            amount: orderData.amount, 
-            currency: "INR",
-            name: "CyberKavach Elite",
-            description: "Lifetime Engine License",
-            order_id: orderData.order_id,
-            theme: { color: "#0f172a" }, // Dark Slate theme
-            prefill: { email: email },
-            
-            // 3. Success Handler
-            handler: async function (response) {
-                payBtn.innerHTML = `<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i> Verifying...`;
-                if (typeof lucide !== 'undefined') lucide.createIcons();
-                
-                try {
-                    const verifyRes = await fetch(`${API_URL}/verify-payment`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            email: email,
-                            razorpay_order_id: response.razorpay_order_id,
-                            razorpay_payment_id: response.razorpay_payment_id,
-                            razorpay_signature: response.razorpay_signature
-                        })
-                    });
-
-                    if (!verifyRes.ok) throw new Error("Payment Verification Failed.");
-                    const finalData = await verifyRes.json();
-                    
-                    // 4. Update UI to Success
-                    if(paymentArea) paymentArea.classList.add('hidden-state');
-                    if(successArea) {
-                        successArea.classList.remove('hidden-state');
-                        successArea.classList.add('flex');
-                    }
-                    if(genKeyDisplay) genKeyDisplay.innerText = finalData.license_key;
-                    if (typeof lucide !== 'undefined') lucide.createIcons();
-                    
-                } catch {
-                    alert("Payment successful, but verification failed. Please contact our support team.");
-                    resetBtn();
-                }
-            }
-        };
-
-        // Launch Razorpay Modal
-        const rzp = new Razorpay(options);
-        rzp.open();
-        
-        // Handling failure
-        rzp.on('payment.failed', function (response) {
-            alert(`Payment Failed: ${response.error.description}`);
-            resetBtn();
-        });
-
-        // Handle user closing the popup manually
-        setTimeout(() => {
-            if (payBtn.disabled && document.querySelector('.razorpay-container') === null) {
-                resetBtn();
-            }
-        }, 1000);
-
-    } catch(error) {
-        console.error("Checkout Error:", error);
-        alert(error.message || "Error connecting to the payment gateway.");
-        resetBtn();
-    }
-
-    // Helper to revert button to normal
-    function resetBtn() {
-        payBtn.innerHTML = originalBtnHTML;
-        payBtn.disabled = false;
-        payBtn.classList.remove('opacity-70', 'cursor-wait');
-        if (typeof lucide !== 'undefined') lucide.createIcons();
-    }
-};
-
 
 
 // BLOG SECTION ANIMATION LOGIC

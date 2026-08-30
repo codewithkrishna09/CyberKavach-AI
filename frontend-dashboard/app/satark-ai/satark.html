@@ -69,24 +69,14 @@
                 <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i> Return to Main
             </a>
 
-            <div class="flex items-center gap-6 bg-white border border-slate-200 p-3 pl-6 rounded-2xl shadow-sm">
+            <div class="flex items-center gap-4 bg-white border border-slate-200 p-3 pl-6 rounded-2xl shadow-sm">
                 <div class="text-right">
-                    <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Node Status</div>
-                    <div class="text-xs font-bold text-red-500 flex items-center justify-end gap-1.5 mt-0.5" id="planBox">
-                        <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span> 
-                        <span id="planName">SYNCING...</span>
+                    <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">System Status</div>
+                    <div class="text-xs font-bold text-emerald-600 flex items-center justify-end gap-1.5 mt-0.5">
+                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Protection Active
                     </div>
                 </div>
-                <div class="h-8 w-px bg-slate-200"></div>
-                <div class="flex items-center gap-4 pr-1">
-                    <div class="text-right">
-                        <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">AI Scans Left</div>
-                        <div id="creditCount" class="text-sm font-black text-slate-800 font-mono mt-0.5">--</div>
-                    </div>
-                    <div class="p-2.5 bg-red-50 rounded-xl text-red-600 border border-red-100">
-                        <i data-lucide="zap" class="w-4 h-4"></i>
-                    </div>
-                </div>
+                <div class="p-2.5 bg-red-50 rounded-xl text-red-600 border border-red-100"><i data-lucide="zap" class="w-4 h-4"></i></div>
             </div>
         </header>
 
@@ -383,27 +373,7 @@
         const fileInput = document.getElementById('fileInput');
         const dropZone = document.getElementById('dropZone');
 
-        // 1. Fetch User Quota on Load
-        async function fetchQuota() {
-            try {
-                const res = await fetch(`${API_URL}/user-status`, { headers: { "x-api-key": userKey } });
-                if (!res.ok) throw new Error("Offline");
-                const data = await res.json();
-                
-                document.getElementById('planName').innerText = data.plan;
-                document.getElementById('creditCount').innerText = data.ai_remaining;
-                
-                if (data.plan === "PRO") {
-                    document.getElementById('planBox').className = "text-xs font-bold text-red-600 flex items-center justify-end gap-1.5 mt-0.5";
-                    document.getElementById('planBox').innerHTML = `<span class="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></span> ${data.plan} ACTIVE`;
-                }
-            } catch (err) {
-                document.getElementById('creditCount').innerText = "OFFLINE";
-            }
-        }
-        fetchQuota();
-
-        // 2. Type Switcher Logic
+        // 1. Type Switcher Logic
         function setScanType(type) {
             currentType = type;
             
@@ -507,7 +477,7 @@
             try {
                 const response = await apiTask;
                 if (response.status === 429) {
-                    alert("Daily Quota Exhausted! Upgrade to PRO for deep forensics.");
+                    alert("Too many requests. Please try again shortly.");
                     resetScanner();
                     return;
                 }
@@ -515,8 +485,6 @@
 
                 const data = await response.json();
                 showResult(data, selectedType);
-                fetchQuota(); // Update quota UI
-
             } catch (error) {
                 alert("Failed to connect to Satark Titan Core. Is main.py running?");
                 resetScanner();

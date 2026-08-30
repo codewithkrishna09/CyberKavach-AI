@@ -96,24 +96,12 @@
                 <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i> Return to Main
             </a>
 
-            <div class="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 bg-white border border-slate-200 p-3 pl-4 sm:pl-6 rounded-2xl shadow-sm w-full sm:w-auto">
+            <div class="flex items-center justify-between sm:justify-end gap-4 bg-white border border-slate-200 p-3 pl-4 sm:pl-6 rounded-2xl shadow-sm w-full sm:w-auto">
                 <div class="text-left sm:text-right">
-                    <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Node Status</div>
-                    <div class="text-[10px] sm:text-xs font-bold text-indigo-600 flex items-center justify-start sm:justify-end gap-1.5 mt-0.5" id="planBox">
-                        <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></span> 
-                        <span id="planName">SYNCING...</span>
-                    </div>
+                    <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">System Status</div>
+                    <div class="text-[10px] sm:text-xs font-bold text-emerald-600 flex items-center justify-start sm:justify-end gap-1.5 mt-0.5"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Protection Active</div>
                 </div>
-                <div class="h-8 w-px bg-slate-200"></div>
-                <div class="flex items-center gap-3 sm:gap-4 pr-1">
-                    <div class="text-right">
-                        <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">AI Scans Left</div>
-                        <div id="creditCount" class="text-xs sm:text-sm font-black text-slate-800 font-mono mt-0.5">--</div>
-                    </div>
-                    <div class="p-2 sm:p-2.5 bg-indigo-50 rounded-xl text-indigo-600 border border-indigo-100">
-                        <i data-lucide="cpu" class="w-4 h-4"></i>
-                    </div>
-                </div>
+                <div class="p-2 sm:p-2.5 bg-indigo-50 rounded-xl text-indigo-600 border border-indigo-100"><i data-lucide="cpu" class="w-4 h-4"></i></div>
             </div>
         </header>
 
@@ -417,27 +405,7 @@
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
 
-        // 1. Fetch User Quota on Load
-        async function fetchQuota() {
-            try {
-                const res = await fetch(`${API_URL}/user-status`, { headers: { "x-api-key": userKey } });
-                if (!res.ok) throw new Error("Offline");
-                const data = await res.json();
-                
-                document.getElementById('planName').innerText = data.plan;
-                document.getElementById('creditCount').innerText = data.ai_remaining;
-                
-                if (data.plan === "PRO") {
-                    document.getElementById('planBox').className = "text-[10px] sm:text-xs font-bold text-indigo-600 flex items-center justify-start sm:justify-end gap-1.5 mt-0.5";
-                    document.getElementById('planBox').innerHTML = `<span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></span> ${data.plan} ACTIVE`;
-                }
-            } catch (err) {
-                document.getElementById('creditCount').innerText = "OFFLINE";
-            }
-        }
-        fetchQuota();
-
-        // 2. Drag & Drop Logic
+        // 1. Drag & Drop Logic
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(e => dropZone.addEventListener(e, (ev) => { ev.preventDefault(); ev.stopPropagation(); }, false));
         ['dragenter', 'dragover'].forEach(e => dropZone.addEventListener(e, () => stateUpload.classList.add('drag-active'), false));
         ['dragleave', 'drop'].forEach(e => dropZone.addEventListener(e, () => stateUpload.classList.remove('drag-active'), false));
@@ -499,7 +467,7 @@
             try {
                 const response = await apiTask;
                 if (response.status === 429) {
-                    alert("Daily Quota Exhausted! Upgrade to PRO to scan more files.");
+                    alert("Too many requests. Please try again shortly.");
                     resetScanner();
                     return;
                 }
@@ -507,8 +475,6 @@
 
                 const data = await response.json();
                 showResult(data);
-                fetchQuota(); // Update quota after scan
-
             } catch (error) {
                 alert("Failed to connect to Titan Core. Is the server running?");
                 resetScanner();
