@@ -1,4 +1,4 @@
-// Replace this value during deployment or define CYBERKAVACH_CONFIG before loading this file.
+// Live Render API used by the deployed Cloudflare website.
 window.CYBERKAVACH_CONFIG = window.CYBERKAVACH_CONFIG || Object.freeze({
-    API_URL: "http://127.0.0.1:8000"
+    API_URL: "https://cyberkavach-ai.onrender.com"
 });
