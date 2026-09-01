@@ -301,46 +301,7 @@ document.addEventListener("DOMContentLoaded", () => {
     counters.forEach(counter => counterObserver.observe(counter));
 
     // ==========================================
-    // 7. HONESTY PROTOCOL PROGRESS BAR
-    // ==========================================
-    const accuracyBar = document.getElementById('accuracy-bar-fill');
-    const accuracyCounter = document.getElementById('accuracy-counter');
-    let isBarAnimated = false;
-
-    if (accuracyBar && accuracyCounter) {
-        const accuracyObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && !isBarAnimated) {
-                    isBarAnimated = true; 
-                    
-                    // Fill CSS width
-                    accuracyBar.style.width = '99.2%';
-
-                    // Animate text digits
-                    const target = 99.2;
-                    let count = 0;
-                    const duration = 1500; 
-                    const frameRate = 1000 / 60; 
-                    const totalFrames = Math.round(duration / frameRate);
-                    const increment = target / totalFrames;
-
-                    const counterInterval = setInterval(() => {
-                        count += increment;
-                        if (count >= target) {
-                            accuracyCounter.innerText = target;
-                            clearInterval(counterInterval);
-                        } else {
-                            accuracyCounter.innerText = count.toFixed(1);
-                        }
-                    }, frameRate);
-                }
-            });
-        }, { threshold: 0.5 }); 
-        accuracyObserver.observe(accuracyBar.parentElement);
-    }
-
-    // ==========================================
-    // 8. FAQ ACCORDION LOGIC
+    // 7. FAQ ACCORDION LOGIC
     // ==========================================
     const faqBtns = document.querySelectorAll('.faq-btn');
 
@@ -490,84 +451,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll('.honesty-fade-up').forEach(el => honestyObserver.observe(el));
 
 
-
-    // 2. Specific Observer for the 99.2% Accuracy Bar & Counter
-
-    const accuracyBar = document.getElementById('accuracy-bar-fill');
-
-    const accuracyCounter = document.getElementById('accuracy-counter');
-
-    let hasAnimated = false;
-
-
-
-    if (accuracyBar && accuracyCounter) {
-
-        const accuracyObserver = new IntersectionObserver((entries) => {
-
-            entries.forEach(entry => {
-
-                if (entry.isIntersecting && !hasAnimated) {
-
-                    hasAnimated = true; // Prevent running multiple times
-
-                   
-
-                    // Fill the bar visually
-
-                    accuracyBar.style.width = '99.2%';
-
-
-
-                    // Animate the number
-
-                    const target = 99.2;
-
-                    let count = 0;
-
-                    const duration = 1500; // 1.5 seconds to match CSS transition
-
-                    const frameRate = 1000 / 60; // 60fps
-
-                    const totalFrames = Math.round(duration / frameRate);
-
-                    const increment = target / totalFrames;
-
-
-
-                    const counterInterval = setInterval(() => {
-
-                        count += increment;
-
-                        if (count >= target) {
-
-                            accuracyCounter.innerText = target;
-
-                            clearInterval(counterInterval);
-
-                        } else {
-
-                            // Show 1 decimal place
-
-                            accuracyCounter.innerText = count.toFixed(1);
-
-                        }
-
-                    }, frameRate);
-
-                }
-
-            });
-
-        }, { threshold: 0.5 }); // Trigger when 50% of the bar box is visible
-
-
-
-        // Observe the parent container of the bar
-
-        accuracyObserver.observe(accuracyBar.parentElement);
-
-    }
 
 });
 

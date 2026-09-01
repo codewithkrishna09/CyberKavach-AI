@@ -168,11 +168,9 @@
                 </div>
                 
                 <div class="p-4 md:p-6 rounded-2xl md:rounded-3xl bg-emerald-50/50 border border-emerald-100 flex flex-col items-center justify-center relative overflow-hidden group">
-                    <div class="text-emerald-500 mb-2 md:mb-3 relative z-10"><i data-lucide="target" class="w-5 h-5 md:w-6 md:h-6"></i></div>
-                    <div class="text-2xl sm:text-4xl font-black font-mono text-emerald-900 mb-1 flex items-center relative z-10">
-                        <span class="counter" data-target="99.2">0</span>%
-                    </div>
-                    <div class="text-[9px] md:text-[10px] font-bold text-emerald-700 uppercase tracking-widest mt-1 relative z-10">Heuristic Accuracy</div>
+                    <div class="text-emerald-500 mb-2 md:mb-3 relative z-10"><i data-lucide="clipboard-check" class="w-5 h-5 md:w-6 md:h-6"></i></div>
+                    <div class="text-lg sm:text-2xl font-black text-emerald-900 mb-1 relative z-10">Measured</div>
+                    <div class="text-[9px] md:text-[10px] font-bold text-emerald-700 uppercase tracking-widest mt-1 relative z-10">No fixed accuracy claim</div>
                 </div>
                 
             </div>
@@ -260,16 +258,8 @@
                 </p>
                 
                 <div class="bg-slate-50 border border-slate-200 p-5 md:p-6 rounded-2xl shadow-inner w-full">
-                    <div class="flex justify-between items-end mb-3">
-                        <span class="text-[10px] md:text-xs font-bold text-slate-600 uppercase tracking-widest">System Accuracy</span>
-                        <span class="text-2xl md:text-3xl font-black text-emerald-600 font-mono"><span id="accuracyNumber">0</span>%</span>
-                    </div>
-                    <div class="w-full h-2.5 md:h-3 bg-slate-200 rounded-full overflow-hidden relative">
-                        <div id="accuracyBar" class="h-full bg-emerald-500 rounded-full progress-fill relative overflow-hidden" style="width: 0%;">
-                            <div class="absolute inset-0 bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzhhYWGMYAEYB8RmROaABADeOQ8CXl/xfgAAAABJRU5ErkJggg==')] opacity-30"></div>
-                        </div>
-                    </div>
-                    <p class="text-[9px] md:text-[10px] text-slate-400 mt-3 font-bold uppercase tracking-wider">The remaining 0.8% accounts for unprecedented zero-day mutations.</p>
+                    <span class="text-[10px] md:text-xs font-bold text-slate-600 uppercase tracking-widest">Responsible evaluation</span>
+                    <p class="text-sm text-slate-600 mt-3 leading-relaxed">We use precision, phishing recall and F1 score on unseen domains. We do not show a fixed accuracy percentage without a current, independent benchmark.</p>
                 </div>
             </div>
 
@@ -379,44 +369,6 @@
             }, { threshold: 0.5 });
             counters.forEach(counter => counterObserver.observe(counter));
 
-            // 4. Honesty Protocol Progress Bar Animation
-            const honestySection = document.getElementById('honesty-section');
-            const accuracyBar = document.getElementById('accuracyBar');
-            const accuracyNumber = document.getElementById('accuracyNumber');
-            let hasAnimatedAccuracy = false;
-
-            if (honestySection && accuracyBar && accuracyNumber) {
-                const honestyObserver = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting && !hasAnimatedAccuracy) {
-                            hasAnimatedAccuracy = true;
-                            
-                            // Fill the bar CSS width
-                            accuracyBar.style.width = '99.2%';
-
-                            // Animate the number counting up
-                            const target = 99.2;
-                            let count = 0;
-                            const duration = 1500; // 1.5s
-                            const frameRate = 1000 / 60;
-                            const totalFrames = Math.round(duration / frameRate);
-                            const increment = target / totalFrames;
-
-                            const counterInterval = setInterval(() => {
-                                count += increment;
-                                if (count >= target) {
-                                    accuracyNumber.innerText = target;
-                                    clearInterval(counterInterval);
-                                } else {
-                                    accuracyNumber.innerText = count.toFixed(1);
-                                }
-                            }, frameRate);
-                        }
-                    });
-                }, { threshold: 0.3 }); // Trigger when 30% of the section is visible
-
-                honestyObserver.observe(honestySection);
-            }
         });
     </script>
 </body>
